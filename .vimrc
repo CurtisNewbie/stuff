@@ -1,0 +1,12 @@
+:set hlsearch
+:set incsearch
+:set ignorecase
+:set smartcase
+:set tabstop=4
+:set shiftwidth=4
+:set expandtab
+:set clipboard+=unnamed
+:set clipboard+=unnamedplus
+:set paste
+:set number
+:syntax enable
