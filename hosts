@@ -1,0 +1,7 @@
+# file located at: /etc/hosts
+
+# configure an address for specific domain name
+# e.g., for github
+140.82.114.4 github.com
+199.232.69.194 github.global.ssl.fastly.net
+185.199.108.153 assets-cdn.Github.com
