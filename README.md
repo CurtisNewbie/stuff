@@ -7,3 +7,5 @@
 5. Windows 10 new Terminal settings.json (almost the same as the default)
 6. Configure sources for apt and apt-get (CN)
 7. Change Hosts on linux
+8. Configure registry for npm
+9. Configure registry for docker
