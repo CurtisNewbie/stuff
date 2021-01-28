@@ -6,7 +6,7 @@ Content:
 
 ```
 {
-    "registry-mirrors" : ["https://registry.docker-cn.com"]
+    "registry-mirrors" : ["https://registry.docker-cn.com", "https://docker.mirrors.ustc.edu.cn/", "https://hub-mirror.c.163.com/" ]
 }
 ```
 
