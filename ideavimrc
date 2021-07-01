@@ -3,13 +3,14 @@ set ignorecase
 set smartcase
 set clipboard+=unnamed
 
-nnoremap gf :action SearchEverywhere<CR>
+nnoremap gs :action SearchEverywhere<CR>
 nnoremap == :action ReformatCode<CR>
 nnoremap gh :action QuickJavaDoc<CR>
 nnoremap gc :action GotoImplementation<CR>
 nnoremap gu :action GotoSuperMethod<CR>
 nnoremap gb :action Back<CR>
-# nnoremap gb :action JumpToLastChange<CR>
+nnoremap gf :action Forward<CR>
+nnoremap ge :action Generate<CR>
 
 
 
