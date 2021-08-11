@@ -8,9 +8,6 @@ In pom.xml:
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <configuration>
-          <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-        </configuration>
         <executions>
           <execution>
             <id>attach-sources</id>
