@@ -1,0 +1,14 @@
+[Unit]
+Description=Authentication Service by yongjie.zhuang
+After=syslog.target network.target
+
+[Service]
+SuccessExitStatus=143
+
+User=zhuangyongj
+Group=zhuangyongj
+
+Type=simple
+
+ExecStart=/bin/bash /home/zhuangyongj/exec/authserver/authserver.sh
+ExecStop=/bin/kill -15 $MAINPID
