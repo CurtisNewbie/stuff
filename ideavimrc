@@ -3,6 +3,8 @@ set ignorecase
 set smartcase
 set clipboard+=unnamed
 
+Plug 'preservim/nerdtree'
+
 nnoremap gs :action SearchEverywhere<CR>
 nnoremap == :action ReformatCode<CR>
 nnoremap gh :action QuickJavaDoc<CR>
@@ -11,7 +13,7 @@ nnoremap gu :action GotoSuperMethod<CR>
 nnoremap gb :action Back<CR>
 nnoremap gf :action Forward<CR>
 nnoremap ge :action Generate<CR>
-
-
-
+nnoremap th :action TypeHierarchy<CR>
+nnoremap -- :action Tool.GotoRequestService<CR>
+nnoremap <C-n> :NERDTreeFocus<CR>
 
