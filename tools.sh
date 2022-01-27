@@ -1,11 +1,20 @@
 #!/bin/bash
+# colours https://www.shellhacks.com/bash-colors/
 
 function echo_red() {
-    echo $'\e[0;31m'"$1"$'\e[0m'
+    echo $'\e[1;31m'"$1"$'\e[0m'
 }
 
 function echo_green() {
-    echo $'\e[0;32m'"$1"$'\e[0m'
+    echo $'\e[1;32m'"$1"$'\e[0m'
+}
+
+function echo_yellow() {
+    echo $'\e[1;33m'"$1"$'\e[0m'
+}
+
+function echo_cyan() {
+    echo $'\e[1;36m'"$1"$'\e[0m'
 }
 
 function mcompile() {
@@ -78,6 +87,8 @@ function cmtrecklessly() {
             t_name="Modified" 
         elif [ $t == 'A' ]; then
             t_name="Added"
+        elif [ $t == 'D' ]; then
+            t_name="Deleted"
         else 
             t="${line:31:4}"
             if [ $t == "R092" ]; then
@@ -229,17 +240,98 @@ function repocheck () {
 # fetch and pull
 function gfp () {
     echo_green "Fetching..."
-    git fetch;
+    msg=`git fetch 2>&1`
+
+    if [ $? -ne 0 ]; then 
+        echo_red "$msg"
+        return 1
+    fi
+
     echo_green "Pulling..."
     git pull;
 }
 
-# [0]: process exit value, [1]: error message
+# [0]: command return value ($?), [1]: error message
 function exit_if_failed() {
-    if [ ! $1 -eq 0 ]; then
-        echo_red $2
+    if [ $1 -ne 0 ]; then
+        if [ ! -z $2 ]; then
+            echo_red $2
+        fi
         return 1;
     fi
+}
+
+function last_weekly_report(){
+
+    (cd $1
+
+    # echo "pwd:" `pwd`
+
+    #Set the field separator to new line
+    IFS=$'\n'
+
+    arr=($(for fname in `ls`; do
+        suffix="${fname#*-}"
+        echo "${suffix%*.md}"
+    done | sort -n))
+
+    # echo "arr: ${arr[@]}"
+
+    len=${#arr[@]}
+    if [ $len -eq 0 ]; then
+        echo 0
+        return 0
+    fi
+
+    last_idx=`expr $len - 1`
+    # echo "last_idx: " $last_idx
+
+    last_num=${arr[$last_idx]}
+    echo `expr $last_num + 1`
+    )
+}
+
+# generate a new weekly report
+function gen_weekly_report(){
+    if [ -z $1 ]; then
+        echo_red "please specify base path first..."
+        exit 1;
+    fi
+
+    base=$1
+    num=`last_weekly_report $base`
+    target=$base/week-$num.md
+
+    if [ -f $target ]; then
+        echo_red "file: '$target' exists, aborting..."
+        return 1;
+    fi
+
+    touch $target
+    echo_green "touched file: '$target', initializing content"
+
+    # initialize content
+    echo "# Week-$num" >> $target
+    echo >> $target
+    echo "## 本周完成工作" >> $target
+    echo >> $target
+    echo "## 本周工作总结" >> $target
+    echo >> $target
+    echo "## 下周工作计划" >> $target
+    echo >> $target
+    echo "## 需协助与帮助" >> $target
+    echo >> $target
+    echo "暂无" >> $target
+    echo >> $target
+    echo "## 备注" >> $target
+    echo >> $target
+    echo "暂无" >> $target
+    echo >> $target
+            
+    echo_green "'$target' content initialized, finished" 
+
+    # open file using vscode
+    code $target  
 }
 
 function reset_one() {
