@@ -1,20 +1,27 @@
 #!/bin/bash
 # colours https://www.shellhacks.com/bash-colors/
 
+end=$'\e[0m'
+red=$'\e[1;31m'
+green=$'\e[1;32m'
+yellow=$'\e[1;33m'
+cyan=$'\e[1;36m'
+
 function echo_red() {
-    echo $'\e[1;31m'"$1"$'\e[0m'
+    echo $red"$1"$end
 }
 
 function echo_green() {
-    echo $'\e[1;32m'"$1"$'\e[0m'
+    echo $green"$1"$end
 }
 
 function echo_yellow() {
-    echo $'\e[1;33m'"$1"$'\e[0m'
+    echo $yellow"$1"$end
+
 }
 
 function echo_cyan() {
-    echo $'\e[1;36m'"$1"$'\e[0m'
+    echo $cyan"$1"$end
 }
 
 function mcompile() {
@@ -27,7 +34,6 @@ function mcompile() {
         fi
     else
         if [ ! -f "pom.xml" ]; then
-
             echo_red ">>> pom.xml is not found, aborted"
         else
             mvn clean compile 
@@ -138,8 +144,7 @@ function check(){
             debug=1
             # echo_green "--debug mode turned on"
         elif [ "$2" == "--fetch" ]; then
-            fetch=1
-            # echo_green "--fetch mode turned on"
+            fetch=1 # echo_green "--fetch mode turned on"
         elif [ "$2" == "--pull" ]; then
             pull=1
             # echo_green "--pull mode turned pn"
