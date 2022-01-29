@@ -1,7 +1,7 @@
 #!/bin/bash
 # colours https://www.shellhacks.com/bash-colors/
 
-end=$'\e[0m'
+colour_reset=$'\e[0m'
 red=$'\e[1;31m'
 green=$'\e[1;32m'
 yellow=$'\e[1;33m'
@@ -20,20 +20,20 @@ function diskusage() {
 }
 
 function echo_red() {
-    echo $red"$1"$end
+    echo $red"$1"$colour_reset
 }
 
 function echo_green() {
-    echo $green"$1"$end
+    echo $green"$1"$colour_reset
 }
 
 function echo_yellow() {
-    echo $yellow"$1"$end
+    echo $yellow"$1"$colour_reset
 
 }
 
 function echo_cyan() {
-    echo $cyan"$1"$end
+    echo $cyan"$1"$colour_reset
 }
 
 function mcompile() {
@@ -146,7 +146,7 @@ function is_master(){
     return 0 
 }
 
-function check(){
+function check() {
     debug=0
     fetch=0
     pull=0
@@ -366,9 +366,31 @@ function reset_one() {
     git status 
 }
 
-function ps_grep(){
+function ps_grep() {
     ps -ef | grep $1 | grep -v grep
 }
+
+function pom_version() {
+    if [ -z $1 ] || [ $1 == "." ] ; then
+        root=`pwd`
+    fi
+ 
+    name="$root/pom.xml"
+    if [ ! -f $name ]; then
+        echo_red "Unable to find $name"
+        return 1
+    fi
+
+    # get project.version
+    ver=$(mvn -q \
+    -Dexec.executable=echo \
+    -Dexec.args='${project.version}' \
+    --non-recursive \
+    exec:exec)
+
+    echo "Project.Version: $cyan $ver $colour_reset"
+}
+
 
 
 
