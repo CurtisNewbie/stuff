@@ -370,7 +370,7 @@ function ps_grep() {
     ps -ef | grep $1 | grep -v grep
 }
 
-function pom_version() {
+function pom_ver() {
     if [ -z $1 ] || [ $1 == "." ] ; then
         root=`pwd`
     fi
