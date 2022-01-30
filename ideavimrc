@@ -5,6 +5,9 @@ set clipboard+=unnamed
 
 Plug 'preservim/nerdtree'
 
+:command W w
+:command Q q
+
 nnoremap gs :action SearchEverywhere<CR>
 nnoremap == :action ReformatCode<CR>
 nnoremap gh :action QuickJavaDoc<CR>
