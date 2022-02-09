@@ -7,6 +7,18 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gst() {
+    git status
+}
+
+function gd() {
+    git diff
+}
+
+function gds() {
+    git diff --staged
+}
+
 function installall(){
     find . -maxdepth 2 -type d | while read dir; do 
     if [ -f "$dir/pom.xml" ]; then 
