@@ -373,6 +373,8 @@ function ps_grep() {
 function pom_ver() {
     if [ -z $1 ] || [ $1 == "." ] ; then
         root=`pwd`
+    else 
+        root="$1"
     fi
  
     name="$root/pom.xml"
@@ -388,7 +390,7 @@ function pom_ver() {
     --non-recursive \
     exec:exec)
 
-    echo "Project.Version: $cyan $ver $colour_reset"
+    echo "'$name' Project.Version: $cyan $ver $colour_reset"
 }
 
 
