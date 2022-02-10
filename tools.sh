@@ -7,7 +7,7 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
-function gst() {
+function gs() {
     git status
 }
 
