@@ -7,6 +7,10 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gl() {
+    git log
+}
+
 function gs() {
     git status
 }
@@ -363,18 +367,40 @@ function gen_weekly_report(){
     code $target  
 }
 
+# reset one git commit, '--stage' to keep files in stage area, '--y' or '--Y' to reset without confirmation
 function reset_one() {
-    read -p "sure you want to reset one commit? [y] "
-    ans=$REPLY
 
-    if [ -z $ans ] || [ $ans != 'y' ] || [ ! $ans != 'Y' ]; then
-        echo_green "aborting ..."
-        return 1
+    # do we need to restre --staged
+    unstage=1
+
+    # do we need confirmation
+    need_confirm=1
+
+    for arg in "$@"; do
+        if [ $arg == '--stage' ]; then  
+            unstage=0
+        elif [[ $arg =~ --[yY] ]]; then  
+            need_confirm=0
+        fi 
+    done 
+
+    if [ $need_confirm -eq 1 ]; then
+        read -p "Sure you want to reset one commit? [y/Y] "
+        ans=$REPLY
+
+        if [ -z $ans ] || [[ $ans =~ [^yY] ]]; then
+            echo_green "Aborting ..."
+            return 1
+        fi
     fi
 
     git reset --soft HEAD~1
-    git restore --staged .
-    echo_green "git resetted one commit"
+
+    if [ $unstage -eq 1 ]; then 
+        git restore --staged .
+    fi
+
+    echo_green "Resetted one git commit"
     git status 
 }
 
