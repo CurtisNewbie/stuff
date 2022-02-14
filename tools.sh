@@ -75,13 +75,13 @@ function minstall() {
         if [ ! -f "$1/pom.xml" ]; then
             echo_red ">>> $1/pom.xml is not found, aborted"
         else
-            mvn clean install -f $1 -Dmaven.test.skip=true -N
+            mvn clean install -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
         fi
     else
         if [ ! -f "pom.xml" ]; then
             echo_red ">>> pom.xml is not found, aborted"
         else
-            mvn clean install -Dmaven.test.skip=true -N
+            mvn clean install -Dmaven.test.skip=true -N -DadditionalJOption=-Xdoclint:none
         fi
     fi
 }
