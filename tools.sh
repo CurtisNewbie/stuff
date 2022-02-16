@@ -9,13 +9,20 @@ cyan=$'\e[1;36m'
 
 function gcmt() {
 
-    if [ -z "$1" ]; then
+    msg="$1"
+
+    if [ -z "$msg" ]; then
+        read -p "Commit message: "
+        msg=$REPLY
+    fi
+
+    if [ -z "$msg" ]; then
         echo_red "Please specify commit message"
         return 1
     fi
 
     git add .
-    git commit -m "$1"
+    git commit -m "$msg"
 }
 
 function gl() {
