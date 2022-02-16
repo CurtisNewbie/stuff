@@ -11,18 +11,13 @@ function gcmt() {
 
     msg="$1"
 
-    if [ -z "$msg" ]; then
-        read -p "Commit message: "
-        msg=$REPLY
-    fi
-
-    if [ -z "$msg" ]; then
-        echo_red "Please specify commit message"
-        return 1
-    fi
-
     git add .
-    git commit -m "$msg"
+
+    if [ -z "$msg" ]; then
+        git commit
+    else
+        git commit -m "$msg"
+    fi
 }
 
 function gl() {
