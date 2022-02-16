@@ -9,7 +9,7 @@ cyan=$'\e[1;36m'
 
 function gcmt() {
 
-    if [ -z $1 ]; then
+    if [ -z "$1" ]; then
         echo_red "Please specify commit message"
         return 1
     fi
