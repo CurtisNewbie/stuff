@@ -7,6 +7,14 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gamd() {
+    git commit --amend 
+}
+
+function gswitch() {
+    git switch "$1"
+}
+
 function gcmt() {
 
     msg="$1"
