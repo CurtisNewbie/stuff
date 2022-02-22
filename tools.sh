@@ -7,6 +7,10 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gpush () {
+    git push
+}
+
 function gbranch() {
     extra="-l"
     if [ $# -gt 0 ]; then
