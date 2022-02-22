@@ -7,8 +7,17 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gall() {
+    git add .
+}
+
 function gbranch() {
-    git branch -l
+    extra="-l"
+    if [ $# -gt 0 ]; then
+        extra="$@"
+    fi
+
+    git branch $extra
 }
 
 function gamd() {
@@ -33,7 +42,13 @@ function gcmt() {
 }
 
 function gl() {
-    git log
+
+    extra=""
+    if [ $# -gt 0 ]; then
+        extra="$@"
+    fi
+
+    git log $extra
 }
 
 function gs() {
@@ -41,7 +56,12 @@ function gs() {
 }
 
 function gd() {
-    git diff
+    extra=""
+    if [ $# -gt 0 ]; then
+        extra="$@"
+    fi
+
+    git diff $extra
 }
 
 function gds() {
