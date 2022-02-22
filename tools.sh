@@ -152,7 +152,7 @@ function mtest() {
     fi
 }
 
-function cmtrecklessly() {
+function rkcmt() {
     git add .
 
     #Set the field separator to new line
