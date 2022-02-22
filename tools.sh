@@ -11,7 +11,7 @@ function gshow() {
     git show
 }
 
-function gall() {
+function gaddall() {
     git add .
 }
 
