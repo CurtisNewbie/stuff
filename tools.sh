@@ -7,6 +7,15 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gclone() {
+    git clone $1
+}
+
+function gstash() {
+    git add .
+    git stash
+}
+
 function gf() {
     git fetch
 }
