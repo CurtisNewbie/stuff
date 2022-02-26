@@ -14,6 +14,10 @@ function mclean() {
 function mresolve() {
     mvn dependency:resolve
 }
+
+function gadd() {
+    git add "$@"
+}
     
 function grestore() {
     git restore --staged "$@"
