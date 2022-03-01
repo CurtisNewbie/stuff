@@ -44,6 +44,10 @@ function gpush () {
     git push
 }
 
+function gbranchlike(){
+    gbranch | grep "$@"
+}
+
 function gbranch() {
     extra="-l"
     if [ $# -gt 0 ]; then
