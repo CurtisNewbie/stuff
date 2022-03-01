@@ -40,11 +40,11 @@ function gf() {
     git fetch
 }
 
-function gpush () {
+function gpush() {
     git push "$@"
 }
 
-function gbranchlike(){
+function gblike() {
     gbranch | grep "$@"
 }
 
