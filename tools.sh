@@ -41,7 +41,7 @@ function gf() {
 }
 
 function gpush () {
-    git push
+    git push "$@"
 }
 
 function gbranchlike(){
