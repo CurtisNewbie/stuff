@@ -56,7 +56,7 @@ function gpush() {
     git push "$@"
 }
 
-function gblike() {
+function glike() {
     gbranch | grep "$@"
 }
 
