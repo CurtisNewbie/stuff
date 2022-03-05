@@ -422,7 +422,7 @@ function last_weekly_report(){
 function gen_weekly_report(){
     if [ -z $1 ]; then
         echo_red "please specify base path first..."
-        exit 1;
+        return 1;
     fi
 
     base=$1
