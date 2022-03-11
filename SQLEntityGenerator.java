@@ -41,7 +41,8 @@ public class SQLEntityGenerator {
     private static void generateJavaClass(SQLTable table) throws IOException {
         final String tableCamelCase = toCamelCases(table.tableName);
         final String className = tableCamelCase.substring(0, 1).toUpperCase() + tableCamelCase.substring(1, tableCamelCase.length());
-        final Path gp = Paths.get(className + ".java");
+        final String fname = className + ".java";
+        final Path gp = Paths.get(fname);
 
         // try to delete it, if there is one
         Files.deleteIfExists(gp);
@@ -68,6 +69,8 @@ public class SQLEntityGenerator {
             // end
             bw.write("}\n");
         }
+
+        System.out.printf("Java Entity File generated: %s\n", fname);
     }
 
     private static String toJavaType(String sqlType) {
