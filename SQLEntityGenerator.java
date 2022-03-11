@@ -4,6 +4,7 @@ import java.nio.file.*;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SQLEntityGenerator {
 
@@ -29,7 +30,9 @@ public class SQLEntityGenerator {
         }
 
         // read ddl scripts
-        final List<String> lines = read(f);
+        final List<String> lines = read(f).stream()
+                .filter(l -> !l.trim().isBlank())
+                .collect(Collectors.toList());
 
         // parse ddl
         final SQLTable table = parse(lines);
@@ -141,7 +144,7 @@ public class SQLEntityGenerator {
 
             // validate syntax
             if (!endsWithCorrectSymbol(trimed, i, lines.size())) {
-                throw new IllegalArgumentException(String.format("Each line must end with either ',' or ';' illegal syntax at line: %d", i + 1));
+                throw new IllegalArgumentException(String.format("Each line must end with either ',' ';' or '(' illegal syntax at line: %d", i + 1));
             }
 
             // split to tokens
@@ -236,7 +239,7 @@ public class SQLEntityGenerator {
             } else {
 
                 // we are look for the end of the comment, and we found it
-                if (l != -1 && (tokens[i].endsWith(pre + ",")) || tokens[i].endsWith(pre + ";")) {
+                if (l != -1 && (tokens[i].endsWith(pre) || tokens[i].endsWith(pre + ",")) || tokens[i].endsWith(pre + ";")) {
                     h = i;
                     break;
                 }
@@ -249,7 +252,9 @@ public class SQLEntityGenerator {
         }
 
         String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
-        return joined.substring(1, joined.length() - 2);
+        // ", or "; or "
+        int sub = joined.endsWith(",") || joined.endsWith(";") ? 2 : 1;
+        return joined.substring(1, joined.length() - sub);
     }
 
     private static String extractTableName(String[] tokens, int lineNo) {
@@ -281,12 +286,15 @@ public class SQLEntityGenerator {
         boolean isFirstLine = i == 0;
         boolean isLineBeforeLastLine = i == len - 2;
 
-        if (isLastLine)
-            return line.endsWith(";");
         if (isFirstLine)
             return line.endsWith("(");
-        if (isLineBeforeLastLine)
-            return line.endsWith(")") || line.endsWith(","); // e.g., constraint
+
+        // todo, we don't validate them for now
+        if (isLastLine || isLineBeforeLastLine) {
+            return true;
+//            return line.endsWith(")") || line.endsWith(","); // e.g., constraint
+//             return line.endsWith(";");
+        }
 
         return line.endsWith(",");
     }
