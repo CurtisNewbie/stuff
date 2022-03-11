@@ -57,7 +57,7 @@ function gpush() {
 }
 
 function glike() {
-    gbranch | grep "$@"
+    git branch -lr | grep "$@"
 }
 
 function gbranch() {
