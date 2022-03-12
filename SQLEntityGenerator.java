@@ -101,13 +101,16 @@ public class SQLEntityGenerator {
         // parse ddl
         final SQLTable table = parse(lines);
 
+        // mybatis-plus feature enabled
+        boolean mybatisPlusFeatureEnabled = Arrays.stream(args).anyMatch(ar -> ar.equals("--mybatisplus"));
+
         // generate java object
-        generateJavaClass(table);
+        generateJavaClass(table, mybatisPlusFeatureEnabled);
     }
 
-    private static void generateJavaClass(SQLTable table) throws IOException {
+    private static void generateJavaClass(SQLTable table, boolean mybatisPlusFeatureEnabled) throws IOException {
         final String tableCamelCase = toCamelCases(table.tableName);
-        final String className = tableCamelCase.substring(0, 1).toUpperCase() + tableCamelCase.substring(1, tableCamelCase.length());
+        final String className = toFirstUppercase(tableCamelCase);
         final String fname = className + ".java";
         final Path gp = Paths.get(fname);
 
@@ -130,7 +133,28 @@ public class SQLEntityGenerator {
             // fields
             for (SQLField field : table.fields) {
                 bw.write("    /** " + field.comment + " */\n");
+
+                // for mybatis-plus only
+                if (mybatisPlusFeatureEnabled) {
+                    bw.write(String.format("    @TableField(\"%s\")\n", field.fieldName));
+                }
                 bw.write("    private " + toJavaType(field.type) + " " + toCamelCases(field.fieldName) + ";\n\n");
+            }
+
+            // getter & setter
+            for (SQLField field : table.fields) {
+
+                final String fn = toCamelCases(field.fieldName);
+                final String us = toFirstUppercase(fn);
+                final String jt =toJavaType(field.type);
+
+                bw.write(String.format("    public %s get%s() {\n", jt, us));
+                bw.write(String.format("        return this.%s;\n", fn));
+                bw.write("    }\n\n");
+
+                bw.write(String.format("    public void set%s(%s %s) {\n", us, jt, fn));
+                bw.write(String.format("        this.%s = %s;\n", fn, fn));
+                bw.write("    }\n\n");
             }
 
             // end
@@ -348,7 +372,8 @@ public class SQLEntityGenerator {
     private static void printHelp() {
         System.out.println("\n  SQLEntityGenerator by yongj.zhuang\n");
         System.out.println("  Help:\n");
-        System.out.println("    arg[0] - Path to the SQL DDL file\n\n");
+        System.out.println("    arg[0] - Path to the SQL DDL file");
+        System.out.println("    arg[1] - (Optional) '--mybatisplus' to enable mybatis-plus feature\n\n");
         System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
         System.out.println("  simple Java Class for this 'table'. The SQL file should ");
         System.out.println("  only contain one 'CREATE TABLE' statement.\n");
@@ -364,6 +389,10 @@ public class SQLEntityGenerator {
         System.out.println("    update_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who updated this record',");
         System.out.println("    is_del TINYINT NOT NULL DEFAULT '0' COMMENT '0-normal, 1-deleted'");
         System.out.println(" ) ENGINE=InnoDB COMMENT 'Some nice books';\n\n");
+    }
+
+    private static String toFirstUppercase(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
     }
 
     private static class SQLField {
