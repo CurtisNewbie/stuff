@@ -6,6 +6,70 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Generator of Java Entity Class based on SQL DDL
+ * <p>
+ * It takes one argument, which to the path to the SQL DDL file. The SQL file should only contain one 'CREATE TABLE'
+ * statement.
+ * </p>
+ * <p>
+ * This simple tool requires that each line only contains keywords for a single field. Don't put everything on a single
+ * line.
+ * </p>
+ *
+ * <pre>
+ * {@code
+ *     The Following is a valid example:
+ *
+ *     CREATE TABLE IF NOT EXISTS book (
+ *      id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT "primary key",
+ *      name VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'name of the book',
+ *      create_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is created',
+ *      create_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who created this record',
+ *      update_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is updated',
+ *      update_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who updated this record',
+ *      is_del TINYINT NOT NULL DEFAULT '0' COMMENT '0-normal, 1-deleted'
+ *     ) ENGINE=InnoDB COMMENT 'Some nice books';
+ * }
+ * </pre>
+ *
+ * <pre>
+ *
+ *     The generate Java class is as follows:
+ *
+ *      import java.util.*;
+ *      import java.time.*;
+ *      import java.math.*;
+ *
+ *      /** Some nice books *{@literal /}
+ *      public class Book {
+ *
+ *          /** primary key *{@literal /}
+ *          private Integer id;
+ *
+ *          /** name of the book *{@literal /}
+ *          private String name;
+ *
+ *          /** when the record is created *{@literal /}
+ *          private LocalDateTime createTime;
+ *
+ *          /** who created this record *{@literal /}
+ *          private String createBy;
+ *
+ *          /** when the record is updated *{@literal /}
+ *          private LocalDateTime updateTime;
+ *
+ *          /** who updated this record *{@literal /}
+ *          private String updateBy;
+ *
+ *          /** 0-normal, 1-deleted *{@literal /}
+ *          private Integer isDel;
+ *
+ *     }
+ * </pre>
+ *
+ * @author yongj.zhuang
+ */
 public class SQLEntityGenerator {
 
     private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint");
@@ -15,8 +79,8 @@ public class SQLEntityGenerator {
 
     public static void main(String[] args) throws IOException {
 
-        if (args.length < 1) {
-            System.out.println("Please specify path to sQL file");
+        if (args.length < 1 || args[0].equals("--help") || args[0].equals("-help")) {
+            printHelp();
             return;
         }
 
@@ -142,11 +206,6 @@ public class SQLEntityGenerator {
             if (trimed.isBlank())
                 continue;
 
-            // validate syntax
-            if (!endsWithCorrectSymbol(trimed, i, lines.size())) {
-                throw new IllegalArgumentException(String.format("Each line must end with either ',' ';' or '(' illegal syntax at line: %d", i + 1));
-            }
-
             // split to tokens
             final String[] tokens = trimed.split(" ");
 
@@ -251,10 +310,15 @@ public class SQLEntityGenerator {
             return "";
         }
 
-        String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
-        // ", or "; or "
-        int sub = joined.endsWith(",") || joined.endsWith(";") ? 2 : 1;
-        return joined.substring(1, joined.length() - sub);
+        final String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
+
+        /*
+            ", or "; or "
+            so, if it's ", or "; we remove the last two char
+            else, we remove the last one
+         */
+        final int end = joined.length() - (joined.endsWith(",") || joined.endsWith(";") ? 2 : 1);
+        return joined.substring(1, end);
     }
 
     private static String extractTableName(String[] tokens, int lineNo) {
@@ -281,22 +345,25 @@ public class SQLEntityGenerator {
         return tokens[5];
     }
 
-    private static boolean endsWithCorrectSymbol(String line, int i, int len) {
-        boolean isLastLine = i == len - 1;
-        boolean isFirstLine = i == 0;
-        boolean isLineBeforeLastLine = i == len - 2;
-
-        if (isFirstLine)
-            return line.endsWith("(");
-
-        // todo, we don't validate them for now
-        if (isLastLine || isLineBeforeLastLine) {
-            return true;
-//            return line.endsWith(")") || line.endsWith(","); // e.g., constraint
-//             return line.endsWith(";");
-        }
-
-        return line.endsWith(",");
+    private static void printHelp() {
+        System.out.println("\n  SQLEntityGenerator by yongj.zhuang\n");
+        System.out.println("  Help:\n");
+        System.out.println("    arg[0] - Path to the SQL DDL file\n\n");
+        System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
+        System.out.println("  simple Java Class for this 'table'. The SQL file should ");
+        System.out.println("  only contain one 'CREATE TABLE' statement.\n");
+        System.out.println("  Each line should only contain key words for a single field,");
+        System.out.println("  so don't put everything in one line.\n");
+        System.out.println("  For example:\n");
+        System.out.println("  CREATE TABLE IF NOT EXISTS book (");
+        System.out.println("    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT \"primary key\",");
+        System.out.println("    name VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'name of the book',");
+        System.out.println("    create_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is created',");
+        System.out.println("    create_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who created this record',");
+        System.out.println("    update_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is updated',");
+        System.out.println("    update_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who updated this record',");
+        System.out.println("    is_del TINYINT NOT NULL DEFAULT '0' COMMENT '0-normal, 1-deleted'");
+        System.out.println(" ) ENGINE=InnoDB COMMENT 'Some nice books';\n\n");
     }
 
     private static class SQLField {
