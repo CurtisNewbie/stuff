@@ -138,24 +138,22 @@ public class SQLEntityGenerator {
 
                 // for mybatis-plus only
                 if (mybatisPlusFeatureEnabled) {
-                    bw.write(String.format("    @TableField(\"%s\")\n", field.fieldName));
+                    bw.write(String.format("    @TableField(\"%s\")\n", field.sqlFieldName));
                 }
-                bw.write("    private " + toJavaType(field.type) + " " + toCamelCases(field.fieldName) + ";\n\n");
+                bw.write("    private " + field.javaType + " " + field.javaFieldName + ";\n\n");
             }
 
             // getter & setter
             for (SQLField field : table.fields) {
 
-                final String fn = toCamelCases(field.fieldName);
-                final String us = toFirstUppercase(fn);
-                final String jt =toJavaType(field.type);
+                final String us = toFirstUppercase(field.javaFieldName);
 
-                bw.write(String.format("    public %s get%s() {\n", jt, us));
-                bw.write(String.format("        return this.%s;\n", fn));
+                bw.write(String.format("    public %s get%s() {\n", field.javaType, us));
+                bw.write(String.format("        return this.%s;\n", field.javaFieldName));
                 bw.write("    }\n\n");
 
-                bw.write(String.format("    public void set%s(%s %s) {\n", us, jt, fn));
-                bw.write(String.format("        this.%s = %s;\n", fn, fn));
+                bw.write(String.format("    public void set%s(%s %s) {\n", us, field.javaType, field.javaFieldName));
+                bw.write(String.format("        this.%s = %s;\n", field.javaFieldName, field.javaFieldName));
                 bw.write("    }\n\n");
             }
 
@@ -291,11 +289,8 @@ public class SQLEntityGenerator {
         if (type == null)
             throw new IllegalArgumentException(String.format("Failed to parse DDL, unable to identify data type for field '%s', illegal syntax at line %d", fieldName, lineNo));
 
-        SQLField field = new SQLField();
-        field.fieldName = fieldName;
-        field.type = type;
-        field.comment = extractComment(tokens, lineNo);
-        System.out.printf("Field: '%s', type: '%s', comment: '%s'\n", fieldName, field.type, field.comment);
+        final SQLField field = new SQLField(fieldName, type, extractComment(tokens, lineNo));
+        System.out.printf("Field: '%s', type: '%s', comment: '%s'\n", fieldName, field.sqlType, field.comment);
         return field;
     }
 
@@ -398,17 +393,18 @@ public class SQLEntityGenerator {
     }
 
     private static class SQLField {
-        private String fieldName;
-        private String type;
-        private String comment;
+        private final String sqlFieldName;
+        private final String sqlType;
+        private final String comment;
+        private final String javaType;
+        private final String javaFieldName;
 
-        @Override
-        public String toString() {
-            return "SQLField{" +
-                    "fieldName='" + fieldName + '\'' +
-                    ", type='" + type + '\'' +
-                    ", comment='" + comment + '\'' +
-                    '}';
+        public SQLField(String sqlFieldName, String sqlType, String comment) {
+            this.sqlFieldName = sqlFieldName;
+            this.sqlType = sqlType;
+            this.comment = comment;
+            this.javaType = toJavaType(sqlType);
+            this.javaFieldName = toCamelCases(sqlFieldName);
         }
     }
 
