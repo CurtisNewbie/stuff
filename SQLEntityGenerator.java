@@ -178,7 +178,7 @@ public class SQLEntityGenerator {
             bw.write("}\n");
         }
 
-        System.out.printf("Java Entity File generated: %s\n", p);
+        System.out.printf("Java class file generated: %s\n", p.toAbsolutePath());
     }
 
     private static String toJavaType(Set<String> keywords, String sqlType) {
