@@ -440,6 +440,10 @@ public class SQLEntityGenerator {
             this.javaType = toJavaType(keywords, sqlType);
             this.javaFieldName = toCamelCases(sqlFieldName);
         }
+
+        public void log(){
+            System.out.printf("Field: '%s' ('%s'), type: '%s' ('%s'), comment: '%s'\n", sqlFieldName, javaFieldName, sqlType, javaType, comment);
+        }
     }
 
     private static class SQLTable {
@@ -449,7 +453,7 @@ public class SQLEntityGenerator {
 
         public void log() {
             System.out.printf("Table: '%s', comment: '%s'\n", tableName, tableComment);
-            fields.forEach(f -> System.out.printf("Field: '%s' ('%s'), type: '%s' ('%s'), comment: '%s'\n", f.sqlFieldName, f.javaFieldName, f.sqlType, f.javaType, f.comment));
+            fields.forEach(SQLField::log);
         }
     }
 
