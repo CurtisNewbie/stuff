@@ -74,6 +74,8 @@ import java.util.stream.Collectors;
  */
 public class SQLEntityGenerator {
 
+    /** some of the keywords (lowercase) that we care, may not contain all of them */
+    private static final Set<String> keywords = new HashSet<>(Arrays.asList("unsigned"));
     private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint");
     private static final String CREATE = "create";
     private static final String COMMENT = "comment";
@@ -164,7 +166,7 @@ public class SQLEntityGenerator {
         System.out.printf("Java Entity File generated: %s\n", fname);
     }
 
-    private static String toJavaType(String sqlType) {
+    private static String toJavaType(Set<String> keywords, String sqlType) {
 
         if (sqlType.equalsIgnoreCase("varchar"))
             return "String";
@@ -173,8 +175,14 @@ public class SQLEntityGenerator {
                 || sqlType.equalsIgnoreCase("timestamp"))
             return "LocalDateTime";
 
-        if (sqlType.equalsIgnoreCase("int")
-                || sqlType.equalsIgnoreCase("tinyint")
+        if (sqlType.equalsIgnoreCase("int")) {
+            if (keywords.contains("unsigned"))
+                return "Long";
+
+            return "Integer";
+        }
+
+        if (sqlType.equalsIgnoreCase("tinyint")
                 || sqlType.equalsIgnoreCase("short"))
             return "Integer";
 
@@ -275,21 +283,26 @@ public class SQLEntityGenerator {
         }
 
         String type = null;
+        Set<String> kw = new HashSet<>();
 
-        // we look for data type
+        // we look for data type, as well as other keywords, e.g., unsigned
         for (int i = 1; i < tokens.length; i++) {
             for (String t : types) {
-                if (tokens[i].toLowerCase().startsWith(t)) {
+                if (type == null && tokens[i].toLowerCase().startsWith(t)) {
                     type = t;
-                    break;
                 }
             }
+
+            // keywords
+            final String lowerCaseToken = tokens[i].toLowerCase();
+            if (keywords.contains(lowerCaseToken))
+                kw.add(lowerCaseToken);
         }
 
         if (type == null)
             throw new IllegalArgumentException(String.format("Failed to parse DDL, unable to identify data type for field '%s', illegal syntax at line %d", fieldName, lineNo));
 
-        final SQLField field = new SQLField(fieldName, type, extractComment(tokens, lineNo));
+        final SQLField field = new SQLField(fieldName, kw, type, extractComment(tokens, lineNo));
         System.out.printf("Field: '%s', type: '%s', comment: '%s'\n", fieldName, field.sqlType, field.comment);
         return field;
     }
@@ -399,11 +412,11 @@ public class SQLEntityGenerator {
         private final String javaType;
         private final String javaFieldName;
 
-        public SQLField(String sqlFieldName, String sqlType, String comment) {
+        public SQLField(String sqlFieldName, Set<String> keywords, String sqlType, String comment) {
             this.sqlFieldName = sqlFieldName;
             this.sqlType = sqlType;
             this.comment = comment;
-            this.javaType = toJavaType(sqlType);
+            this.javaType = toJavaType(keywords, sqlType);
             this.javaFieldName = toCamelCases(sqlFieldName);
         }
     }
@@ -412,15 +425,6 @@ public class SQLEntityGenerator {
         private List<SQLField> fields;
         private String tableName;
         private String tableComment;
-
-        @Override
-        public String toString() {
-            return "SQLTable{" +
-                    "fields=" + fields +
-                    ", tableName='" + tableName + '\'' +
-                    ", tableComment='" + tableComment + '\'' +
-                    '}';
-        }
     }
 
 }
