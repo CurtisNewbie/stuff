@@ -65,6 +65,8 @@ import java.util.stream.Collectors;
  *          /** 0-normal, 1-deleted *{@literal /}
  *          private Integer isDel;
  *
+ *          // ... and some getter, setter
+ *
  *     }
  * </pre>
  *
