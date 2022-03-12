@@ -130,8 +130,20 @@ public class SQLEntityGenerator {
             bw.write("import java.time.*;\n");
             bw.write("import java.math.*;\n\n");
 
+            // for mybatis-plus only
+            if (mybatisPlusFeatureEnabled) {
+                bw.write("import com.baomidou.mybatisplus.annotation.IdType;\n");
+                bw.write("import com.baomidou.mybatisplus.annotation.TableField;\n");
+                bw.write("import com.baomidou.mybatisplus.annotation.TableId;\n\n");
+            }
+
             // class
             bw.write("/** " + table.tableComment + " */\n");
+
+            // for mybatis-plus only
+            if (mybatisPlusFeatureEnabled)
+                bw.write(String.format("@TableName(value = \"%s\")\n", table.tableName));
+
             bw.write("public class " + className + " {\n\n");
 
             // fields
@@ -140,7 +152,10 @@ public class SQLEntityGenerator {
 
                 // for mybatis-plus only
                 if (mybatisPlusFeatureEnabled) {
-                    bw.write(String.format("    @TableField(\"%s\")\n", field.sqlFieldName));
+                    if (field.sqlFieldName.equalsIgnoreCase("id"))
+                        bw.write("    @TableId(type = IdType.AUTO)\n");
+                    else
+                        bw.write(String.format("    @TableField(\"%s\")\n", field.sqlFieldName));
                 }
                 bw.write("    private " + field.javaType + " " + field.javaFieldName + ";\n\n");
             }
@@ -163,7 +178,7 @@ public class SQLEntityGenerator {
             bw.write("}\n");
         }
 
-        System.out.printf("Java Entity File generated: %s\n", fname);
+        System.out.printf("Java Entity File generated: %s\n", p);
     }
 
     private static String toJavaType(Set<String> keywords, String sqlType) {
