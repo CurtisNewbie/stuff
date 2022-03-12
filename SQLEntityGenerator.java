@@ -9,12 +9,16 @@ import java.util.stream.Collectors;
 /**
  * Generator of Java Entity Class based on SQL DDL
  * <p>
- * It takes one argument, which to the path to the SQL DDL file. The SQL file should only contain one 'CREATE TABLE'
- * statement.
+ * It takes two arguments, the arg[0] is the path to the SQL DDL file. The SQL file should only contain one 'CREATE TABLE'
+ * statement. The arg[1] is the optional flag '--mybatisplus', which indicates the mybatis-plus is used, the generated Java class will
+ * then contain annotation, such as @TableField and @TableName.
  * </p>
  * <p>
  * This simple tool requires that each line only contains keywords for a single field. Don't put everything on a single
  * line.
+ * </p>
+ * <p>
+ *
  * </p>
  *
  * <pre>
@@ -393,7 +397,10 @@ public class SQLEntityGenerator {
         System.out.println("\n  SQLEntityGenerator by yongj.zhuang\n");
         System.out.println("  Help:\n");
         System.out.println("    arg[0] - Path to the SQL DDL file");
-        System.out.println("    arg[1] - (Optional) '--mybatisplus' to enable mybatis-plus feature\n\n");
+        System.out.println("    arg[1] - (Optional) '--mybatisplus' to enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n");
+        System.out.println("  For exmaple:\n");
+        System.out.println("    java SQLEntityGenerator book.sql --mybatisplus\n");
+        System.out.println("    java SQLEntityGenerator book.sql\n\n");
         System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
         System.out.println("  simple Java Class for this 'table'. The SQL file should ");
         System.out.println("  only contain one 'CREATE TABLE' statement.\n");
