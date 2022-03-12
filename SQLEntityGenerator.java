@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 /**
  * Generator of Java Entity Class based on SQL DDL
  * <p>
- * It takes two arguments, the arg[0] is the path to the SQL DDL file. The SQL file should only contain one 'CREATE TABLE'
- * statement. The arg[1] is the optional flag '--mybatisplus', which indicates the mybatis-plus is used, the generated Java class will
- * then contain annotation, such as @TableField and @TableName.
+ * It takes two arguments, the arg[0] is the path to the SQL DDL file. The SQL file should only contain one 'CREATE
+ * TABLE' statement. The arg[1] is the optional flag '--mybatisplus', which indicates the mybatis-plus is used, the
+ * generated Java class will then contain annotation, such as @TableField and @TableName.
  * </p>
  * <p>
  * This simple tool requires that each line only contains keywords for a single field. Don't put everything on a single
@@ -93,16 +93,21 @@ public class SQLEntityGenerator {
         }
 
         final String path = args[0];
-        System.out.printf("Will be parsing file: %s\n", path);
-
-        final File f = new File(path);
-        if (!f.exists()) {
-            System.out.printf("File %s not found", path);
+        if (path.trim().isBlank()) {
+            System.out.println("Illegal file path, please try again.");
             return;
         }
 
+        final File f = Paths.get(path).toFile();
+        if (!f.exists()) {
+            System.out.printf("File '%s' not found", path);
+            return;
+        }
+        System.out.printf("Parsing file: '%s'\n", f.getAbsolutePath());
+
         // read ddl scripts
-        final List<String> lines = read(f).stream()
+        final List<String> lines = read(f)
+                .stream()
                 .filter(l -> !l.trim().isBlank())
                 .collect(Collectors.toList());
 
@@ -290,7 +295,7 @@ public class SQLEntityGenerator {
         sqlTable.tableName = tableName;
         sqlTable.tableComment = tableComment != null ? tableComment : "";
         sqlTable.fields = fields;
-        System.out.printf("Table: '%s', comment: '%s'\n", sqlTable.tableName, sqlTable.tableComment);
+        sqlTable.log();
         return sqlTable;
     }
 
@@ -322,7 +327,6 @@ public class SQLEntityGenerator {
             throw new IllegalArgumentException(String.format("Failed to parse DDL, unable to identify data type for field '%s', illegal syntax at line %d", fieldName, lineNo));
 
         final SQLField field = new SQLField(fieldName, kw, type, extractComment(tokens, lineNo));
-        System.out.printf("Field: '%s', type: '%s', comment: '%s'\n", fieldName, field.sqlType, field.comment);
         return field;
     }
 
@@ -442,6 +446,11 @@ public class SQLEntityGenerator {
         private List<SQLField> fields;
         private String tableName;
         private String tableComment;
+
+        public void log() {
+            System.out.printf("Table: '%s', comment: '%s'\n", tableName, tableComment);
+            fields.forEach(f -> System.out.printf("Field: '%s' ('%s'), type: '%s' ('%s'), comment: '%s'\n", f.sqlFieldName, f.javaFieldName, f.sqlType, f.javaType, f.comment));
+        }
     }
 
 }
