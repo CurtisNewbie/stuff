@@ -361,13 +361,8 @@ public class SQLEntityGenerator {
 
         final String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
 
-        /*
-            ", or "; or "
-            so, if it's ", or "; we remove the last two char
-            else, we remove the last one
-         */
-        final int end = joined.length() - (joined.endsWith(",") || joined.endsWith(";") ? 2 : 1);
-        return joined.substring(1, end);
+        // ( ", or "; or " ) we only want the part before {@code pre}
+        return joined.substring(1, joined.lastIndexOf(pre));
     }
 
     private static String extractTableName(String[] tokens, int lineNo) {
