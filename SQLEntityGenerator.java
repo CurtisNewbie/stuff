@@ -381,15 +381,15 @@ public class SQLEntityGenerator {
 
                 l = i;
 
-                final String cmt = tki.substring(tki.indexOf("=") + 1, tki.length());
-                if (!cmt.startsWith("'") && !cmt.startsWith("\""))
+                final String afterEq = tki.substring(tki.indexOf("=") + 1, tki.length());
+                if (!afterEq.startsWith("'") && !afterEq.startsWith("\""))
                     throw new IllegalArgumentException("Failed to parse DDL, COMMENT must start with ' or \", illegal syntax at line " + lineNo);
 
-                if (cmt.startsWith("\""))
+                if (afterEq.startsWith("\""))
                     pre = "\"";
 
                 // single word comment
-                if (cmt.endsWith(pre)) {
+                if (afterEq.endsWith(pre)) {
                     h = l;
                     break;
                 }
@@ -412,13 +412,13 @@ public class SQLEntityGenerator {
         String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
 
         // special case for COMMENT="Apple juice"
-        if (joined.startsWith(COMMENT_EQUAL)) {
+        if (joined.toLowerCase().startsWith(COMMENT_EQUAL)) {
             joined = joined.substring(COMMENT_EQUAL.length(), joined.length());
         }
 
         // ( ", or "; or " ) we only want the part before {@code pre}
         int ip = joined.lastIndexOf(pre);
-        return ip > 0 ? joined.substring(1, ip) : joined;
+        return ip != -1 ? joined.substring(1, ip) : joined;
     }
 
     private static String extractTableName(String[] tokens, int lineNo) {
