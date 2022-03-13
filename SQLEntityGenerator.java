@@ -465,7 +465,7 @@ public class SQLEntityGenerator {
             this.sqlType = sqlType;
             this.comment = comment;
             this.javaType = toJavaType(keywords, sqlType);
-            this.javaFieldName = toCamelCases(sqlFieldName);
+            this.javaFieldName = toCamelCases(this.sqlFieldName);
         }
 
         public void log() {
