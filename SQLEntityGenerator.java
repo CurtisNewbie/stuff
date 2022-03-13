@@ -83,6 +83,7 @@ public class SQLEntityGenerator {
     private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint");
     private static final String CREATE = "create";
     private static final String COMMENT = "comment";
+    private static final String COMMENT_EQUAL = COMMENT + "=";
     private static final String CONSTRAINT = "constraint";
 
     public static void main(String[] args) throws IOException {
@@ -265,7 +266,7 @@ public class SQLEntityGenerator {
             // split to tokens
             final String[] tokens = trimed.split(" ");
 
-            // thi line starts with create, it must be "CREATE TABLE *", try to extract the table name
+            // this line starts with create, it must be "CREATE TABLE *", try to extract the table name
             if (tokens[0].equalsIgnoreCase(CREATE)) {
                 if (tableName != null)
                     throw new IllegalArgumentException("CREATE keyword is already used, please check your syntax");
@@ -274,11 +275,7 @@ public class SQLEntityGenerator {
             }
             // the last line of the table
             else if (tokens[0].startsWith(")")) {
-                String[] tks = new String[tokens.length];
-                for (int j = 0; j < tokens.length; j++) {
-                    tks[j] = tokens[j].replaceAll("=", ""); // handle special case for COMMENT="ABC"
-                }
-                tableComment = extractComment(tks, i + 1);
+                tableComment = extractComment(tokens, i + 1);
             }
             // lines for the fields
             else {
@@ -356,27 +353,51 @@ public class SQLEntityGenerator {
         int l = -1, h = -1;
         String pre = "'";
         for (int i = 1; i < tokens.length; i++) {
-            if (tokens[i].equalsIgnoreCase(COMMENT)) {
+            final String tki = tokens[i];
+
+            // COMMENT ...
+            if (tki.equalsIgnoreCase(COMMENT)) {
 
                 if (l != -1) // we have already seem COMMENT key word
                     throw new IllegalArgumentException("Failed to parse DDL, multiple COMMENT keyword is found, illegal syntax at line " + lineNo);
 
                 l = i + 1;
-                if (!tokens[l].startsWith("'") && !tokens[l].startsWith("\""))
+                final String tkl = tokens[l];
+
+                if (!tkl.startsWith("'") && !tkl.startsWith("\""))
                     throw new IllegalArgumentException("Failed to parse DDL, COMMENT must start with ' or \", illegal syntax at line " + lineNo);
 
-                if (tokens[l].startsWith("\""))
+                if (tkl.startsWith("\""))
                     pre = "\"";
 
                 // single word comment
-                if (tokens[l].endsWith(pre)) {
+                if (tkl.endsWith(pre)) {
                     h = l;
                     break;
                 }
-            } else {
+            }
+            // special case for COMMENT="apple chill"
+            else if (l == -1 && tki.toLowerCase().startsWith(COMMENT_EQUAL)) {
 
-                // we are look for the end of the comment, and we found it
-                if (l != -1 && (tokens[i].endsWith(pre) || tokens[i].endsWith(pre + ",")) || tokens[i].endsWith(pre + ";")) {
+                l = i;
+
+                final String cmt = tki.substring(tki.indexOf("=") + 1, tki.length());
+                if (!cmt.startsWith("'") && !cmt.startsWith("\""))
+                    throw new IllegalArgumentException("Failed to parse DDL, COMMENT must start with ' or \", illegal syntax at line " + lineNo);
+
+                if (cmt.startsWith("\""))
+                    pre = "\"";
+
+                // single word comment
+                if (cmt.endsWith(pre)) {
+                    h = l;
+                    break;
+                }
+            }
+            // look for the end of the comment
+            else {
+                // we found the end of a comment
+                if (l != -1 && (tki.endsWith(pre) || tki.endsWith(pre + ",") || tki.endsWith(pre + ";"))) {
                     h = i;
                     break;
                 }
@@ -388,10 +409,16 @@ public class SQLEntityGenerator {
             return "";
         }
 
-        final String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
+        String joined = String.join(" ", Arrays.copyOfRange(tokens, l, h + 1));
+
+        // special case for COMMENT="Apple juice"
+        if (joined.startsWith(COMMENT_EQUAL)) {
+            joined = joined.substring(COMMENT_EQUAL.length(), joined.length());
+        }
 
         // ( ", or "; or " ) we only want the part before {@code pre}
-        return joined.substring(1, joined.lastIndexOf(pre));
+        int ip = joined.lastIndexOf(pre);
+        return ip > 0 ? joined.substring(1, ip) : joined;
     }
 
     private static String extractTableName(String[] tokens, int lineNo) {
