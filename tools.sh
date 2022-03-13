@@ -7,6 +7,15 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function gcb() {
+    if [ -z $1 ]; then
+        echo_red "please enter branch name" 
+        return 1;
+    fi
+
+    git checkout -b $1
+}
+
 function gp() {
     git pull
 }
