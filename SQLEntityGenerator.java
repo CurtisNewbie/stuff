@@ -265,7 +265,7 @@ public class SQLEntityGenerator {
             // split to tokens
             final String[] tokens = trimed.split(" ");
 
-            // this line starts with create, it must be "CREATE TABLE *", try to extract the table name
+            // thi line starts with create, it must be "CREATE TABLE *", try to extract the table name
             if (tokens[0].equalsIgnoreCase(CREATE)) {
                 if (tableName != null)
                     throw new IllegalArgumentException("CREATE keyword is already used, please check your syntax");
@@ -274,7 +274,11 @@ public class SQLEntityGenerator {
             }
             // the last line of the table
             else if (tokens[0].startsWith(")")) {
-                tableComment = extractComment(tokens, i + 1);
+                String[] tks = new String[tokens.length];
+                for (int j = 0; j < tokens.length; j++) {
+                    tks[j] = tokens[j].replaceAll("=", ""); // handle special case for COMMENT="ABC"
+                }
+                tableComment = extractComment(tks, i + 1);
             }
             // lines for the fields
             else {
