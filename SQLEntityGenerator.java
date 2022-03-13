@@ -414,7 +414,7 @@ public class SQLEntityGenerator {
         String tname = tokens[5];
 
         // strip off wrapping '`'
-        tname = tname.replace('`', '');
+        tname = tname.replaceAll("`", "");
 
         final int idx = tname.indexOf('.');
         if (idx != -1) { // database name is specified, remove it
@@ -461,7 +461,7 @@ public class SQLEntityGenerator {
         private final String javaFieldName;
 
         public SQLField(String sqlFieldName, Set<String> keywords, String sqlType, String comment) {
-            this.sqlFieldName = sqlFieldName.replace('`', '');
+            this.sqlFieldName = sqlFieldName.replaceAll("`", "");
             this.sqlType = sqlType;
             this.comment = comment;
             this.javaType = toJavaType(keywords, sqlType);
