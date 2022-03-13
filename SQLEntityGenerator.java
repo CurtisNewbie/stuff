@@ -304,13 +304,13 @@ public class SQLEntityGenerator {
         // we don't handle constraints and keys
         if (tokens[0].equalsIgnoreCase(CONSTRAINT))
             return true;
-        if (tokens[0].equalsIgnoreCase("UNIQUE"))
+        if (tokens[0].equalsIgnoreCase("unique") && tokens[1].equalsIgnoreCase("key"))
             return true;
-        if (tokens[0].equalsIgnoreCase("INDEx"))
+        if (tokens[0].equalsIgnoreCase("index"))
             return true;
-        if (tokens[0].equalsIgnoreCase("PRIMARY") && tokens[1].equalsIgnoreCase("KEY"))
+        if (tokens[0].equalsIgnoreCase("primary") && tokens[1].equalsIgnoreCase("key"))
             return true;
-        if (tokens[0].equalsIgnoreCase("FOREIGN") && tokens[1].equalsIgnoreCase("KEY"))
+        if (tokens[0].equalsIgnoreCase("foreign") && tokens[1].equalsIgnoreCase("key"))
             return true;
 
         return false;
@@ -411,7 +411,17 @@ public class SQLEntityGenerator {
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
         }
 
-        return tokens[5];
+        String tname = tokens[5];
+
+        // strip off wrapping '`'
+        tname = tname.replace('`', '');
+
+        final int idx = tname.indexOf('.');
+        if (idx != -1) { // database name is specified, remove it
+            tname = tname.substring(idx + 1, tname.length());
+        }
+
+        return tname;
     }
 
     private static void printHelp() {
@@ -451,7 +461,7 @@ public class SQLEntityGenerator {
         private final String javaFieldName;
 
         public SQLField(String sqlFieldName, Set<String> keywords, String sqlType, String comment) {
-            this.sqlFieldName = sqlFieldName;
+            this.sqlFieldName = sqlFieldName.replace('`', '');
             this.sqlType = sqlType;
             this.comment = comment;
             this.javaType = toJavaType(keywords, sqlType);
