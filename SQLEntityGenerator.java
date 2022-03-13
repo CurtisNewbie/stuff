@@ -93,7 +93,7 @@ public class SQLEntityGenerator {
         }
 
         final String path = args[0];
-        if (path.trim().isBlank()) {
+        if (path.trim().isEmpty()) {
             System.out.println("Illegal file path, please try again.");
             return;
         }
@@ -108,7 +108,7 @@ public class SQLEntityGenerator {
         // read ddl scripts
         final List<String> lines = read(f)
                 .stream()
-                .filter(l -> !l.trim().isBlank())
+                .filter(l -> !l.trim().isEmpty())
                 .collect(Collectors.toList());
 
         // parse ddl
@@ -259,7 +259,7 @@ public class SQLEntityGenerator {
             final String trimed = lines.get(i).trim();
 
             // skip blank lines
-            if (trimed.isBlank())
+            if (trimed.isEmpty())
                 continue;
 
             // split to tokens
