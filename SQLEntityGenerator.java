@@ -278,10 +278,9 @@ public class SQLEntityGenerator {
             }
             // lines for the fields
             else {
-                // we don't handle constraints and primary key
-                if (tokens[0].equalsIgnoreCase(CONSTRAINT))
-                    continue;
-                if (tokens[0].equalsIgnoreCase("PRIMARY") && tokens[1].equalsIgnoreCase("KEY"))
+
+                // we don't handle constraints and keys
+                if (isContraintOrKeys(tokens))
                     continue;
 
                 fields.add(parseField(tokens, i + 1));
@@ -299,6 +298,22 @@ public class SQLEntityGenerator {
         sqlTable.fields = fields;
         sqlTable.log();
         return sqlTable;
+    }
+
+    private static boolean isContraintOrKeys(String[] tokens) {
+        // we don't handle constraints and keys
+        if (tokens[0].equalsIgnoreCase(CONSTRAINT))
+            return true;
+        if (tokens[0].equalsIgnoreCase("UNIQUE"))
+            return true;
+        if (tokens[0].equalsIgnoreCase("INDEx"))
+            return true;
+        if (tokens[0].equalsIgnoreCase("PRIMARY") && tokens[1].equalsIgnoreCase("KEY"))
+            return true;
+        if (tokens[0].equalsIgnoreCase("FOREIGN") && tokens[1].equalsIgnoreCase("KEY"))
+            return true;
+
+        return false;
     }
 
     private static SQLField parseField(String[] tokens, int lineNo) {
