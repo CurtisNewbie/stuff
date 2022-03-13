@@ -278,8 +278,10 @@ public class SQLEntityGenerator {
             }
             // lines for the fields
             else {
-                // we don't handle constraints
+                // we don't handle constraints and primary key
                 if (tokens[0].equalsIgnoreCase(CONSTRAINT))
+                    continue;
+                if (tokens[0].equalsIgnoreCase("PRIMARY") && tokens[1].equalsIgnoreCase("KEY"))
                     continue;
 
                 fields.add(parseField(tokens, i + 1));
@@ -441,7 +443,7 @@ public class SQLEntityGenerator {
             this.javaFieldName = toCamelCases(sqlFieldName);
         }
 
-        public void log(){
+        public void log() {
             System.out.printf("Field: '%s' ('%s'), type: '%s' ('%s'), comment: '%s'\n", sqlFieldName, javaFieldName, sqlType, javaType, comment);
         }
     }
