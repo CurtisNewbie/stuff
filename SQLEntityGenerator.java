@@ -109,7 +109,10 @@ public class SQLEntityGenerator {
         // read ddl scripts
         final List<String> lines = read(f)
                 .stream()
-                .filter(l -> !l.trim().isEmpty())
+                .filter(l -> {
+                    final String trimed = l.trim();
+                    return !trimed.isEmpty() && !trimed.startsWith("--");
+                })
                 .collect(Collectors.toList());
 
         // parse ddl
@@ -309,6 +312,8 @@ public class SQLEntityGenerator {
             return true;
         if (tokens[0].equalsIgnoreCase("index"))
             return true;
+        if (tokens[0].equalsIgnoreCase("key"))
+            return true;
         if (tokens[0].equalsIgnoreCase("primary") && tokens[1].equalsIgnoreCase("key"))
             return true;
         if (tokens[0].equalsIgnoreCase("foreign") && tokens[1].equalsIgnoreCase("key"))
@@ -426,23 +431,25 @@ public class SQLEntityGenerator {
         if (tokens.length < 4)
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
-        // if length is greater than 3, then it must be 7, 'CREATE TABLE IF NOT EXISTS XXX ('
-        if (tokens.length > 3 && tokens.length != 7)
+        // if length is greater than 4, then it must be 7, 'CREATE TABLE IF NOT EXISTS XXX ('
+        if (tokens.length > 4 && tokens.length != 7)
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
         if (!tokens[0].equalsIgnoreCase("create") || !tokens[1].equalsIgnoreCase("table"))
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
-        if (tokens.length == 3)
-            return tokens[2];
+        String tname;
 
-        if (!tokens[2].equalsIgnoreCase("if")
-                || !tokens[3].equalsIgnoreCase("not")
-                || !tokens[4].equalsIgnoreCase("exists")) {
-            throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
+        if (tokens.length == 4)
+            tname = tokens[2];
+        else {
+            if (!tokens[2].equalsIgnoreCase("if")
+                    || !tokens[3].equalsIgnoreCase("not")
+                    || !tokens[4].equalsIgnoreCase("exists")) {
+                throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
+            }
+            tname = tokens[5];
         }
-
-        String tname = tokens[5];
 
         // strip off wrapping '`'
         tname = tname.replaceAll("`", "");
