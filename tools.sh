@@ -7,6 +7,10 @@ green=$'\e[1;32m'
 yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 
+function stashpop() {
+    git stash pop
+}
+
 function gcb() {
     if [ -z $1 ]; then
         echo_red "please enter branch name" 
@@ -41,7 +45,12 @@ function mresolve() {
 }
 
 function gadd() {
-    git add "$@"
+
+    if [ ! -z "$1" ]; then
+        git add "$@"
+    else 
+        git add .
+    fi
 }
     
 function grestore() {
