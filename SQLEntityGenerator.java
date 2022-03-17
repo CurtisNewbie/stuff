@@ -1,3 +1,6 @@
+import java.awt.datatransfer.StringSelection;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.*;
@@ -78,6 +81,13 @@ import java.util.stream.Collectors;
  */
 public class SQLEntityGenerator {
 
+    /*
+    Args key
+     */
+    private static final String MYBATISPLUS_FLAG = "--mybatis-plus";
+    private static final String PATH_ARG = "--path";
+    private static final String COPY_FLAG = "--copy";
+
     /** some of the keywords (lowercase) that we care, may not contain all of them */
     private static final Set<String> keywords = new HashSet<>(Arrays.asList("unsigned"));
     private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint");
@@ -85,110 +95,97 @@ public class SQLEntityGenerator {
     private static final String COMMENT = "comment";
     private static final String COMMENT_EQUAL = COMMENT + "=";
     private static final String CONSTRAINT = "constraint";
+    private static Context context;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
-        if (args.length < 1 || args[0].equals("--help") || args[0].equals("-help")) {
+        if (args.length < 1
+                || args[0].equalsIgnoreCase("--help")
+                || args[0].equalsIgnoreCase("-help")) {
             printHelp();
             return;
         }
 
-        final String path = args[0];
-        if (path.trim().isEmpty()) {
-            System.out.println("Illegal file path, please try again.");
-            return;
-        }
+        // parse context arguments
+        context = parseContext(args);
 
-        final File f = Paths.get(path).toFile();
-        if (!f.exists()) {
-            System.out.printf("File '%s' not found", path);
-            return;
-        }
+        File f = openFile(context);
         System.out.printf("Parsing file: '%s'\n", f.getAbsolutePath());
 
         // read ddl scripts
-        final List<String> lines = read(f)
-                .stream()
-                .filter(l -> !l.trim().isEmpty())
-                .collect(Collectors.toList());
+        final List<String> lines = read(f);
 
         // parse ddl
         final SQLTable table = parse(lines);
 
-        // mybatis-plus feature enabled
-        boolean mybatisPlusFeatureEnabled = Arrays.stream(args).anyMatch(ar -> ar.equals("--mybatisplus"));
-
         // generate java object
-        generateJavaClass(table, mybatisPlusFeatureEnabled);
+        generateJavaClass(table, context);
     }
 
-    private static void generateJavaClass(SQLTable table, boolean mybatisPlusFeatureEnabled) throws IOException {
+    private static void generateJavaClass(SQLTable table, Context context) throws IOException {
+        final boolean mybatisPlusFeatureEnabled = context.isPresent(MYBATISPLUS_FLAG);
+        final boolean copyToClipboardFeature = context.isPresent(COPY_FLAG);
         final String tableCamelCase = toCamelCases(table.tableName);
         final String className = toFirstUppercase(tableCamelCase);
-        final String fname = className + ".java";
-        final Path gp = Paths.get(fname);
 
-        // try to delete it, if there is one
-        Files.deleteIfExists(gp);
+        final StringBuilder sb = new StringBuilder();
 
-        // create a new one
-        final Path p = Files.createFile(gp);
+        // always import util, time and math
+        sb.append("import java.util.*;\n");
+        sb.append("import java.time.*;\n");
+        sb.append("import java.math.*;\n\n");
 
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(p)))) {
-            // always import util, time and math
-            bw.write("import java.util.*;\n");
-            bw.write("import java.time.*;\n");
-            bw.write("import java.math.*;\n\n");
+        // for mybatis-plus only
+        if (mybatisPlusFeatureEnabled) {
+            sb.append("import com.baomidou.mybatisplus.annotation.IdType;\n");
+            sb.append("import com.baomidou.mybatisplus.annotation.TableField;\n");
+            sb.append("import com.baomidou.mybatisplus.annotation.TableId;\n\n");
+        }
+
+        // class
+        sb.append("/** " + table.tableComment + " */\n");
+
+        // for mybatis-plus only
+        if (mybatisPlusFeatureEnabled)
+            sb.append(String.format("@TableName(value = \"%s\")\n", table.tableName));
+
+        sb.append("public class " + className + " {\n\n");
+
+        // fields
+        for (SQLField field : table.fields) {
+            sb.append("    /** " + field.comment + " */\n");
 
             // for mybatis-plus only
             if (mybatisPlusFeatureEnabled) {
-                bw.write("import com.baomidou.mybatisplus.annotation.IdType;\n");
-                bw.write("import com.baomidou.mybatisplus.annotation.TableField;\n");
-                bw.write("import com.baomidou.mybatisplus.annotation.TableId;\n\n");
+                if (field.sqlFieldName.equalsIgnoreCase("id"))
+                    sb.append("    @TableId(type = IdType.AUTO)\n");
+                else
+                    sb.append(String.format("    @TableField(\"%s\")\n", field.sqlFieldName));
             }
-
-            // class
-            bw.write("/** " + table.tableComment + " */\n");
-
-            // for mybatis-plus only
-            if (mybatisPlusFeatureEnabled)
-                bw.write(String.format("@TableName(value = \"%s\")\n", table.tableName));
-
-            bw.write("public class " + className + " {\n\n");
-
-            // fields
-            for (SQLField field : table.fields) {
-                bw.write("    /** " + field.comment + " */\n");
-
-                // for mybatis-plus only
-                if (mybatisPlusFeatureEnabled) {
-                    if (field.sqlFieldName.equalsIgnoreCase("id"))
-                        bw.write("    @TableId(type = IdType.AUTO)\n");
-                    else
-                        bw.write(String.format("    @TableField(\"%s\")\n", field.sqlFieldName));
-                }
-                bw.write("    private " + field.javaType + " " + field.javaFieldName + ";\n\n");
-            }
-
-            // getter & setter
-            for (SQLField field : table.fields) {
-
-                final String us = toFirstUppercase(field.javaFieldName);
-
-                bw.write(String.format("    public %s get%s() {\n", field.javaType, us));
-                bw.write(String.format("        return this.%s;\n", field.javaFieldName));
-                bw.write("    }\n\n");
-
-                bw.write(String.format("    public void set%s(%s %s) {\n", us, field.javaType, field.javaFieldName));
-                bw.write(String.format("        this.%s = %s;\n", field.javaFieldName, field.javaFieldName));
-                bw.write("    }\n\n");
-            }
-
-            // end
-            bw.write("}\n");
+            sb.append("    private " + field.javaType + " " + field.javaFieldName + ";\n\n");
         }
 
-        System.out.printf("Java class file generated: %s\n", p.toAbsolutePath());
+        // getter & setter
+        for (SQLField field : table.fields) {
+
+            final String us = toFirstUppercase(field.javaFieldName);
+
+            sb.append(String.format("    public %s get%s() {\n", field.javaType, us));
+            sb.append(String.format("        return this.%s;\n", field.javaFieldName));
+            sb.append("    }\n\n");
+
+            sb.append(String.format("    public void set%s(%s %s) {\n", us, field.javaType, field.javaFieldName));
+            sb.append(String.format("        this.%s = %s;\n", field.javaFieldName, field.javaFieldName));
+            sb.append("    }\n\n");
+        }
+        // end
+        sb.append("}\n");
+
+        if (copyToClipboardFeature) {
+            copyToClipboard(sb.toString()); // copy to clipboard
+        } else {
+            writeToFile(className + ".java", sb.toString()); // write a file
+        }
     }
 
     private static String toJavaType(Set<String> keywords, String sqlType) {
@@ -248,7 +245,12 @@ public class SQLEntityGenerator {
                 lines.add(l);
             }
         }
-        return lines;
+        return lines.stream()
+                .filter(l -> {
+                    final String trimed = l.trim();
+                    return !trimed.isEmpty() && !trimed.startsWith("--");
+                })
+                .collect(Collectors.toList());
     }
 
     private static SQLTable parse(List<String> lines) {
@@ -308,6 +310,8 @@ public class SQLEntityGenerator {
         if (tokens[0].equalsIgnoreCase("unique") && tokens[1].equalsIgnoreCase("key"))
             return true;
         if (tokens[0].equalsIgnoreCase("index"))
+            return true;
+        if (tokens[0].equalsIgnoreCase("key"))
             return true;
         if (tokens[0].equalsIgnoreCase("primary") && tokens[1].equalsIgnoreCase("key"))
             return true;
@@ -426,23 +430,25 @@ public class SQLEntityGenerator {
         if (tokens.length < 4)
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
-        // if length is greater than 3, then it must be 7, 'CREATE TABLE IF NOT EXISTS XXX ('
-        if (tokens.length > 3 && tokens.length != 7)
+        // if length is greater than 4, then it must be 7, 'CREATE TABLE IF NOT EXISTS XXX ('
+        if (tokens.length > 4 && tokens.length != 7)
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
         if (!tokens[0].equalsIgnoreCase("create") || !tokens[1].equalsIgnoreCase("table"))
             throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
 
-        if (tokens.length == 3)
-            return tokens[2];
+        String tname;
 
-        if (!tokens[2].equalsIgnoreCase("if")
-                || !tokens[3].equalsIgnoreCase("not")
-                || !tokens[4].equalsIgnoreCase("exists")) {
-            throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
+        if (tokens.length == 4)
+            tname = tokens[2];
+        else {
+            if (!tokens[2].equalsIgnoreCase("if")
+                    || !tokens[3].equalsIgnoreCase("not")
+                    || !tokens[4].equalsIgnoreCase("exists")) {
+                throw new IllegalArgumentException("Illegal CREATE TABLE statement at line " + lineNo);
+            }
+            tname = tokens[5];
         }
-
-        String tname = tokens[5];
 
         // strip off wrapping '`'
         tname = tname.replaceAll("`", "");
@@ -458,11 +464,11 @@ public class SQLEntityGenerator {
     private static void printHelp() {
         System.out.println("\n  SQLEntityGenerator by yongj.zhuang\n");
         System.out.println("  Help:\n");
-        System.out.println("    arg[0] - Path to the SQL DDL file");
-        System.out.println("    arg[1] - (Optional) '--mybatisplus' to enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n");
+        System.out.printf("    '%s $path' : Path to the SQL DDL file\n", PATH_ARG);
+        System.out.printf("    '%s' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n", MYBATISPLUS_FLAG);
+        System.out.printf("    '%s' : Enable copy to clipboard feature\n\n", COPY_FLAG);
         System.out.println("  For exmaple:\n");
-        System.out.println("    java SQLEntityGenerator book.sql --mybatisplus\n");
-        System.out.println("    java SQLEntityGenerator book.sql\n\n");
+        System.out.printf("    java SQLEntityGenerator %s book.sql %s %s\n\n\n", PATH_ARG, COPY_FLAG, MYBATISPLUS_FLAG);
         System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
         System.out.println("  simple Java Class for this 'table'. The SQL file should ");
         System.out.println("  only contain one 'CREATE TABLE' statement.\n");
@@ -482,6 +488,22 @@ public class SQLEntityGenerator {
 
     private static String toFirstUppercase(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
+    }
+
+    private static File openFile(Context context) {
+        if (!context.isPresent(PATH_ARG))
+            throw new IllegalArgumentException("Please provide file path");
+
+        final String path = context.get(PATH_ARG);
+        if (path.trim().isEmpty()) {
+            throw new IllegalArgumentException("Illegal file path, please try again.");
+        }
+
+        final File f = Paths.get(path).toFile();
+        if (!f.exists()) {
+            throw new IllegalArgumentException(String.format("File '%s' not found", path));
+        }
+        return f;
     }
 
     private static class SQLField {
@@ -515,4 +537,62 @@ public class SQLEntityGenerator {
         }
     }
 
+    private static class Context {
+        Map<String, String> argMap = new HashMap<>();
+
+        public void add(String k, String v) {
+            argMap.put(k, v);
+        }
+
+        public boolean isPresent(String k) {
+            return argMap.containsKey(k);
+        }
+
+        public String get(String k) {
+            return argMap.get(k);
+        }
+    }
+
+    private static Context parseContext(String[] args) {
+        Context ctx = new Context();
+
+        for (int i = 0; i < args.length; i++) {
+            if (isFlag(args[i]))
+                ctx.add(args[i], "");
+            else
+                ctx.add(args[i], args[i + 1]);
+        }
+        return ctx;
+    }
+
+    private static boolean isFlag(String arg) {
+        if (arg.equalsIgnoreCase(MYBATISPLUS_FLAG))
+            return true;
+        if (arg.equalsIgnoreCase(COPY_FLAG))
+            return true;
+
+        return false;
+    }
+
+    private static void copyToClipboard(String content) {
+        StringSelection stringSelection = new StringSelection(content);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+        System.out.println("Copied to clipboard");
+    }
+
+    private static void writeToFile(String file, String content) throws IOException {
+        final Path gp = Paths.get(file);
+
+        // try to delete it, if there is one
+        Files.deleteIfExists(gp);
+
+        // create a new one
+        final Path p = Files.createFile(gp);
+
+        try (BufferedWriter wb = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(p)))) {
+            wb.write(content);
+        }
+        System.out.printf("Java class file generated: %s\n", p.toAbsolutePath());
+    }
 }
