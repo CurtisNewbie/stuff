@@ -87,6 +87,7 @@ public class SQLEntityGenerator {
     private static final String MYBATISPLUS_FLAG = "--mybatis-plus";
     private static final String PATH_ARG = "--path";
     private static final String COPY_FLAG = "--copy";
+    private static final String LAMBOK_FLAG = "--lambok";
 
     /** some of the keywords (lowercase) that we care, may not contain all of them */
     private static final Set<String> keywords = new HashSet<>(Arrays.asList("unsigned"));
@@ -125,6 +126,8 @@ public class SQLEntityGenerator {
     private static void generateJavaClass(SQLTable table, Context context) throws IOException {
         final boolean mybatisPlusFeatureEnabled = context.isPresent(MYBATISPLUS_FLAG);
         final boolean copyToClipboardFeature = context.isPresent(COPY_FLAG);
+        final boolean lambokFeatureEnabled = context.isPresent(LAMBOK_FLAG);
+
         final String tableCamelCase = toCamelCases(table.tableName);
         final String className = toFirstUppercase(tableCamelCase);
 
@@ -139,11 +142,22 @@ public class SQLEntityGenerator {
         if (mybatisPlusFeatureEnabled) {
             sb.append("import com.baomidou.mybatisplus.annotation.IdType;\n");
             sb.append("import com.baomidou.mybatisplus.annotation.TableField;\n");
-            sb.append("import com.baomidou.mybatisplus.annotation.TableId;\n\n");
+            sb.append("import com.baomidou.mybatisplus.annotation.TableId;\n");
+        }
+
+        // for lambok
+        if (lambokFeatureEnabled) {
+            sb.append("import lombok.*;\n");
         }
 
         // class
+        sb.append("\n");
         sb.append("/** " + table.tableComment + " */\n");
+
+        // for lambok
+        if (lambokFeatureEnabled) {
+            sb.append("@Data\n");
+        }
 
         // for mybatis-plus only
         if (mybatisPlusFeatureEnabled)
@@ -153,6 +167,7 @@ public class SQLEntityGenerator {
 
         // fields
         for (SQLField field : table.fields) {
+
             sb.append("    /** " + field.comment + " */\n");
 
             // for mybatis-plus only
@@ -165,18 +180,21 @@ public class SQLEntityGenerator {
             sb.append("    private " + field.javaType + " " + field.javaFieldName + ";\n\n");
         }
 
-        // getter & setter
-        for (SQLField field : table.fields) {
+        // if we have lambok we don't need getter, setter
+        if (!lambokFeatureEnabled) {
+            // getter & setter
+            for (SQLField field : table.fields) {
 
-            final String us = toFirstUppercase(field.javaFieldName);
+                final String us = toFirstUppercase(field.javaFieldName);
 
-            sb.append(String.format("    public %s get%s() {\n", field.javaType, us));
-            sb.append(String.format("        return this.%s;\n", field.javaFieldName));
-            sb.append("    }\n\n");
+                sb.append(String.format("    public %s get%s() {\n", field.javaType, us));
+                sb.append(String.format("        return this.%s;\n", field.javaFieldName));
+                sb.append("    }\n\n");
 
-            sb.append(String.format("    public void set%s(%s %s) {\n", us, field.javaType, field.javaFieldName));
-            sb.append(String.format("        this.%s = %s;\n", field.javaFieldName, field.javaFieldName));
-            sb.append("    }\n\n");
+                sb.append(String.format("    public void set%s(%s %s) {\n", us, field.javaType, field.javaFieldName));
+                sb.append(String.format("        this.%s = %s;\n", field.javaFieldName, field.javaFieldName));
+                sb.append("    }\n\n");
+            }
         }
         // end
         sb.append("}\n");
@@ -466,9 +484,10 @@ public class SQLEntityGenerator {
         System.out.println("  Help:\n");
         System.out.printf("    '%s $path' : Path to the SQL DDL file\n", PATH_ARG);
         System.out.printf("    '%s' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n", MYBATISPLUS_FLAG);
-        System.out.printf("    '%s' : Enable copy to clipboard feature\n\n", COPY_FLAG);
+        System.out.printf("    '%s' : Enable copy to clipboard feature\n", COPY_FLAG);
+        System.out.printf("    '%s' : Enable lambok feature, e.g., @Data on class\n\n", LAMBOK_FLAG);
         System.out.println("  For exmaple:\n");
-        System.out.printf("    java SQLEntityGenerator %s book.sql %s %s\n\n\n", PATH_ARG, COPY_FLAG, MYBATISPLUS_FLAG);
+        System.out.printf("    java SQLEntityGenerator %s book.sql %s %s %s\n\n\n", PATH_ARG, COPY_FLAG, MYBATISPLUS_FLAG, LAMBOK_FLAG);
         System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
         System.out.println("  simple Java Class for this 'table'. The SQL file should ");
         System.out.println("  only contain one 'CREATE TABLE' statement.\n");
@@ -569,6 +588,8 @@ public class SQLEntityGenerator {
         if (arg.equalsIgnoreCase(MYBATISPLUS_FLAG))
             return true;
         if (arg.equalsIgnoreCase(COPY_FLAG))
+            return true;
+        if (arg.equalsIgnoreCase(LAMBOK_FLAG))
             return true;
 
         return false;
