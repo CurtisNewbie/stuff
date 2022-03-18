@@ -343,7 +343,7 @@ public class SQLEntityGenerator {
         // we don't handle constraints and keys
         if (tokens[0].equalsIgnoreCase(CONSTRAINT))
             return true;
-        if (tokens[0].equalsIgnoreCase("unique") && tokens[1].equalsIgnoreCase("key"))
+        if (tokens[0].equalsIgnoreCase("unique"))
             return true;
         if (tokens[0].equalsIgnoreCase("index"))
             return true;
