@@ -167,7 +167,7 @@ public class SQLEntityGenerator {
             sb.append(" * @author " + context.get(AUTHOR_ARG) + "\n");
         }
         // end of class doc
-        sb.append("*/\n");
+        sb.append(" */\n");
 
         // for lambok
         if (lambokFeatureEnabled) {
