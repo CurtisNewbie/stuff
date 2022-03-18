@@ -84,14 +84,20 @@ public class SQLEntityGenerator {
     /*
     Args key
      */
-    private static final String MYBATISPLUS_FLAG = "--mybatis-plus";
+    private static final String AUTHOR_ARG = "--author";
     private static final String PATH_ARG = "--path";
+
+    /*
+    Flags
+     */
+    private static final String MYBATISPLUS_FLAG = "--mybatis-plus";
     private static final String COPY_FLAG = "--copy";
     private static final String LAMBOK_FLAG = "--lambok";
 
+
     /** some of the keywords (lowercase) that we care, may not contain all of them */
     private static final Set<String> keywords = new HashSet<>(Arrays.asList("unsigned"));
-    private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint");
+    private static final List<String> types = Arrays.asList("varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint", "char");
     private static final String CREATE = "create";
     private static final String COMMENT = "comment";
     private static final String COMMENT_EQUAL = COMMENT + "=";
@@ -150,9 +156,18 @@ public class SQLEntityGenerator {
             sb.append("import lombok.*;\n");
         }
 
-        // class
+        // begin of class doc
         sb.append("\n");
-        sb.append("/** " + table.tableComment + " */\n");
+        sb.append("/**\n");
+        sb.append(" * " + table.tableComment + "\n");
+
+        // author
+        if (context.isPresent(AUTHOR_ARG)) {
+            sb.append(" *\n");
+            sb.append(" * @author " + context.get(AUTHOR_ARG) + "\n");
+        }
+        // end of class doc
+        sb.append("*/\n");
 
         // for lambok
         if (lambokFeatureEnabled) {
@@ -231,6 +246,9 @@ public class SQLEntityGenerator {
 
         if (sqlType.equalsIgnoreCase("decimal"))
             return "BigDecimal";
+
+        if (sqlType.equalsIgnoreCase("char"))
+            return "String";
 
         throw new IllegalArgumentException("Unable to find corresponding java type for " + sqlType);
     }
@@ -483,6 +501,7 @@ public class SQLEntityGenerator {
         System.out.println("\n  SQLEntityGenerator by yongj.zhuang\n");
         System.out.println("  Help:\n");
         System.out.printf("    '%s $path' : Path to the SQL DDL file\n", PATH_ARG);
+        System.out.printf("    '%s $author' : Author of the class\n", AUTHOR_ARG);
         System.out.printf("    '%s' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n", MYBATISPLUS_FLAG);
         System.out.printf("    '%s' : Enable copy to clipboard feature\n", COPY_FLAG);
         System.out.printf("    '%s' : Enable lambok feature, e.g., @Data on class\n\n", LAMBOK_FLAG);
@@ -575,11 +594,15 @@ public class SQLEntityGenerator {
     private static Context parseContext(String[] args) {
         Context ctx = new Context();
 
-        for (int i = 0; i < args.length; i++) {
-            if (isFlag(args[i]))
+        int i = 0;
+        while (i < args.length) {
+            if (isFlag(args[i])) {
                 ctx.add(args[i], "");
-            else
+                i++;
+            } else {
                 ctx.add(args[i], args[i + 1]);
+                i += 2;
+            }
         }
         return ctx;
     }
