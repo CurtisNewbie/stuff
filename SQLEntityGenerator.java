@@ -86,6 +86,7 @@ public class SQLEntityGenerator {
      */
     private static final String AUTHOR_ARG = "--author";
     private static final String PATH_ARG = "--path";
+    private static final String EXCLUDE_ARG = "--exclude";
 
     /*
     Flags
@@ -180,8 +181,15 @@ public class SQLEntityGenerator {
 
         sb.append("public class " + className + " {\n\n");
 
+        final Set<String> excludedFields = new HashSet<>(
+                context.isRepeatablePresent(EXCLUDE_ARG) ? context.getRepeatable(EXCLUDE_ARG) : Collections.emptyList()
+        );
+        System.out.printf("Excluded Fields: %s\n", excludedFields);
+
         // fields
         for (SQLField field : table.fields) {
+
+            if (excludedFields.contains(field.sqlFieldName)) continue;
 
             sb.append("    /** " + field.comment + " */\n");
 
@@ -502,11 +510,13 @@ public class SQLEntityGenerator {
         System.out.println("  Help:\n");
         System.out.printf("    '%s $path' : Path to the SQL DDL file\n", PATH_ARG);
         System.out.printf("    '%s $author' : Author of the class\n", AUTHOR_ARG);
+        System.out.printf("    '%s $excludedField' : name of field to be excluded, this argument is repeatable\n", EXCLUDE_ARG);
         System.out.printf("    '%s' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc\n", MYBATISPLUS_FLAG);
         System.out.printf("    '%s' : Enable copy to clipboard feature\n", COPY_FLAG);
         System.out.printf("    '%s' : Enable lambok feature, e.g., @Data on class\n\n", LAMBOK_FLAG);
         System.out.println("  For exmaple:\n");
-        System.out.printf("    java SQLEntityGenerator %s book.sql %s %s %s\n\n\n", PATH_ARG, COPY_FLAG, MYBATISPLUS_FLAG, LAMBOK_FLAG);
+        System.out.printf("    java SQLEntityGenerator %s book.sql %s create_time %s create_by %s %s %s\n\n\n", PATH_ARG,
+                EXCLUDE_ARG, EXCLUDE_ARG, COPY_FLAG, MYBATISPLUS_FLAG, LAMBOK_FLAG);
         System.out.println("  This tool parse a SQL DDL script file, and then generate a ");
         System.out.println("  simple Java Class for this 'table'. The SQL file should ");
         System.out.println("  only contain one 'CREATE TABLE' statement.\n");
@@ -577,17 +587,44 @@ public class SQLEntityGenerator {
 
     private static class Context {
         Map<String, String> argMap = new HashMap<>();
+        Map<String, List<String>> repeatableArgMap = new HashMap<>();
 
         public void add(String k, String v) {
-            argMap.put(k, v);
+            if (!isRepeatable(k))
+                argMap.put(k, v);
+            else {
+                if (isRepeatablePresent(k)) {
+                    List<String> values = repeatableArgMap.get(k);
+                    values.add(v);
+                } else {
+                    ArrayList<String> l = new ArrayList<>();
+                    l.add(v);
+                    repeatableArgMap.put(k, l);
+                }
+            }
         }
 
         public boolean isPresent(String k) {
             return argMap.containsKey(k);
         }
 
+        public boolean isRepeatablePresent(String k) {
+            return repeatableArgMap.containsKey(k);
+        }
+
         public String get(String k) {
             return argMap.get(k);
+        }
+
+        public List<String> getRepeatable(String k) {
+            return repeatableArgMap.get(k);
+        }
+
+        private boolean isRepeatable(String k) {
+            if (k.equalsIgnoreCase(EXCLUDE_ARG))
+                return true;
+
+            return false;
         }
     }
 
