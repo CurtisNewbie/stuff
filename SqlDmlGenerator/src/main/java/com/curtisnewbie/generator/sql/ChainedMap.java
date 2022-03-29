@@ -10,7 +10,7 @@ public class ChainedMap {
     private Map<String, String> param;
 
     public ChainedMap(Map<String, String> param) {
-        this.param = param;
+        this.param = new HashMap<>(param);
     }
 
     public ChainedMap() {
