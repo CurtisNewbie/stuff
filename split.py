@@ -1,7 +1,9 @@
 import sys
 
 def split(text, delimiter):
-    print(text.split(delimiter))
+    arr = text.split(delimiter)
+    for v in arr:
+        print(v)
 
 def print_help():
     print('arg[0] - text to be splited')
