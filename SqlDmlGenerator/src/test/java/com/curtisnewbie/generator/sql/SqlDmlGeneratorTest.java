@@ -17,7 +17,7 @@ public class SqlDmlGeneratorTest {
 
     @Test
     public void generate_insert_template_sql() {
-        new SqlDmlGenerator(fields, dbName, tableName)
+        final String insertSql = new SqlDmlGenerator(fields, dbName, tableName)
                 .withMapDefaultParam(new ChainedMap()
                         .thenPut("created_at", "CURRENT_TIMESTAMP")
                         .thenPut("created_by", "''")
@@ -29,6 +29,8 @@ public class SqlDmlGeneratorTest {
                 .withJsonDefaultParam(jsonDefaultParam)
                 .withJsonArrayParams(jsonArrayParams)
                 .generateInsertSql();
+
+        System.out.println(insertSql);
     }
 
 }

@@ -15,10 +15,10 @@ public class SqlDmlGenerator {
 
     private static final ObjectMapper om = new ObjectMapper();
 
-    private static final String pre = "(";
-    private static final String after = ")";
-    private static final String delimiter = ",";
-    private static final String last = ";";
+    private static final String PREFIX = "(";
+    private static final String SUFFIX = ")";
+    private static final String DELIMITER = ",";
+    private static final String STATEMENT_END = ";";
 
     private final String dbName;
     private final String tableName;
@@ -105,21 +105,25 @@ public class SqlDmlGenerator {
     /**
      * Generate (batch) insert SQL
      */
-    public void generateInsertSql() {
+    public String generateInsertSql() {
         final String dbNTable = dbName != null ? dbName + "." + tableName : tableName;
-        System.out.printf("INSERT INTO %s (%s) VALUES \n", dbNTable, fields);
+        StringBuilder sb = new StringBuilder(String.format("INSERT INTO %s (%s) VALUES \n", dbNTable, fields));
+
         final String template = genStrInterpolationTemplate(fields);
         for (int i = 0; i < params.size(); i++) {
             Map<String, String> m = new HashMap<>(defaultParam);
             m.putAll(params.get(i));
             final StrSubstitutor sub = new StrSubstitutor(m);
-            String line = pre + sub.replace(template) + after;
+            String line = PREFIX + sub.replace(template) + SUFFIX;
             if (i < params.size() - 1)
-                line += delimiter;
+                line += DELIMITER;
             else
-                line += last;
-            System.out.println(line);
+                line += STATEMENT_END;
+
+            sb.append(line);
         }
+
+        return sb.toString();
     }
 
     // ---------------------------------------------- helper methods -----------------------------------------
