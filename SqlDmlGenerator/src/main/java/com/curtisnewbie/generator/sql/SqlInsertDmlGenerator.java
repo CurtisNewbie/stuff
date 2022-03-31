@@ -11,7 +11,7 @@ import java.util.stream.*;
 /**
  * @author yongj.zhuang
  */
-public class SqlDmlGenerator {
+public class SqlInsertDmlGenerator {
 
     private static final ObjectMapper om = new ObjectMapper();
 
@@ -24,14 +24,14 @@ public class SqlDmlGenerator {
     private final String tableName;
     private final String fields;
     private final List<Map<String, String>> params = new ArrayList<>();
-    private Map<String, String> defaultParam = new HashMap<>();
+    private final Map<String, String> defaultParam = new HashMap<>();
 
     /**
      * Construct a SqlDmlGenerator
      *
      * @param fields list of fields delimited by comma
      */
-    public SqlDmlGenerator(String fields, String dbName, String tableName) {
+    public SqlInsertDmlGenerator(String fields, String dbName, String tableName) {
         Objects.nonNull(fields);
         this.fields = fields;
         this.dbName = dbName;
@@ -43,7 +43,7 @@ public class SqlDmlGenerator {
      *
      * @param fields list of fields delimited by comma
      */
-    public SqlDmlGenerator(String fields, String tableName) {
+    public SqlInsertDmlGenerator(String fields, String tableName) {
         Objects.nonNull(fields);
         this.fields = fields;
         this.dbName = null;
@@ -53,18 +53,31 @@ public class SqlDmlGenerator {
     /**
      * Set parameters
      *
-     * @param params parameters (each represent a row)
+     * @param rows        parameters (each represent a row)
+     * @param isAllQuoted whether all values are quoted
      */
-    public SqlDmlGenerator withMapParams(List<Map<String, String>> params) {
-        Objects.nonNull(params);
-        this.params.addAll(params);
+    public SqlInsertDmlGenerator withMapParams(List<Map<String, String>> rows, final boolean isAllQuoted) {
+        Objects.nonNull(rows);
+        this.params.addAll(paramMapsPostProcessing(rows, isAllQuoted));
+        return this;
+    }
+
+    /**
+     * Set parameters
+     *
+     * @param row         map represents a single row
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withMapParam(Map<String, String> row, final boolean isAllQuoted) {
+        Objects.nonNull(row);
+        this.params.add(paramMapPostProcessing(row, isAllQuoted));
         return this;
     }
 
     /**
      * Default parameters
      */
-    public SqlDmlGenerator withMapDefaultParam(Map<String, String> defaultParam) {
+    public SqlInsertDmlGenerator withMapDefaultParam(Map<String, String> defaultParam) {
         this.defaultParam.putAll(defaultParam);
         return this;
     }
@@ -72,8 +85,21 @@ public class SqlDmlGenerator {
     /**
      * Default parameters
      */
-    public SqlDmlGenerator withJsonDefaultParam(String json) {
+    public SqlInsertDmlGenerator withJsonDefaultParam(String json) {
         this.defaultParam.putAll(readAsMap(json));
+        return this;
+    }
+
+    /**
+     * Set parameters
+     *
+     * @param jsonArray   array of json object (each represent a row)
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withJsonArrayParams(final String jsonArray, final boolean isAllQuoted) {
+        Objects.nonNull(jsonArray);
+
+        this.params.addAll(paramMapsPostProcessing(readAsListOfMap(jsonArray), isAllQuoted));
         return this;
     }
 
@@ -82,22 +108,49 @@ public class SqlDmlGenerator {
      *
      * @param jsonArray array of json object (each represent a row)
      */
-    public SqlDmlGenerator withJsonArrayParams(String jsonArray) {
-        Objects.nonNull(jsonArray);
+    public SqlInsertDmlGenerator withJsonArrayParams(String jsonArray) {
+        return withJsonArrayParams(jsonArray, false);
+    }
 
-        this.params.addAll(readAsListOfMap(jsonArray));
+    /**
+     * Set parameters
+     *
+     * @param tabDelimitedParams tab delimited data (each line represent a row)
+     * @param isAllQuoted        whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withTabDelimitedParams(final String tabDelimitedParams, final boolean isAllQuoted) {
+        final String[] lines = tabDelimitedParams.split("\n");
+        final String[] titles = lines[0].split("\\t");
+
+        for (int i = 1; i < lines.length; i++) {
+            final String[] columns = lines[i].split("\\t");
+            final ChainedMap chainedMap = new ChainedMap();
+            for (int j = 0; j < columns.length; j++) {
+                chainedMap.thenPut(titles[j], columns[j]);
+            }
+            withMapParam(chainedMap.get(), isAllQuoted);
+        }
         return this;
     }
 
     /**
      * Set parameters
      *
-     * @param jsons list of json object (each represent a row)
+     * @param tabDelimitedParams tab delimited data (each line represent a row)
      */
-    public SqlDmlGenerator withJsonParams(List<String> jsons) {
-        Objects.nonNull(jsons);
-        this.params.addAll(jsons.stream()
-                .map(SqlDmlGenerator::readAsMap)
+    public SqlInsertDmlGenerator withTabDelimitedParams(final String tabDelimitedParams) {
+        return withTabDelimitedParams(tabDelimitedParams, false);
+    }
+
+    /**
+     * Set parameters
+     *
+     * @param jsonObjects list of json object (each represent a row)
+     */
+    public SqlInsertDmlGenerator withJsonParams(List<String> jsonObjects) {
+        Objects.nonNull(jsonObjects);
+        this.params.addAll(jsonObjects.stream()
+                .map(SqlInsertDmlGenerator::readAsMap)
                 .collect(Collectors.toList()));
         return this;
     }
@@ -120,7 +173,7 @@ public class SqlDmlGenerator {
             else
                 line += STATEMENT_END;
 
-            sb.append(line);
+            sb.append(line).append("\n");
         }
 
         return sb.toString();
@@ -162,6 +215,22 @@ public class SqlDmlGenerator {
             sb.append("${").append(fieldsArr[i].trim()).append("}");
         }
         return sb.toString();
+    }
+
+    private static Map<String, String> paramMapPostProcessing(Map<String, String> m, boolean isAllQuoted) {
+        if (isAllQuoted) {
+            m.forEach((k, v) -> m.put(k, quote(v)));
+        }
+        return m;
+    }
+
+    private static List<Map<String, String>> paramMapsPostProcessing(List<Map<String, String>> l, boolean isAllQuoted) {
+        l.forEach(m -> paramMapPostProcessing(m, isAllQuoted));
+        return l;
+    }
+
+    private static final String quote(String v) {
+        return "'" + v + "'";
     }
 
 }
