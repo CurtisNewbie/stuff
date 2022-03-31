@@ -78,7 +78,16 @@ public class SqlInsertDmlGenerator {
      * Default parameters
      */
     public SqlInsertDmlGenerator withMapDefaultParam(Map<String, String> defaultParam) {
-        this.defaultParam.putAll(defaultParam);
+        return withMapDefaultParam(defaultParam, false);
+    }
+
+    /**
+     * Default parameters
+     *
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withMapDefaultParam(Map<String, String> defaultParam, final boolean isAllQuoted) {
+        this.defaultParam.putAll(paramMapPostProcessing(defaultParam, isAllQuoted));
         return this;
     }
 
@@ -86,7 +95,16 @@ public class SqlInsertDmlGenerator {
      * Default parameters
      */
     public SqlInsertDmlGenerator withJsonDefaultParam(String json) {
-        this.defaultParam.putAll(readAsMap(json));
+        return withJsonDefaultParam(json, false);
+    }
+
+    /**
+     * Default parameters
+     *
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withJsonDefaultParam(String json, final boolean isAllQuoted) {
+        this.defaultParam.putAll(paramMapPostProcessing(readAsMap(json), isAllQuoted));
         return this;
     }
 
