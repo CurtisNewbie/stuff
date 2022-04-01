@@ -3,19 +3,25 @@ import sys
 def split(text, delimiter):
     arr = text.split(delimiter)
     for v in arr:
-        print(v)
+        s = v.strip()
+        if s != '':
+            print(s)
 
 def print_help():
     print('arg[0] - text to be splited')
     print('arg[1] - delimiter')
 
 if __name__ == "__main__"   :
-    if len(sys.argv) != 3: 
+    if len(sys.argv) < 2: 
         print_help()
         raise Exception('Illegal Arguments')  
 
     text = sys.argv[1]
-    delimiter = sys.argv[2]
+    if len(sys.argv) > 2: 
+        delimiter = sys.argv[2]
+    else:
+        delimiter = ','
+
     split(text, delimiter)
 
 
