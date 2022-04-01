@@ -17,9 +17,8 @@ def json_arr(text):
 def print_help():
     print('arg[0] - comma delimited strings to be joined as a json array')
 
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
+if __name__ == "__main__"   :
+    if len(sys.argv) < 2: 
         print_help()
         raise Exception('Illegal Arguments')
 
