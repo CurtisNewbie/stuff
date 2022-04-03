@@ -26,8 +26,6 @@ flag_set  = (MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG)
 #
 CREATE = "create"
 TABLE = 'table'
-COMMENT = "comment"
-COMMENT_EQUAL = COMMENT + "="
 
 
 # some of the keywords (lowercase) that we care, may not contain all of them
@@ -202,7 +200,7 @@ class Context:
         return s
 
 
-def assert_True(flag, msg):  
+def assert_true(flag, msg):  
     if flag is not True: 
        print(f"Error - {msg}") 
        sys.exit(1)
@@ -227,7 +225,7 @@ def parse_ddl(lines):
         line_no = i+ 1;
 
         if strmatches(tokens[0], CREATE):
-            assert_True(table_name == None, "CREATE keyword is already used, please check your syntax")
+            assert_true(table_name == None, "CREATE keyword is already used, please check your syntax")
             table_name = extract_table_name(tokens, line_no)
 
         elif tokens[0].startswith(')'):
@@ -239,8 +237,8 @@ def parse_ddl(lines):
 
             fields.append(parse_field(tokens, line_no))
 
-    assert_True(table_name is not None, 'Failed to parse DDL, table name is not found')
-    assert_True(len(fields) > 0, 'Failed to parse DDL, this table doesn\'t have fields')
+    assert_true(table_name is not None, 'Failed to parse DDL, table name is not found')
+    assert_true(len(fields) > 0, 'Failed to parse DDL, this table doesn\'t have fields')
 
     return SQLTable(table_name, table_comment, fields) 
     
@@ -278,7 +276,7 @@ def parse_field(tokens, line_no):
     arg[1] - current line number
     '''
     field_name = tokens[0]
-    assert_True(field_name not in sql_types, f"Failed to parse DDL, field name {field_name} can't be a keyword, illegal syntax at line {line_no}")
+    assert_true(field_name not in sql_types, f"Failed to parse DDL, field name {field_name} can't be a keyword, illegal syntax at line {line_no}")
 
     type = None
     kw = set()
@@ -292,7 +290,7 @@ def parse_field(tokens, line_no):
         if tk in keywords:
             kw.add(tk)
 
-    assert_True(type is not None, f"Failed to parse DDL, unable to identify data type for field '{field_name}', illegal syntax at line {line_no}")
+    assert_true(type is not None, f"Failed to parse DDL, unable to identify data type for field '{field_name}', illegal syntax at line {line_no}")
     return SQLField(field_name, kw, type, extract_comment(tokens, line_no))
 
 
@@ -394,62 +392,85 @@ def extract_comment(tokens, line_no):
 
     err_msg = f"Failed to parse DDL, multiple COMMENT keyword is found, illegal syntax at line: {line_no}" 
 
-    # try to find comment, it won't be the first one anyway
+    llen = len(tokens)
     l = -1
     h = -1
-    pre = '\''
+    quote = '\''
 
-    for i in range(1, len(tokens)):
-        tki = tokens[i]
+    # try to find comment, it won't be the first one anyway
+    i = 0 
+    while i < llen:
+ 
+        # COMMENT = 'xxx  or COMMENT =' xxx  or COMMENT= 'xxx  or COMMENT=' xxx 
+        if tokens[i].lower().startswith('comment'):
 
-        # COMMENT ...
-        if strmatches(tki, COMMENT):
-            assert_True(l == -1, err_msg)
-            l =  i + 1
-            tkl = tokens[l]
-
-            is_quoted = tkl.startswith('\'') or tkl.startswith('\"')
-            assert_True(is_quoted, f"Failed to parse DDL, COMMENT must start with ' or \", illegal syntax at line: {line_no}")
-
-            if tkl.startswith('\"'):
-                pre = '\"'
-
-            if tkl.endswith(pre):
-                h = l
-                break
-
-        elif l == -1 and tki.lower().startswith(COMMENT_EQUAL):
+            # make sure there is only one COMMENT keyword
+            assert_true(l == -1, err_msg)
             l = i
-            after_eq = tki[tki.index('=') + 1 : len(tki)]
 
-            is_quoted = after_eq.startswith('\'') or after_eq.startswith('\"')
-            assert_True(is_quoted, f"Failed to parse DDL, COMMENT must start with ' or \", illegal syntax at line: {line_no}")
+            # find where the equal sign is 
+            eq = tokens[i].find('=')
 
-            if after_eq.startswith('\"'):
-                pre = '\"'
+            # no equal sign found
+            # so it's the COMMENT = ..... case
+            if eq == -1:
+                l = i + 1
 
-            if after_eq.endswith(pre):
-                h = l
+            # found equal sign
+            # it may be COMMENT='xxx or COMMENT= 'xxx
+            # try to find the quotes
+            else: 
+                # maybe there is a ' or " after the eq sign ?
+                qt = first_quote(tokens[i], eq - 1)
+
+                # no quote is found, we must find one, if we don't, this is a syntax error
+                if qt is None:
+                    while i < llen:
+                        qt = first_quote(tokens[i])
+                        if qt is not None:
+                            pre = qt 
+                            l = i        
+                            break
+                        i += 1
+
+                    # opening quote is not found, syntax error
+                    assert_true(i < llen, f'Syntax error, unable to find the opening quote for comment at line: {line_no}')
+                else: 
+                    # which quote is used (' or ")
+                    quote = qt 
+                    l = i
+
+            # current token is also the end of the comment
+            # which is the case: COMMENT='xxx'
+            if tokens[i].endswith(quote):
+                h = i 
                 break
-
         else:
-            # todo fix this, change to regex maybe
-            ends_with_pre = tki.endswith(pre) or tki.endswith(pre + ',') or tki.endswith(pre + ';')
-            if l != -1 and ends_with_pre:
+            # the opening quote is already found, try to find the ending quote
+            if l > -1 and tokens[i].rfind(quote) > 0:
                 h = i
                 break
+        i += 1
 
     # no comment found
     if l == -1 or h == -1:
         return ''
 
     joined = ' '.join(tokens[l: h + 1])
+    return joined[joined.find(quote): joined.rfind(quote) + 1]
 
-    if joined.lower().startswith(COMMENT_EQUAL):
-        joined = joined[len(COMMENT_EQUAL): len(joined)]
 
-    ip = joined.rfind(pre)
-    return joined[1: ip] if ip > -1 else joined
+def first_quote(s, after=-1):
+    sq = s.find('\'', after)
+    dq = s.find('\"', after)
+    if sq == -1 and dq == -1:
+        return None
+    if sq == -1:
+        return '\"' 
+    elif dq == -1: 
+        return '\'' 
+
+    return '\'' if sq < dq else '\"'
 
 def extract_table_name(tokens, line_no):
     '''
@@ -462,18 +483,18 @@ def extract_table_name(tokens, line_no):
     err_msg = f"Illegal CREATE TABLE statement at line: {line_no}"
 
     l = len(tokens)
-    assert_True(l >= 4, err_msg)
-    assert_True(l > 4 and l == 7, err_msg)
-    assert_True(strmatches(tokens[0], CREATE), err_msg)
-    assert_True(strmatches(tokens[1], TABLE), err_msg)
+    assert_true(l >= 4, err_msg)
+    assert_true(l > 4 and l == 7, err_msg)
+    assert_true(strmatches(tokens[0], CREATE), err_msg)
+    assert_true(strmatches(tokens[1], TABLE), err_msg)
 
     name = ''
     if l == 4:
         name = tokens[2]
     else:
-        assert_True(strmatches(tokens[2], "if"), err_msg)
-        assert_True(strmatches(tokens[3], "not"), err_msg)
-        assert_True(strmatches(tokens[4], "exists"), err_msg)
+        assert_true(strmatches(tokens[2], "if"), err_msg)
+        assert_true(strmatches(tokens[3], "not"), err_msg)
+        assert_true(strmatches(tokens[4], "exists"), err_msg)
         name = tokens[5]
 
     name = name.replace("`", "")
@@ -497,7 +518,7 @@ def to_java_type(keywords, sql_type):
     if sql_type == 'int' and 'unsigned' in keywords:
         return 'Long'
 
-    assert_True(sql_type in sql_java_type_mapping, f"Unable to find corresponding java type for {sql_type}")
+    assert_true(sql_type in sql_java_type_mapping, f"Unable to find corresponding java type for {sql_type}")
 
     return sql_java_type_mapping[sql_type]
 
@@ -574,7 +595,7 @@ if __name__ == '__main__':
 
 
     # read file
-    assert_True(ctx.is_present(PATH_ARG), f'Argument for "{PATH_ARG}" is not found')
+    assert_true(ctx.is_present(PATH_ARG), f'Argument for "{PATH_ARG}" is not found')
     path = ctx.get_first(PATH_ARG)
     lines = read_file(path)
 
