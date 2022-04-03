@@ -409,26 +409,24 @@ def extract_comment(tokens, line_no):
             l = i
 
             # find where the equal sign is 
+            # if no equal sign found
+            # then it's the COMMENT = ..... case
             eq = tokens[i].find('=')
-
-            # no equal sign found
-            # so it's the COMMENT = ..... case
             if eq == -1:
                 l = i + 1
-
-            # found equal sign
-            # it may be COMMENT='xxx or COMMENT= 'xxx
-            # try to find the quotes
             else: 
+                # found equal sign
+                # it may be COMMENT='xxx or COMMENT= 'xxx
+                # try to find the quotes
                 # maybe there is a ' or " after the eq sign ?
                 qt = first_quote(tokens[i], eq - 1)
 
                 # no quote is found, we must find one, if we don't, this is a syntax error
-                if qt is None:
+                if qt[0] is None:
                     while i < llen:
                         qt = first_quote(tokens[i])
-                        if qt is not None:
-                            pre = qt 
+                        if qt[0] is not None:
+                            quote = qt[0]
                             l = i        
                             break
                         i += 1
@@ -437,14 +435,14 @@ def extract_comment(tokens, line_no):
                     assert_true(i < llen, f'Syntax error, unable to find the opening quote for comment at line: {line_no}')
                 else: 
                     # which quote is used (' or ")
-                    quote = qt 
+                    quote = qt[0]
                     l = i
 
-            # current token is also the end of the comment
-            # which is the case: COMMENT='xxx'
-            if tokens[i].endswith(quote):
-                h = i 
-                break
+                # current token is also the end of the comment
+                # which is the case: COMMENT='xxx'
+                if tokens[i].rfind(quote) > qt[1]:
+                    h = i 
+                    break
         else:
             # the opening quote is already found, try to find the ending quote
             if l > -1 and tokens[i].rfind(quote) > 0:
@@ -464,13 +462,13 @@ def first_quote(s, after=-1):
     sq = s.find('\'', after)
     dq = s.find('\"', after)
     if sq == -1 and dq == -1:
-        return None
+        return [None, -1]
     if sq == -1:
-        return '\"' 
+        return ['\"', dq]
     elif dq == -1: 
-        return '\'' 
+        return ['\'', sq]
 
-    return '\'' if sq < dq else '\"'
+    return ['\'', sq] if sq < dq else ['\"', dq]
 
 def extract_table_name(tokens, line_no):
     '''
