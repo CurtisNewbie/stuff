@@ -99,23 +99,28 @@ def print_help():
     """
     print("\n  sql_entity_gen.py by yongj.zhuang\n")
     print("  Help:\n")
-    print("  1. Arguments:\n")
+    print("  Arguments:\n")
     print(f"{T}'{PATH_ARG} $path' : Path to the SQL DDL file")
     print(f"{T}'{AUTHOR_ARG} $author' : Author of the class")
     print(f"{T}'{EXCLUDE_ARG} $excludedField' : name of field to be excluded, this argument is repeatable")
     print(f"{T}'{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
+    print(f"{T}'{OUTPUT_ARG}' : (Optional) Where the generate java class is written to")
     print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
-    print("  2. For example:\n")
-    print(
-        f"{T}\'python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} create_time {EXCLUDE_ARG} create_by {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG}\'\n")
+    print("  For example:\n")
+    print(f"{T}python3 sql_entity_gen.py \\")
+    print(f"{TT}{PATH_ARG} book.sql \\")
+    print(f"{TT}{EXCLUDE_ARG} create_time \\")
+    print(f"{TT}{EXCLUDE_ARG} create_by \\")
+    print(f"{TT}{MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} \\")
+    print(f"{TT}{OUTPUT_ARG} Book.java\n")
     print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
     print(f"{T}simple Java Class for this 'table'. The SQL file should ")
     print(f"{T}only contain one 'CREATE TABLE' statement.\n")
     print(f"{T}Each line should only contain key words for a single field,")
     print(f"{T}so don't put everything in one line.\n\n")
-    print("  3. About Data Type Mapping:\n")
+    print("  About Data Type Mapping:\n")
     print(data_type_mapping_str(T))
-    print("  4. For example:\n")
+    print("  For example:\n")
     print(f"{T}CREATE TABLE IF NOT EXISTS book (")
     print(f"{TT}id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT \"primary key\",")
     print(f"{TT}name VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'name of the book',")
@@ -664,6 +669,9 @@ if __name__ == '__main__':
     generated = generate_java_class(table, ctx)
 
     # write to file
-    fn = first_char_upper(to_camel_case(table.table_name)) + ".java"
+    if ctx.is_present(OUTPUT_ARG):
+        fn = ctx.get_first(OUTPUT_ARG)
+    else:
+        fn = first_char_upper(to_camel_case(table.table_name)) + ".java"
     write_file(fn, generated)
     print(f"Java class generated and written to \'{fn}\'")
