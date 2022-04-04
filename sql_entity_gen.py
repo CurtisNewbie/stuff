@@ -350,13 +350,15 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
     if table.is_type_used('LocalDateTime'):
         s += "import java.time.*;\n"
     if table.is_type_used('BigDecimal'):
-        s += "import java.math.*;\n\n"
+        s += "import java.math.*;\n"
+    s += '\n'
 
     # for mybatis-plus only
     if mbp_ft:
         s += "import com.baomidou.mybatisplus.annotation.IdType;\n"
         s += "import com.baomidou.mybatisplus.annotation.TableField;\n"
         s += "import com.baomidou.mybatisplus.annotation.TableId;\n"
+    s += '\n'
 
     # for lambok
     if lambok_ft:
