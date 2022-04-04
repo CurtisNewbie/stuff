@@ -193,6 +193,8 @@ class Context:
 
         arg[0] - list of string
         """
+        argv = list(filter(filter_empty_str, argv))
+
         i = 0
         al = len(argv)
         if al == 0:
