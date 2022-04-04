@@ -11,6 +11,7 @@ TT = T + T  # two tabs
 AUTHOR_ARG: str = "--author"
 PATH_ARG: str = "--path"
 EXCLUDE_ARG: str = "--exclude"
+OUTPUT_ARG: str = "--output"
 
 # set of arguments key
 arg_set: Set[str] = {AUTHOR_ARG, PATH_ARG, EXCLUDE_ARG}
@@ -29,7 +30,7 @@ flag_set: Set[str] = {MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG}
 # some constants
 #
 CREATE: str = "create"
-TABLE: str = 'table'
+TABLE: str = "table"
 
 # some keywords (lowercase) that we care, may not contain all of them
 sql_keywords = {'unsigned'}
@@ -98,38 +99,50 @@ def print_help():
     """
     print("\n  sql_entity_gen.py by yongj.zhuang\n")
     print("  Help:\n")
-    print(f"   Arguments:\n")
-    print(f"    '{PATH_ARG} $path' : Path to the SQL DDL file")
-    print(f"    '{AUTHOR_ARG} $author' : Author of the class")
-    print(f"    '{EXCLUDE_ARG} $excludedField' : name of field to be excluded, this argument is repeatable")
-    print(f"    '{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
-    print(f"    '{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
-    print("  For example:\n")
+    print("  1. Arguments:\n")
+    print(f"{T}'{PATH_ARG} $path' : Path to the SQL DDL file")
+    print(f"{T}'{AUTHOR_ARG} $author' : Author of the class")
+    print(f"{T}'{EXCLUDE_ARG} $excludedField' : name of field to be excluded, this argument is repeatable")
+    print(f"{T}'{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
+    print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
+    print("  2. For example:\n")
     print(
-        f"    python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} create_time {EXCLUDE_ARG} create_by {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG}\n")
-    print("  This tool parse a SQL DDL script file, and then generate a ")
-    print("  simple Java Class for this 'table'. The SQL file should ")
-    print("  only contain one 'CREATE TABLE' statement.\n")
-    print("  Each line should only contain key words for a single field,")
-    print("  so don't put everything in one line.\n")
-    print("  For example:\n")
-    print("  CREATE TABLE IF NOT EXISTS book (")
-    print("    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT \"primary key\",")
-    print("    name VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'name of the book',")
-    print("    create_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is created',")
-    print("    create_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who created this record',")
-    print("    update_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is updated',")
-    print("    update_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who updated this record',")
-    print("    is_del TINYINT NOT NULL DEFAULT '0' COMMENT '0-normal, 1-deleted'")
-    print(" ) ENGINE=InnoDB COMMENT 'Some nice books'\n\n")
+        f"{T}\'python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} create_time {EXCLUDE_ARG} create_by {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG}\'\n")
+    print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
+    print(f"{T}simple Java Class for this 'table'. The SQL file should ")
+    print(f"{T}only contain one 'CREATE TABLE' statement.\n")
+    print(f"{T}Each line should only contain key words for a single field,")
+    print(f"{T}so don't put everything in one line.\n\n")
+    print("  3. About Data Type Mapping:\n")
+    print(data_type_mapping_str(T))
+    print("  4. For example:\n")
+    print(f"{T}CREATE TABLE IF NOT EXISTS book (")
+    print(f"{TT}id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT \"primary key\",")
+    print(f"{TT}name VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'name of the book',")
+    print(f"{TT}create_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is created',")
+    print(f"{TT}create_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who created this record',")
+    print(f"{TT}update_time DATETIME NOT NULL DEFAULT NOW() COMMENT 'when the record is updated',")
+    print(f"{TT}update_by VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'who updated this record',")
+    print(f"{TT}is_del TINYINT NOT NULL DEFAULT '0' COMMENT '0-normal, 1-deleted'")
+    print(f"{T}) ENGINE=InnoDB COMMENT 'Some nice books'\n\n")
 
 
-def is_flag(key: str):
-    """whether the key is flag """
+def data_type_mapping_str(pre: str) -> str:
+    """
+    Concat data type mapping as string
+    """
+    s = ''
+    for k in sql_java_type_mapping:
+        s += f"{pre}{k} -> {sql_java_type_mapping[k]}\n"
+    return s
+
+
+def is_flag(key: str) -> bool:
+    """whether the key is a flag """
     return key in flag_set
 
 
-def is_arg(key: bool):
+def is_arg(key: bool) -> bool:
     """Whether the key is an argument (that has one or more values associated with it)"""
     return key in arg_set
 
