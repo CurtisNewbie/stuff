@@ -61,6 +61,11 @@ def filter_comment(line: str) -> bool:
     return False if line.strip().startswith("--") else True
 
 
+def filter_empty_str(s: str) -> bool:
+    """Filter empty string"""
+    return False if s.strip() == '' else True
+
+
 def write_file(path: str, content: str) -> None:
     """
     Write all content to a file
@@ -204,9 +209,9 @@ class Context:
         return s
 
 
-def assert_true(flag: bool, msg: str) -> None:
+def assert_true(flag: bool, msg: str, hint: str = '') -> None:
     if flag is not True:
-        print(f"Error - {msg}")
+        print(f"Error - {msg} hint: {hint}")
         sys.exit(1)
 
 
@@ -502,20 +507,22 @@ def extract_table_name(tokens: List[str], line_no: int) -> str:
 
     arg[1] - current line no
     """
+    tokens = list(filter(filter_empty_str, tokens))
     err_msg = f"Illegal CREATE TABLE statement at line: {line_no}"
-
     tlen = len(tokens)
-    assert_true(tlen >= 4, err_msg)
-    assert_true(tlen > 4 and tlen == 7, err_msg)
+
+    assert_true(tlen >= 4, err_msg, 'tokens.len < 4')
+    if tlen > 4:
+        assert_true(tlen == 7, err_msg, f'Invalid number of tokens, it should be 7 but {tlen}')
     assert_true(str_matches(tokens[0], CREATE), err_msg)
     assert_true(str_matches(tokens[1], TABLE), err_msg)
 
-    if tlen == 4:
+    if tlen == 4:  # create table [table_name]
         name = tokens[2]
-    else:
-        assert_true(str_matches(tokens[2], "if"), err_msg)
-        assert_true(str_matches(tokens[3], "not"), err_msg)
-        assert_true(str_matches(tokens[4], "exists"), err_msg)
+    else:  # create table if not exists [table_name]
+        assert_true(str_matches(tokens[2], "if"), err_msg, '\'IF\' is not found')
+        assert_true(str_matches(tokens[3], "not"), err_msg, '\'NOT\' is not found')
+        assert_true(str_matches(tokens[4], "exists"), err_msg, '\'EXISTS\' is not found')
         name = tokens[5]
 
     name = name.replace("`", "")
