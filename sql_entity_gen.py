@@ -3,6 +3,7 @@ import sys
 from typing import Set, List, Dict
 
 T = '    '  # four space tab
+TT = T + T  # two tabs
 
 #
 # Argument keys that only accept one single parameter
@@ -390,11 +391,11 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
         for f in table.fields:
             us = first_char_upper(f.java_field_name)
             s += f"{T}public {f.java_type} get{us}() {{\n"
-            s += f"{T}{T}return this.{f.java_field_name}\n"
+            s += f"{TT}return this.{f.java_field_name}\n"
             s += f"{T}}}\n\n"
 
             s += f"{T}public void set{us}({f.java_type} {f.java_field_name}) {{\n"
-            s += f"{T}{T}this.{f.java_field_name} = {f.java_field_name};\n"
+            s += f"{TT}this.{f.java_field_name} = {f.java_field_name};\n"
             s += f"{T}}}\n\n"
 
     s += '}\n'
