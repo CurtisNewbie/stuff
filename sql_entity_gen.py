@@ -57,6 +57,22 @@ sql_java_type_mapping = {
 #
 # -----------------------------------------------------------
 
+def arr_partial_matches(arr: List[str], param: List[str], start: int = 0) -> bool:
+    """
+    Partial Matching between two array
+
+    arg[0] - list of string that is validated
+    arg[1] - list of string as parameters that validate the arg[0]
+    arg[2] - starting index for arg[0] (default 0)
+    """
+    al = len(arr)
+    for i, p in enumerate(param, start):
+        if i > al:
+            return False
+        if not str_matches(arr[i], p):
+            return False
+    return True
+
 
 def filter_comment(line: str) -> bool:
     """Filter comment"""
@@ -228,9 +244,9 @@ class Context:
         return s
 
 
-def assert_true(flag: bool, msg: str, hint: str = '') -> None:
+def assert_true(flag: bool, msg: str) -> None:
     if flag is not True:
-        print(f"Error - {msg} hint: {hint}")
+        print(f"[Error] {msg}")
         sys.exit(1)
 
 
@@ -532,18 +548,15 @@ def extract_table_name(tokens: List[str], line_no: int) -> str:
     err_msg = f"Illegal CREATE TABLE statement at line: {line_no}"
     tlen = len(tokens)
 
-    assert_true(tlen >= 4, err_msg, 'tokens.len < 4')
+    assert_true(tlen >= 4, err_msg)
     if tlen > 4:
-        assert_true(tlen == 7, err_msg, f'Invalid number of tokens, it should be 7 but {tlen}')
-    assert_true(str_matches(tokens[0], CREATE), err_msg)
-    assert_true(str_matches(tokens[1], TABLE), err_msg)
+        assert_true(tlen == 7, err_msg)
+    assert_true(arr_partial_matches(tokens, [CREATE, TABLE]), err_msg)
 
     if tlen == 4:  # create table [table_name]
         name = tokens[2]
     else:  # create table if not exists [table_name]
-        assert_true(str_matches(tokens[2], "if"), err_msg, '\'IF\' is not found')
-        assert_true(str_matches(tokens[3], "not"), err_msg, '\'NOT\' is not found')
-        assert_true(str_matches(tokens[4], "exists"), err_msg, '\'EXISTS\' is not found')
+        assert_true(arr_partial_matches(tokens, ['if', 'not', 'exists'], 2), err_msg)
         name = tokens[5]
 
     name = name.replace("`", "")
