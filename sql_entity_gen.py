@@ -118,17 +118,12 @@ def print_help():
     print("  Arguments:\n")
     print(f"{T}'{PATH_ARG} $path' : Path to the SQL DDL file")
     print(f"{T}'{AUTHOR_ARG} $author' : Author of the class")
-    print(f"{T}'{EXCLUDE_ARG} $excludedField' : name of field to be excluded, this argument is repeatable")
+    print(f"{T}'{EXCLUDE_ARG} $field' : one or move field to be excluded (delimited by \',\')")
     print(f"{T}'{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
     print(f"{T}'{OUTPUT_ARG}' : (Optional) Where the generate java class is written to")
     print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
     print("  For example:\n")
-    print(f"{T}python3 sql_entity_gen.py \\")
-    print(f"{TT}{PATH_ARG} book.sql \\")
-    print(f"{TT}{EXCLUDE_ARG} create_time \\")
-    print(f"{TT}{EXCLUDE_ARG} create_by \\")
-    print(f"{TT}{MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} \\")
-    print(f"{TT}{OUTPUT_ARG} Book.java\n")
+    print(f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} {OUTPUT_ARG} Book.java\n")
     print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
     print(f"{T}simple Java Class for this 'table'. The SQL file should ")
     print(f"{T}only contain one 'CREATE TABLE' statement.\n")
@@ -409,7 +404,12 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
     '''
         Fields
     '''
-    excluded: Set[str] = set(ctx.get(EXCLUDE_ARG)) if ctx.is_present(EXCLUDE_ARG) else set()
+    excluded = set()
+    if ctx.is_present(EXCLUDE_ARG):
+        for x in ctx.get(EXCLUDE_ARG):
+            for s in list(filter(filter_empty_str, x.split(','))):
+                excluded.add(s)
+
     for f in table.fields:
         if f.sql_field_name in excluded:
             continue
