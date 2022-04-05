@@ -48,6 +48,7 @@ def gen_qrcode(content: str, size: int, path: str) -> None:
     """
     Generate QRCode
 
+    :param size: size of the qrcode (1 ~ 40)
     :param content: content to be encoded
     :param path: output path
     """
