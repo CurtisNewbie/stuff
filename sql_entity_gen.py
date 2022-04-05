@@ -74,13 +74,13 @@ def arr_partial_matches(arr: List[str], param: List[str], start: int = 0) -> boo
     return True
 
 
-def filter_comment(line: str) -> bool:
-    """Filter comment"""
+def is_not_comment(line: str) -> bool:
+    """Return true if it's not a comment else false"""
     return False if line.strip().startswith("--") else True
 
 
-def filter_empty_str(s: str) -> bool:
-    """Filter empty string"""
+def is_not_empty_str(s: str) -> bool:
+    """Return true if string is not empty else false"""
     return False if s.strip() == '' else True
 
 
@@ -123,7 +123,8 @@ def print_help():
     print(f"{T}'{OUTPUT_ARG}' : (Optional) Where the generate java class is written to")
     print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
     print("  For example:\n")
-    print(f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} {OUTPUT_ARG} Book.java\n")
+    print(
+        f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} {OUTPUT_ARG} Book.java\n")
     print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
     print(f"{T}simple Java Class for this 'table'. The SQL file should ")
     print(f"{T}only contain one 'CREATE TABLE' statement.\n")
@@ -188,7 +189,7 @@ class Context:
 
         arg[0] - list of string
         """
-        argv = list(filter(filter_empty_str, argv))
+        argv = list(filter(is_not_empty_str, argv))
 
         i = 0
         al = len(argv)
@@ -248,7 +249,7 @@ def assert_true(flag: bool, msg: str) -> None:
 
 
 def parse_ddl(lines: List[str]):
-    lines = list(filter(filter_comment, lines))
+    lines = list(filter(is_not_comment, lines))
 
     """
     Parse 'CREATE TABLE' DDL Script
@@ -407,7 +408,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
     excluded = set()
     if ctx.is_present(EXCLUDE_ARG):
         for x in ctx.get(EXCLUDE_ARG):
-            for s in list(filter(filter_empty_str, x.split(','))):
+            for s in list(filter(is_not_empty_str, x.split(','))):
                 excluded.add(s)
 
     for f in table.fields:
@@ -546,7 +547,7 @@ def extract_table_name(tokens: List[str], line_no: int) -> str:
 
     arg[1] - current line no
     """
-    tokens = list(filter(filter_empty_str, tokens))
+    tokens = list(filter(is_not_empty_str, tokens))
     err_msg = f"Illegal CREATE TABLE statement at line: {line_no}"
     tlen = len(tokens)
 
