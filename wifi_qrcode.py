@@ -14,7 +14,7 @@ WIFI_PWD_ARG = "-p"
 WIFI_NAME_ARG = "-n"
 
 # def size
-DEF_SIZE = 10
+DEF_SIZE = 5
 
 
 def print_help() -> None:
@@ -28,7 +28,7 @@ def print_help() -> None:
     print(f"{TT}{WIFI_NAME_ARG}{T}wifi name")
     print(f"{TT}{WIFI_PWD_ARG}{T}wifi password\n")
     print(f"  E.g., \n")
-    print(f"{TT}{WIFI_NAME_ARG} 'mywifi' {WIFI_PWD_ARG} 'mypassword' {SIZE_ARG} 10 {OUTPUT_ARG} wifi.png\n")
+    print(f"{TT}{WIFI_NAME_ARG} 'mywifi' {WIFI_PWD_ARG} 'mypassword' {SIZE_ARG} 1 {OUTPUT_ARG} wifi.png\n")
 
 
 def prep_wifi_code(ctx: "Context") -> str:
@@ -37,8 +37,8 @@ def prep_wifi_code(ctx: "Context") -> str:
 
     :param ctx context
     """
-    assert_true(ctx.is_present(WIFI_NAME_ARG), f"{WIFI_NAME_ARG} must be specified")
-    assert_true(ctx.is_present(WIFI_PWD_ARG), f"{WIFI_PWD_ARG} must be specified")
+    assert_true(ctx.is_present(WIFI_NAME_ARG), f"{WIFI_NAME_ARG} wifi name must be specified")
+    assert_true(ctx.is_present(WIFI_PWD_ARG), f"{WIFI_PWD_ARG} wifi password must be specified")
     name = ctx.get_first(WIFI_NAME_ARG)
     pwd = ctx.get_first(WIFI_PWD_ARG)
     return f"WIFI:T:WPA;S:{name};P:{pwd};;"
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # version / size
-    s = ctx.get_first(SIZE_ARG) if ctx.is_present(SIZE_ARG) else DEF_SIZE
+    s: int = int(ctx.get_first(SIZE_ARG)) if ctx.is_present(SIZE_ARG) else DEF_SIZE
     assert_true(0 < s <= 40, "Size must be between 1 and 40")
 
     # prepare wifi code
