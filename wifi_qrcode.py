@@ -58,6 +58,7 @@ def gen_qrcode(content: str, size: int, path: str) -> None:
     img = qr.make_image()
     img.save(path)
 
+
 """
 WIFI QRCode Generator
 
