@@ -1,8 +1,5 @@
 from util import *
 
-T = '    '  # four space tab
-TT = T + T  # two tabs
-
 #
 # Argument keys that only accept one single parameter
 #
@@ -507,6 +504,11 @@ yongj.zhuang
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+
+    # no arg provided
+    if len(args) == 0:
+        print_help()
+        sys.exit(0)
 
     # parse args as context
     ctx = Context(args, lambda x: x in flag_set)

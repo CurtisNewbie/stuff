@@ -1,6 +1,9 @@
 import sys
 from typing import List, Dict, Set
 
+T = '    '  # four space tab
+TT = T + T  # two tabs
+
 
 def first_char_upper(s: str) -> str:
     """Make first char uppercase"""
@@ -62,7 +65,7 @@ def is_not_empty_str(s: str) -> bool:
     return False if s.strip() == '' else True
 
 
-def assert_true(flag: bool, msg: str, hint: str = None) -> None:
+def assert_true(flag: bool, msg: str = 'Illegal Argument', hint: str = None) -> None:
     """Assert the given flag is true, else print an error msg and exit the program"""
     if flag is not True:
         s = f"[Error] {msg}"
