@@ -13,6 +13,7 @@ def print_help():
     print('arg[0] - text to be splited')
     print('arg[1] - delimiter')
 
+
 def main():
     text = sys.argv[1]
     if len(sys.argv) > 2:

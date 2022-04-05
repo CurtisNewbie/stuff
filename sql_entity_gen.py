@@ -1,6 +1,4 @@
-import sys
-
-from typing import Set, List, Dict
+from util import *
 
 T = '    '  # four space tab
 TT = T + T  # two tabs
@@ -12,9 +10,6 @@ AUTHOR_ARG: str = "--author"
 PATH_ARG: str = "--path"
 EXCLUDE_ARG: str = "--exclude"
 OUTPUT_ARG: str = "--output"
-
-# set of arguments key
-arg_set: Set[str] = {AUTHOR_ARG, PATH_ARG, EXCLUDE_ARG}
 
 #
 # Flags that indicate a feature or a switch is turned on when they present 
@@ -79,36 +74,6 @@ def is_not_comment(line: str) -> bool:
     return False if line.strip().startswith("--") else True
 
 
-def is_not_empty_str(s: str) -> bool:
-    """Return true if string is not empty else false"""
-    return False if s.strip() == '' else True
-
-
-def write_file(path: str, content: str) -> None:
-    """
-    Write all content to a file
-
-    arg[0] - file path
-
-    arg[1] - content
-    """
-    f = open(path, "w")
-    f.write(content)
-    f.close()
-
-
-def read_file(path: str) -> List[str]:
-    """
-    Read all content of a file in forms of a list of string, each represents a single line
-
-    arg[0] - file path
-    """
-    f = open(path, "r")
-    lines = f.read().splitlines()
-    f.close()
-    return lines
-
-
 def print_help():
     """
     Print help
@@ -154,100 +119,6 @@ def data_type_mapping_str(pre: str) -> str:
     return s
 
 
-def is_flag(key: str) -> bool:
-    """whether the key is a flag """
-    return key in flag_set
-
-
-def is_arg(key: bool) -> bool:
-    """Whether the key is an argument (that has one or more values associated with it)"""
-    return key in arg_set
-
-
-class Context:
-    """Context"""
-
-    def __init__(self, argv: List[str]):
-        # ctx_dict: dict<key: string, value: list of string>
-        self.ctx_dict: Dict[str, List[str]] = {}
-        self._parse_context(argv)
-
-    def _put(self, k: str, v: str):
-        """
-        put key -> value in context, value is not overwritten when key collides
-
-        arg[0] - key, arg[1] - value
-        """
-        if k in self.ctx_dict:
-            self.ctx_dict[k].append(v)
-        else:
-            self.ctx_dict[k] = [v]
-
-    def _parse_context(self, argv: List[str]):
-        """
-        Parse arguments
-
-        arg[0] - list of string
-        """
-        argv = list(filter(is_not_empty_str, argv))
-
-        i = 0
-        al = len(argv)
-        if al == 0:
-            print("Error - Argument list is empty")
-            sys.exit(1)
-
-        while i < al:
-            ar = argv[i]
-            if is_flag(ar):
-                self._put(ar, '')
-                i += 1
-            else:
-                if i + 1 > al:
-                    print(f"Error - {ar}'s argument is missing")
-                    sys.exit(1)
-                self._put(ar, argv[i + 1])
-                i += 2
-
-    def is_present(self, k: str) -> bool:
-        """
-        Whether key is present
-
-        arg[0] - key
-        """
-        return k in self.ctx_dict
-
-    def get_first(self, k: str) -> str:
-        """
-        Get first value for given key
-
-        arg[0] - key
-        """
-        return self.get(k)[0]
-
-    def get(self, k: str) -> List[str]:
-        """
-        Get values for given key, a list is returned
-
-        arg[0] - key
-        """
-        return self.ctx_dict[k]
-
-    def __str__(self):
-        s = ''
-        for k in self.ctx_dict:
-            if s != '':
-                s += '\n'
-            s += f'key: "{k}" -> value: {self.ctx_dict[k]}'
-        return s
-
-
-def assert_true(flag: bool, msg: str) -> None:
-    if flag is not True:
-        print(f"[Error] {msg}")
-        sys.exit(1)
-
-
 def parse_ddl(lines: List[str]):
     lines = list(filter(is_not_comment, lines))
 
@@ -283,11 +154,6 @@ def parse_ddl(lines: List[str]):
     assert_true(len(fields) > 0, 'Failed to parse DDL, this table doesn\'t have fields')
 
     return SQLTable(table_name, table_comment, fields)
-
-
-def str_matches(t: str, v: str) -> bool:
-    """Check whether two string matches ignore cases"""
-    return t.casefold() == v.casefold()
 
 
 # data structures used by is_constraint() method
@@ -338,11 +204,6 @@ def parse_field(tokens: list, line_no: int) -> "SQLField":
     assert_true(st is not None,
                 f"Failed to parse DDL, unable to identify data type for field '{field_name}', illegal syntax at line {line_no}")
     return SQLField(field_name, kw, st, extract_comment(tokens, line_no))
-
-
-def first_char_upper(s: str) -> str:
-    """Make first char uppercase"""
-    return s[0:1].upper() + s[1:]
 
 
 def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
@@ -408,8 +269,8 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
     excluded = set()
     if ctx.is_present(EXCLUDE_ARG):
         for x in ctx.get(EXCLUDE_ARG):
-            for s in list(filter(is_not_empty_str, x.split(','))):
-                excluded.add(s)
+            for v in list(filter(is_not_empty_str, x.split(','))):
+                excluded.add(v)
 
     for f in table.fields:
         if f.sql_field_name in excluded:
@@ -551,15 +412,16 @@ def extract_table_name(tokens: List[str], line_no: int) -> str:
     err_msg = f"Illegal CREATE TABLE statement at line: {line_no}"
     tlen = len(tokens)
 
-    assert_true(tlen >= 4, err_msg)
+    assert_true(tlen >= 4, err_msg, 'Invalid number to tokens, must be greater or equal to 4')
     if tlen > 4:
         assert_true(tlen == 7, err_msg)
-    assert_true(arr_partial_matches(tokens, [CREATE, TABLE]), err_msg)
+    assert_true(arr_partial_matches(tokens, [CREATE, TABLE]), err_msg, 'Does not matches CREATE TABLE ...')
 
     if tlen == 4:  # create table [table_name]
         name = tokens[2]
     else:  # create table if not exists [table_name]
-        assert_true(arr_partial_matches(tokens, ['if', 'not', 'exists'], 2), err_msg)
+        assert_true(arr_partial_matches(tokens, ['if', 'not', 'exists'], 2), err_msg,
+                    'Does not matches CREATE TABLE IF NOT EXISTS')
         name = tokens[5]
 
     name = name.replace("`", "")
@@ -587,26 +449,6 @@ def to_java_type(keywords: Set[str], sql_type: str) -> str:
     assert_true(sql_type in sql_java_type_mapping, f"Unable to find corresponding java type for {sql_type}")
 
     return sql_java_type_mapping[sql_type]
-
-
-def to_camel_case(s: str) -> str:
-    """
-    Convert a string to camel case
-    """
-    is_prev_uc = False  # is prev in uppercase
-    s = s.lower()
-    ccs = ''
-    for i in range(len(s)):
-        ci = s[i]
-        if ci == '_':
-            is_prev_uc = True
-        else:
-            if is_prev_uc:
-                ccs += ci.upper()
-                is_prev_uc = False
-            else:
-                ccs += ci
-    return ccs
 
 
 class SQLField:
@@ -657,17 +499,17 @@ class SQLTable:
         return java_type in self.java_type_set
 
 
-# -----------------------------------------------------------
-#
-# Main 
-#
-# -----------------------------------------------------------
+""" 
+SQL to Java Entity Generator  
+
+yongj.zhuang
+"""
 
 if __name__ == '__main__':
     args = sys.argv[1:]
 
     # parse args as context
-    ctx = Context(args)
+    ctx = Context(args, lambda x: x in flag_set)
     if ctx.is_present(HELP_FLAG):
         print_help()
         sys.exit(0)
