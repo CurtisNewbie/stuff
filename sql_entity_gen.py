@@ -267,7 +267,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
     if ctx.is_present(EXCLUDE_ARG):
         for x in ctx.get(EXCLUDE_ARG):
             for v in list(filter(is_not_empty_str, x.split(','))):
-                excluded.add(v)
+                excluded.add(v.strip())
 
     for f in table.fields:
         if f.sql_field_name in excluded:
