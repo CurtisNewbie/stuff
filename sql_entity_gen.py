@@ -86,7 +86,8 @@ def print_help():
     print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
     print("  For example:\n")
     print(
-        f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} {OUTPUT_ARG} Book.java\n")
+        f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} "
+        f"{TT}{OUTPUT_ARG} src/main/java/com/curtisnewbie/Book.java\n")
     print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
     print(f"{T}simple Java Class for this 'table'. The SQL file should ")
     print(f"{T}only contain one 'CREATE TABLE' statement.\n")
