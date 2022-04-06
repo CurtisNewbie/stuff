@@ -203,22 +203,30 @@ def parse_field(tokens: list, line_no: int) -> "SQLField":
     return SQLField(field_name, kw, st, extract_comment(tokens, line_no))
 
 
-def generate_java_class(table: "SQLTable", ctx: "Context") -> str:
+def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None, package: None) -> str:
     """
     Generate Java class, and return it as a string
 
-    arg[0] - SQLTable object
-
-    arg[1] - Context object
+    :param table SQLTable object
+    :param ctx Context object
+    :param spec_class_name specified class name (if None, it will attempt to generate one based the class name used in DDL)
+    :param package package for the class (optional)
+    :return generated java class as a str
     """
 
     # features
     mbp_ft = ctx.is_present(MYBATIS_PLUS_FLAG)
     lambok_ft = ctx.is_present(LAMBOK_FLAG)
 
-    table_camel_case = to_camel_case(table.table_name)
-    class_name = first_char_upper(table_camel_case)
+    # if the class name is specified, we used the given one instead of the one parsed from CREATE TABLE statement
+    class_name = spec_class_name if spec_class_name is not None else first_char_upper(to_camel_case(table.table_name))
     s = ''
+
+    '''
+        For package
+    '''
+    if package is not None:
+        s += f"package {package};\n"
 
     '''
         For Imports 
@@ -495,6 +503,25 @@ class SQLTable:
         """
         return java_type in self.java_type_set
 
+    def supply_java_class_name(self):
+        """
+        Supply java class name based on the one used in DDL
+        """
+        return first_char_upper(to_camel_case(self.table_name))
+
+
+def guess_package(path: str) -> str or None:
+    hi = path.rfind("/")  # only works for unix like OS
+    if hi == -1:
+        return None
+
+    pat = 'src/main/java'
+    lo = path.find(pat)
+    if lo == -1:
+        return None
+
+    return path[lo + len(pat) + 1: hi].replace('/', '.')
+
 
 """ 
 SQL to Java Entity Generator  
@@ -522,16 +549,28 @@ if __name__ == '__main__':
     lines = read_file(path)
 
     # parse ddl
-    table = parse_ddl(lines)
+    table: SQLTable = parse_ddl(lines)
+    print()  # extra line break
     print(table)
 
-    # generate java class                                       
-    generated = generate_java_class(table, ctx)
-
-    # write to file
+    # check whether file name is specified, it does affect the java class name that we are about to use
     if ctx.is_present(OUTPUT_ARG):
         fn = ctx.get_first(OUTPUT_ARG)
+        hi = fn.rindex('.java')
+        lo = fn.rfind('/')
+        if lo == -1:
+            lo = 0
+        else:
+            lo = lo + 1
+        java_class_name = fn[lo: hi]
     else:
-        fn = first_char_upper(to_camel_case(table.table_name)) + ".java"
+        java_class_name = table.supply_java_class_name()
+        fn = java_class_name + ".java"
+
+    # generate java class                                       
+    generated = generate_java_class(table, ctx, java_class_name, guess_package(fn))
+
+    # write to file
+
     write_file(fn, generated)
     print(f"Java class generated and written to \'{fn}\'")
