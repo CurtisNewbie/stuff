@@ -373,7 +373,7 @@ def extract_comment(tokens, line_no) -> str:
         return ''
 
     joined = ' '.join(tokens[l: h + 1])
-    return joined[joined.find(quote) + 1: joined.rfind(quote) - 1]
+    return joined[joined.find(quote) + 1: joined.rfind(quote)]
 
 
 def first_quote(s, after=-1) -> List[str]:
