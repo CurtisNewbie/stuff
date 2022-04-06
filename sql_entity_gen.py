@@ -219,7 +219,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
     lambok_ft = ctx.is_present(LAMBOK_FLAG)
 
     # if the class name is specified, we used the given one instead of the one parsed from CREATE TABLE statement
-    class_name = spec_class_name if spec_class_name is not None else first_char_upper(to_camel_case(table.table_name))
+    class_name = spec_class_name if spec_class_name is not None else table.supply_java_class_name()
     s = ''
 
     '''
