@@ -116,18 +116,24 @@ def data_type_mapping_str(pre: str) -> str:
     return s
 
 
-def parse_ddl(lines: List[str]):
-    lines = list(filter(is_not_comment, lines))
-
+def parse_ddl(lines: List[str], ctx: "Context"):
     """
     Parse 'CREATE TABLE' DDL Script
 
-    arg[0] - list of string, each represents a single line
+    :param lines list of string, each represents a single line
+    :param ctx context
     """
+    lines = list(filter(is_not_comment, lines))
     table_name = None
     table_comment = None
     fields = []
     l = len(lines)
+
+    excluded = set()
+    if ctx.is_present(EXCLUDE_ARG):
+        for x in ctx.get(EXCLUDE_ARG):
+            for v in list(filter(is_not_empty_str, x.split(','))):
+                excluded.add(v.strip())
 
     for i in range(l):
         trimmed = lines[i].strip()
@@ -145,7 +151,11 @@ def parse_ddl(lines: List[str]):
         else:
             if is_constraint(tokens):
                 continue
-            fields.append(parse_field(tokens, line_no))
+
+            f = parse_field(tokens, line_no)
+            if f.sql_field_name in excluded:
+                continue
+            fields.append(f)
 
     assert_true(table_name is not None, 'Failed to parse DDL, table name is not found')
     assert_true(len(fields) > 0, 'Failed to parse DDL, this table doesn\'t have fields')
@@ -231,7 +241,6 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
     '''
         For Imports 
     '''
-    s += "import java.util.*;\n"
     if table.is_type_used('LocalDateTime'):
         s += "import java.time.*;\n"
     if table.is_type_used('BigDecimal'):
@@ -240,9 +249,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
 
     # for mybatis-plus only
     if mbp_ft:
-        s += "import com.baomidou.mybatisplus.annotation.IdType;\n"
-        s += "import com.baomidou.mybatisplus.annotation.TableField;\n"
-        s += "import com.baomidou.mybatisplus.annotation.TableId;\n"
+        s += "import com.baomidou.mybatisplus.annotation.*;\n"
     s += '\n'
 
     # for lambok
@@ -271,16 +278,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
     '''
         Fields
     '''
-    excluded = set()
-    if ctx.is_present(EXCLUDE_ARG):
-        for x in ctx.get(EXCLUDE_ARG):
-            for v in list(filter(is_not_empty_str, x.split(','))):
-                excluded.add(v.strip())
-
     for f in table.fields:
-        if f.sql_field_name in excluded:
-            continue
-
         s += f"{T}/** {f.comment} */\n"
         if mbp_ft:
             if str_matches(f.sql_field_name, 'id'):
@@ -549,7 +547,7 @@ if __name__ == '__main__':
     lines = read_file(path)
 
     # parse ddl
-    table: SQLTable = parse_ddl(lines)
+    table: SQLTable = parse_ddl(lines, ctx)
     print()  # extra line break
     print(table)
 
