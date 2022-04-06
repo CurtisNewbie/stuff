@@ -78,16 +78,16 @@ def assert_true(flag: bool, msg: str = 'Illegal Argument', hint: str = None) -> 
 class Context:
     """Context"""
 
-    def __init__(self, argv: List[str], is_flag_predicate_func):
+    def __init__(self, argv: List[str], is_flag_predicate_func=None):
         """
         Create a new Context by parsing the given arguments list
 
         :param argv: list of str
         :param is_flag_predicate_func: function that takes a str and returns bool indicating whether the given str is a
-            flag or not
+            flag or not (if not provided, then we think there is no flag at all)
         """
         self.ctx_dict: Dict[str, List[str]] = {}
-        self.is_flag_predicate_func = is_flag_predicate_func
+        self.is_flag_predicate_func = is_flag_predicate_func if is_flag_predicate_func is not None else lambda x: False
         self._parse_context(argv)
 
     def _put(self, k: str, v: str):
