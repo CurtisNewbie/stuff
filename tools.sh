@@ -28,6 +28,10 @@ function gstashpop() {
     git stash pop
 }
 
+function mpackage() {
+    mvn package 
+}
+
 function gcb() {
     if [ -z $1 ]; then
         echo_red "please enter branch name" 
