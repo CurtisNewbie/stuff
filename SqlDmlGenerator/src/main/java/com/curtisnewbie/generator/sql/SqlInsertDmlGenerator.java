@@ -139,12 +139,17 @@ public class SqlInsertDmlGenerator {
     public SqlInsertDmlGenerator withTabDelimitedParams(final String tabDelimitedParams, final boolean isAllQuoted) {
         final String[] lines = tabDelimitedParams.split("\n");
         final String[] titles = lines[0].split("\\t");
+        final int tlen = titles.length;
 
         for (int i = 1; i < lines.length; i++) {
             final String[] columns = lines[i].split("\\t");
+            final int clen = columns.length;
             final ChainedMap chainedMap = new ChainedMap();
-            for (int j = 0; j < columns.length; j++) {
-                chainedMap.thenPut(titles[j], columns[j]);
+            for (int j = 0; j < tlen; j++) {
+                if (j >= clen)
+                    chainedMap.thenPut(titles[j], "");
+                else
+                    chainedMap.thenPut(titles[j], columns[j]);
             }
             withMapParam(chainedMap.get(), isAllQuoted);
         }
