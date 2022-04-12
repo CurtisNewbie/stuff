@@ -8,6 +8,29 @@ yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 trash_can="$HOME/tmp"
 
+# complete -W "-r" gbranch 
+complete -F _gbranch_completion gbranch 
+complete -F _reset_one_completion reset_one 
+
+
+_gbranch_completion()
+{
+    if [ ${#COMP_WORDS[@]} -gt 2 ]; then
+        return
+    fi
+
+    COMPREPLY=("-r")
+}
+
+_reset_one_completion()
+{
+    if [ ${#COMP_WORDS[@]} -gt 2 ]; then
+        return
+    fi
+
+    COMPREPLY=("--y")
+}
+
 function trm() {
     if [ -z $1 ]; then
         echo_red "please specify file to remove"
