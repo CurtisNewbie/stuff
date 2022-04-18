@@ -31,8 +31,8 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
-function lgrep() {
-    ls -a | grep "$1"
+function lfind() {
+    ls -a | grep "$1" -i
 }
 
 function trm() {
