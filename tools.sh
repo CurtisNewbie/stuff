@@ -31,6 +31,10 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
+function lgrep() {
+    ls -a | grep "$1"
+}
+
 function trm() {
     if [ -z $1 ]; then
         echo_red "please specify file to remove"
