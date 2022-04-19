@@ -141,7 +141,29 @@ function gamd() {
 }
 
 function gswitch() {
+    # On branch xxx 
+    branch=$(git status)
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
     git switch "$1"
+    if [ $? -eq 0 ]; then
+        branch=$(echo "$branch" | cut -d $'\n' -f 1)
+        branch=${branch:10}
+        branch=${branch%%$'\n'*}
+
+        GSWITCH_BACK="$branch"
+        echo_cyan "Previous was: $GSWITCH_BACK"
+    fi
+}
+
+function gswitchback() {
+    if [ ! -z $GSWITCH_BACK ]; then
+        gswitch $GSWITCH_BACK
+    else
+        echo_red "No branch to switch back"
+    fi
 }
 
 function gcmt() {
