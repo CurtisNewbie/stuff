@@ -27,7 +27,7 @@ public class App {
         final JsonBasedCmd cmd = new ObjectMapper().readValue(file, JsonBasedCmd.class);
         final SqlInsertDmlGenerator generator = new SqlInsertDmlGenerator(cmd.getFields(), cmd.getDbName(), cmd.getTableName())
                 .withJsonDefaultParam(cmd.getDefaultParams())
-                .withTabDelimitedParams(cmd.getTabDelimitedParam());
+                .withTabDelimitedParams(cmd.getTabDelimitedParam(), true);
 
         System.out.println(generator.generateInsertSql());
         System.out.println();
