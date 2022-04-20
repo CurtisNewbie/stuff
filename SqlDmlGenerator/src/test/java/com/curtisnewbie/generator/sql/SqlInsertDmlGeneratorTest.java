@@ -15,15 +15,16 @@ public class SqlInsertDmlGeneratorTest {
 
     @Test
     public void generate_insert_template_sql() {
+        /*
+        {
+            "fields" : "",
+            "dbName" : "",
+            "tableName" : "",
+            "defaultParams" : "" ,
+            "tabDelimitedParam: ""
+        }
+         */
         final String insertSql = new SqlInsertDmlGenerator(fields, dbName, tableName)
-                .withMapDefaultParam(new ChainedMap()
-                        .thenPut("created_at", "CURRENT_TIMESTAMP")
-                        .thenPut("created_by", "''")
-                        .thenPut("updated_by", "''")
-                        .thenPut("updated_at", "CURRENT_TIMESTAMP")
-                        .thenPut("trace_id", "''")
-                        .thenPut("del_flag", "'N'")
-                        .get())
                 .withJsonDefaultParam(jsonDefaultParam)
                 .withTabDelimitedParams(tabDelimitedParams, true)
                 .generateInsertSql();
