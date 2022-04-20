@@ -2,8 +2,7 @@ package com.curtisnewbie.generator.sql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @author yongj.zhuang
@@ -25,11 +24,25 @@ public class App {
 
 
         final JsonBasedCmd cmd = new ObjectMapper().readValue(file, JsonBasedCmd.class);
-        final SqlInsertDmlGenerator generator = new SqlInsertDmlGenerator(cmd.getFields(), cmd.getDbName(), cmd.getTableName())
-                .withJsonDefaultParam(cmd.getDefaultParams())
-                .withTabDelimitedParams(cmd.getTabDelimitedParam(), true);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(cmd.getTabDelimitedParamPath())))) {
+            final StringBuilder sb = new StringBuilder();
+            boolean isFirstLine = true;
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                } else {
+                    sb.append("\n");
+                }
+                sb.append(line);
+            }
 
-        System.out.println(generator.generateInsertSql());
-        System.out.println();
+            final SqlInsertDmlGenerator generator = new SqlInsertDmlGenerator(cmd.getFields(), cmd.getDbName(), cmd.getTableName())
+                    .withMapDefaultParam(cmd.getDefaultParams())
+                    .withTabDelimitedParams(sb.toString(), true);
+
+            System.out.println(generator.generateInsertSql());
+            System.out.println();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.curtisnewbie.generator.sql;
 
+import java.util.*;
+
 /**
  * @author yongj.zhuang
  */
@@ -11,9 +13,9 @@ public class JsonBasedCmd {
 
     private String tableName;
 
-    private String defaultParams;
+    private Map<String, String> defaultParams;
 
-    private String tabDelimitedParam;
+    private String tabDelimitedParamPath;
 
     public String getFields() {
         return fields;
@@ -42,21 +44,21 @@ public class JsonBasedCmd {
         return this;
     }
 
-    public String getDefaultParams() {
+    public Map<String, String> getDefaultParams() {
         return defaultParams;
     }
 
-    public JsonBasedCmd setDefaultParams(String defaultParams) {
+    public JsonBasedCmd setDefaultParams(Map<String, String> defaultParams) {
         this.defaultParams = defaultParams;
         return this;
     }
 
-    public String getTabDelimitedParam() {
-        return tabDelimitedParam;
+    public String getTabDelimitedParamPath() {
+        return tabDelimitedParamPath;
     }
 
-    public JsonBasedCmd setTabDelimitedParam(String tabDelimitedParam) {
-        this.tabDelimitedParam = tabDelimitedParam;
+    public JsonBasedCmd setTabDelimitedParamPath(String tabDelimitedParamPath) {
+        this.tabDelimitedParamPath = tabDelimitedParamPath;
         return this;
     }
 }
