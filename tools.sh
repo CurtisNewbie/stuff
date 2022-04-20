@@ -56,7 +56,20 @@ function gstashpop() {
 }
 
 function mpackage() {
-    mvn package 
+    if [ ! -z $1 ]
+    then
+        if [ ! -f "$1/pom.xml" ]; then
+            echo_red ">>> $1/pom.xml is not found, aborted"
+        else
+            mvn package -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        fi
+    else
+        if [ ! -f "pom.xml" ]; then
+            echo_red ">>> pom.xml is not found, aborted"
+        else
+            mvn package -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        fi
+    fi
 }
 
 function gcb() {
