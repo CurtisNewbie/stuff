@@ -5,6 +5,11 @@ T = '    '  # four space tab
 TT = T + T  # two tabs
 
 
+def first_char_lower(s: str) -> str:
+    """Make first char lowercase"""
+    return s[0:1].lower() + s[1:]
+
+
 def first_char_upper(s: str) -> str:
     """Make first char uppercase"""
     return s[0:1].upper() + s[1:]
