@@ -136,9 +136,9 @@ public class SqlInsertDmlGenerator {
      * @param csv         csv file content (each line represent a row)
      * @param isAllQuoted whether all values are quoted
      */
-    public SqlInsertDmlGenerator withCsvParam(final String csv, final boolean isAllQuoted) {
+    public SqlInsertDmlGenerator withCsvParam(String csv, final boolean isAllQuoted) {
         // preprocessing
-        csv.replace("\"\"", "\"");
+        csv = csv.replace("\"\"", "\"");
 
         final String[] lines = csv.split("\n");
         final String[] titles = lines[0].split(",");
