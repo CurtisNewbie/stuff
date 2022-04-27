@@ -138,6 +138,17 @@ public class SqlInsertDmlGenerator {
      * @param isAllQuoted whether all values are quoted
      */
     public SqlInsertDmlGenerator withCsvParam(Reader reader, final boolean isAllQuoted) throws IOException {
+        withCsvParam(reader, isAllQuoted, Collections.emptySet());
+        return this;
+    }
+
+    /**
+     * Set parameters
+     *
+     * @param reader      of the csv file
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withCsvParam(Reader reader, final boolean isAllQuoted, final Set<String> excluded) throws IOException {
         try (CSVReader csvReader = new CSVReader(reader)) {
             String[] titles = csvReader.readNext();
             final int tlen = titles.length;
@@ -149,7 +160,7 @@ public class SqlInsertDmlGenerator {
                 final ChainedMap chainedMap = new ChainedMap();
                 final int clen = columns.length;
                 for (int j = 0; j < tlen; j++) {
-                    if (titles[j].trim().isEmpty()) continue;
+                    if (titles[j].trim().isEmpty() || excluded.contains(titles[j])) continue;
 
                     if (j >= clen)
                         chainedMap.thenPut(titles[j], "");

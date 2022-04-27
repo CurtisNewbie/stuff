@@ -15,9 +15,9 @@ public class JsonBasedCmd {
 
     private Map<String, String> defaultParams;
 
-    private String tabDelimitedParamPath;
-
     private String csvFilePath;
+
+    private String excludedCsvFields;
 
     public String getFields() {
         return fields;
@@ -57,5 +57,13 @@ public class JsonBasedCmd {
 
     public void setCsvFilePath(String csvFilePath) {
         this.csvFilePath = csvFilePath;
+    }
+
+    public String getExcludedCsvFields() {
+        return excludedCsvFields;
+    }
+
+    public void setExcludedCsvFields(String excludedCsvFields) {
+        this.excludedCsvFields = excludedCsvFields;
     }
 }
