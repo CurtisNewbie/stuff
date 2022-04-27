@@ -133,6 +133,35 @@ public class SqlInsertDmlGenerator {
     /**
      * Set parameters
      *
+     * @param csv         csv file content (each line represent a row)
+     * @param isAllQuoted whether all values are quoted
+     */
+    public SqlInsertDmlGenerator withCsvParam(final String csv, final boolean isAllQuoted) {
+        final String[] lines = csv.split("\n");
+        final String[] titles = lines[0].split(",");
+        final int tlen = titles.length;
+
+        for (int i = 1; i < lines.length; i++) {
+            final String[] columns = lines[i].split(",");
+            final int clen = columns.length;
+            final ChainedMap chainedMap = new ChainedMap();
+            for (int j = 0; j < tlen; j++) {
+                if (titles[j].trim().isEmpty())
+                    continue;
+
+                if (j >= clen)
+                    chainedMap.thenPut(titles[j], "");
+                else
+                    chainedMap.thenPut(titles[j], columns[j]);
+            }
+            withMapParam(chainedMap.get(), isAllQuoted);
+        }
+        return this;
+    }
+
+    /**
+     * Set parameters
+     *
      * @param tabDelimitedParams tab delimited data (each line represent a row)
      * @param isAllQuoted        whether all values are quoted
      */

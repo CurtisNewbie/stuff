@@ -22,9 +22,8 @@ public class App {
             return;
         }
 
-
         final JsonBasedCmd cmd = new ObjectMapper().readValue(file, JsonBasedCmd.class);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(cmd.getTabDelimitedParamPath())))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(cmd.getCsvFilePath()), "UTF-8"))) {
             final StringBuilder sb = new StringBuilder();
             boolean isFirstLine = true;
             String line;
@@ -39,7 +38,7 @@ public class App {
 
             final SqlInsertDmlGenerator generator = new SqlInsertDmlGenerator(cmd.getFields(), cmd.getDbName(), cmd.getTableName())
                     .withMapDefaultParam(cmd.getDefaultParams())
-                    .withTabDelimitedParams(sb.toString(), true);
+                    .withCsvParam(sb.toString(), true);
 
             System.out.println(generator.generateInsertSql());
             System.out.println();
