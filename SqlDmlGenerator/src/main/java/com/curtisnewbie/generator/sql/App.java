@@ -24,21 +24,9 @@ public class App {
 
         final JsonBasedCmd cmd = new ObjectMapper().readValue(file, JsonBasedCmd.class);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(cmd.getCsvFilePath()), "UTF-8"))) {
-            final StringBuilder sb = new StringBuilder();
-            boolean isFirstLine = true;
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                } else {
-                    sb.append("\n");
-                }
-                sb.append(line);
-            }
-
             final SqlInsertDmlGenerator generator = new SqlInsertDmlGenerator(cmd.getFields(), cmd.getDbName(), cmd.getTableName())
                     .withMapDefaultParam(cmd.getDefaultParams())
-                    .withCsvParam(sb.toString(), true);
+                    .withCsvParam(br, true);
 
             System.out.println(generator.generateInsertSql());
             System.out.println();

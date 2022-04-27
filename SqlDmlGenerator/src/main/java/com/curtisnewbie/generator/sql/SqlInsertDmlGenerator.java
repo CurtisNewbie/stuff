@@ -2,6 +2,7 @@ package com.curtisnewbie.generator.sql;
 
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
+import com.opencsv.*;
 import org.apache.commons.text.*;
 
 import java.io.*;
@@ -133,31 +134,30 @@ public class SqlInsertDmlGenerator {
     /**
      * Set parameters
      *
-     * @param csv         csv file content (each line represent a row)
+     * @param reader      of the csv file
      * @param isAllQuoted whether all values are quoted
      */
-    public SqlInsertDmlGenerator withCsvParam(String csv, final boolean isAllQuoted) {
-        // preprocessing
-        csv = csv.replace("\"\"", "\"");
+    public SqlInsertDmlGenerator withCsvParam(Reader reader, final boolean isAllQuoted) throws IOException {
+        try (CSVReader csvReader = new CSVReader(reader)) {
+            String[] titles = csvReader.readNext();
+            final int tlen = titles.length;
 
-        final String[] lines = csv.split("\n");
-        final String[] titles = lines[0].split(",");
-        final int tlen = titles.length;
 
-        for (int i = 1; i < lines.length; i++) {
-            final String[] columns = lines[i].split(",");
-            final int clen = columns.length;
-            final ChainedMap chainedMap = new ChainedMap();
-            for (int j = 0; j < tlen; j++) {
-                if (titles[j].trim().isEmpty())
-                    continue;
+            String[] columns;
+            while ((columns = csvReader.readNext()) != null) {
 
-                if (j >= clen)
-                    chainedMap.thenPut(titles[j], "");
-                else
-                    chainedMap.thenPut(titles[j], columns[j]);
+                final ChainedMap chainedMap = new ChainedMap();
+                final int clen = columns.length;
+                for (int j = 0; j < tlen; j++) {
+                    if (titles[j].trim().isEmpty()) continue;
+
+                    if (j >= clen)
+                        chainedMap.thenPut(titles[j], "");
+                    else
+                        chainedMap.thenPut(titles[j], columns[j]);
+                }
+                withMapParam(chainedMap.get(), isAllQuoted);
             }
-            withMapParam(chainedMap.get(), isAllQuoted);
         }
         return this;
     }
