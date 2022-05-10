@@ -627,6 +627,25 @@ function pom_ver() {
     echo "'$name' Project.Version: $cyan $ver $colour_reset"
 }
 
+function set_git_user() {
+  if [ ! -d ".git" ]; then
+    # echo "$(pwd) not a git repository, skipped ..."
+    exit 0;
+  fi
 
+  git config user.name "$1" 
+  git config user.email "$2" 
+  if [ $? -eq 0 ]; then
+    echo "Configured git.user in $(pwd)"
+  fi 
+}
 
-
+function all_set_git_user() {
+  echo "Configuring all git repo under $(pwd) to use user.name: $1, user.email: $2"
+  for d in *
+  do
+    if [ -d "$d" ]; then
+      (cd "$d"; set_git_user "$1" "$2")
+    fi
+  done
+}
