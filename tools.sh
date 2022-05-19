@@ -31,6 +31,10 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
+function clfind() {
+    cd $(lfind "$1")
+}
+
 function lfind() {
     ls -a | grep "$1" -i
 }
