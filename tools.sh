@@ -653,3 +653,12 @@ function all_set_git_user() {
     fi
   done
 }
+
+function set_append_target(){
+    APPEND_TARGET="$1"
+}
+
+function append() {
+    echo "$1" >> "$APPEND_TARGET" 
+}
+
