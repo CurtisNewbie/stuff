@@ -659,6 +659,11 @@ function set_append_target(){
 }
 
 function append() {
-    echo "$1" >> "$APPEND_TARGET" 
+    if [ -z "$1" ]; then 
+        cnt=""
+    else 
+        cnt="$1"
+    fi
+    echo "$cnt" >> "$APPEND_TARGET" 
 }
 
