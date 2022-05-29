@@ -252,7 +252,7 @@ function echo_cyan() {
     echo $cyan"$1"$colour_reset
 }
 
-function mcompile() {
+function mcp() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
