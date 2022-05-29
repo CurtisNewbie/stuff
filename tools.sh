@@ -667,3 +667,10 @@ function append() {
     echo "$cnt" >> "$APPEND_TARGET" 
 }
 
+function rmlogs() {
+    find . -name "*.log" | while read f; do 
+        echo "removed $f"
+        rm $f
+    done
+}
+
