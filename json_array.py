@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import sys
 
 
@@ -20,6 +22,6 @@ def print_help():
 if __name__ == "__main__"   :
     if len(sys.argv) < 2: 
         print_help()
-        raise Exception('Illegal Arguments')
+        sys.exit(1)
 
     json_arr(sys.argv[1])
