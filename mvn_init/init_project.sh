@@ -2,7 +2,7 @@
 
 function help() {
     echo "args[0] - target directory"
-    echo "args[1] -  project name"
+    echo "args[1] - project name"
     echo "args[2] - project description (optional)"
 }
 
