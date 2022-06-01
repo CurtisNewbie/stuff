@@ -63,6 +63,7 @@ if [ -d "$projd" ]; then
 fi
 
 cp "$curr/template.zip" "$target"
+cp "$curr/.gitignore" "$target"
 (
 cd $target  
 unzip "./template.zip"
