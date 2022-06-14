@@ -679,7 +679,7 @@ function fd_count() {
 }
 
 function fmem() {
-    free -m 
+    free -mh
 }
 
 
