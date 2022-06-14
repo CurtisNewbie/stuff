@@ -678,7 +678,7 @@ function fd_count() {
     sudo ls -l /proc/$1/fd/ | wc -l
 }
 
-function fmem() {
+function mem() {
     free -mh
 }
 
