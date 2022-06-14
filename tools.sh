@@ -678,3 +678,8 @@ function fd_count() {
     ls -l /proc/$1/fd/ | wc -l
 }
 
+function fmem() {
+    free -m 
+}
+
+
