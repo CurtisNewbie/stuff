@@ -675,7 +675,7 @@ function rmlogs() {
 }
 
 function fd_count() {
-    ls -l /proc/$1/fd/ | wc -l
+    sudo ls -l /proc/$1/fd/ | wc -l
 }
 
 function fmem() {
