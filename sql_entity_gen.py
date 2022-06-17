@@ -9,6 +9,7 @@ AUTHOR_ARG: str = "--author"
 PATH_ARG: str = "--path"
 EXCLUDE_ARG: str = "--exclude"
 OUTPUT_ARG: str = "--output"
+EXTENDS_ARG: str = "--extends"
 
 #
 # Flags that indicate a feature or a switch is turned on when they present 
@@ -83,11 +84,12 @@ def print_help():
     print(f"{T}'{EXCLUDE_ARG} $field' : one or move field to be excluded (delimited by \',\')")
     print(f"{T}'{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
     print(f"{T}'{OUTPUT_ARG}' : (Optional) Where the generate java class is written to")
-    print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class\n")
+    print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class")
+    print(f"{T}'{EXTENDS_ARG}' : Canonical class name that it extends, e.g., \'com.curtisnewbie.dao.BaseEntity\'\n")
     print("  For example:\n")
     print(
         f"{T}python3 sql_entity_gen.py {PATH_ARG} book.sql {EXCLUDE_ARG} \'create_time,create_by\' {MYBATIS_PLUS_FLAG} {LAMBOK_FLAG} "
-        f"{TT}{OUTPUT_ARG} src/main/java/com/curtisnewbie/Book.java\n")
+        f"{OUTPUT_ARG} src/main/java/com/curtisnewbie/Book.java {EXTENDS_ARG} \'com.curtisnewbie.dao.BaseEntity\'\n")
     print(f"{T}This tool parse a SQL DDL script file, and then generate a ")
     print(f"{T}simple Java Class for this 'table'. The SQL file should ")
     print(f"{T}only contain one 'CREATE TABLE' statement.\n")
@@ -257,6 +259,10 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
     if lambok_ft:
         s += "import lombok.*;\n"
 
+    # for inheritance
+    if ctx.is_present(EXTENDS_ARG):
+        s += f"import {ctx.get_first(EXTENDS_ARG).strip()};\n"
+
     s += '\n'
     s += '/**\n'
     s += f" * {table.table_comment}\n"
@@ -274,7 +280,13 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
     if mbp_ft:
         s += f"@TableName(value = \"{table.table_name}\")\n"
 
-    s += f"public class {class_name} {{\n\n"
+    s += f"public class {class_name}"
+    if ctx.is_present(EXTENDS_ARG):
+        canonical = ctx.get_first(EXTENDS_ARG)
+        r = canonical.rfind('.')
+        s += f" extends {canonical[r + 1:]}"
+
+    s += " {\n\n"
 
     '''
         Fields
@@ -374,6 +386,7 @@ def extract_comment(tokens, line_no) -> str:
         return ''
 
     joined = ' '.join(tokens[l: h + 1])
+    # print(f"tokens: {tokens}, qt: {quote}, l: {l}, h: {h}, joined: {joined}, cmt: {cmt}")
     return joined[joined.find(quote) + 1: joined.rfind(quote)]
 
 
@@ -396,6 +409,7 @@ def first_quote(s: str, after=0) -> List[str]:
         return ['\'', sq]
     else:
         return ['\'', sq] if sq < dq else ['\"', dq]
+
 
 def extract_table_name(tokens: List[str], line_no: int) -> str:
     """
@@ -487,7 +501,7 @@ class SQLTable:
             s += f" - {f}\n"
         return s
 
-    def is_type_used(self, java_type: str):
+    def is_type_used(self, java_type: str) -> bool:
         """
         Check whether the java type is used in this table
 
@@ -495,7 +509,7 @@ class SQLTable:
         """
         return java_type in self.java_type_set
 
-    def supply_java_class_name(self):
+    def supply_java_class_name(self) -> str:
         """
         Supply java class name based on the one used in DDL
         """
