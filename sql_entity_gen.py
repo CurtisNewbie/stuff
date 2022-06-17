@@ -18,9 +18,7 @@ LAMBOK_FLAG: str = "--lambok"
 HELP_FLAG: str = '--help'
 
 # set of flag key (flag doesn't need value, it's just a flag)
-flag_set: Set[str] = {MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG}
-
-#
+flag_set: Set[str] = {MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG}  #
 # some constants
 #
 CREATE: str = "create"
@@ -320,13 +318,13 @@ def extract_comment(tokens, line_no) -> str:
     llen = len(tokens)
     l = -1
     h = -1
-    quote = '\''
+    quote = None;
 
     # try to find comment, it won't be the first one anyway
     i = 0
     while i < llen:
 
-        # COMMENT = 'xxx  or COMMENT =' xxx  or COMMENT= 'xxx  or COMMENT=' xxx 
+        # COMMENT = 'xxx  or COMMENT =' xxx  or COMMENT= 'xxx  or COMMENT=' xxx  or COMMENT 'xxx or COMMENT'xxx
         if tokens[i].lower().startswith('comment'):
 
             # make sure there is only one COMMENT keyword
@@ -334,36 +332,30 @@ def extract_comment(tokens, line_no) -> str:
                         f"Failed to parse DDL, multiple COMMENT keyword is found, illegal syntax at line: {line_no}")
             l = i
 
-            # find where the equal sign is 
-            # if no equal sign found
-            # then it's the COMMENT = ..... case
             eq = tokens[i].find('=')
-            if eq == -1:
-                l = i + 1
-            else:
-                # found equal sign
-                # it may be COMMENT='xxx or COMMENT= 'xxx
-                # try to find the quotes
-                # maybe there is a ' or " after the eq sign ?
+            if eq == -1:  # no equal sign is found then it's the COMMENT ..... case
+                qt = first_quote(tokens[i])
+            else:  # it may be COMMENT='xxx or COMMENT= 'xxx, find the quotes after the eq sign
                 qt = first_quote(tokens[i], eq - 1)
 
-                # no quote is found, we must find one, if we don't, this is a syntax error
-                if qt[0] is None:
-                    while i < llen:
-                        qt = first_quote(tokens[i])
-                        if qt[0] is not None:
-                            quote = qt[0]
-                            l = i
-                            break
-                        i += 1
+            # no quote is found, we must find one, if we don't, this is a syntax error
+            if qt[0] is None:
+                i += 1
+                while i < llen:
+                    qt = first_quote(tokens[i])
+                    if qt[0] is not None:
+                        quote = qt[0]
+                        l = i
+                        break
+                    i += 1
 
-                    # opening quote is not found, syntax error
-                    assert_true(i < llen,
-                                f'Syntax error, unable to find the opening quote for comment at line: {line_no}')
-                else:
-                    # which quote is used (' or ")
-                    quote = qt[0]
-                    l = i
+                # opening quote is not found, syntax error
+                assert_true(i < llen,
+                            f'Syntax error, unable to find the opening quote for comment at line: {line_no}')
+            else:
+                # which quote is used (' or ")
+                quote = qt[0]
+                l = i
 
                 # current token is also the end of the comment
                 # which is the case: COMMENT='xxx'
@@ -385,7 +377,7 @@ def extract_comment(tokens, line_no) -> str:
     return joined[joined.find(quote) + 1: joined.rfind(quote)]
 
 
-def first_quote(s, after=-1) -> List[str]:
+def first_quote(s: str, after=0) -> List[str]:
     """
     Find the first quote being used, it may be a single  quote or a double quote
 
@@ -398,13 +390,12 @@ def first_quote(s, after=-1) -> List[str]:
     dq = s.find('\"', after)
     if sq == -1 and dq == -1:
         return [None, -1]
-    if sq == -1:
+    if sq == -1 and dq != -1:
         return ['\"', dq]
-    elif dq == -1:
+    elif dq == -1 and sq != -1:
         return ['\'', sq]
-
-    return ['\'', sq] if sq < dq else ['\"', dq]
-
+    else:
+        return ['\'', sq] if sq < dq else ['\"', dq]
 
 def extract_table_name(tokens: List[str], line_no: int) -> str:
     """
