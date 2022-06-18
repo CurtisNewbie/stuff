@@ -682,4 +682,8 @@ function mem() {
     free -mh
 }
 
+function mtestcp() {
+    mvn test-compile
+}
+
 
