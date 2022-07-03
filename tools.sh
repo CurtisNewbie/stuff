@@ -678,6 +678,10 @@ function fd_count() {
     sudo ls -l /proc/$1/fd/ | wc -l
 }
 
+function threadcount(){
+    sudo ls /proc/$1/task | wc -l 
+}
+
 function mem() {
     free -mh
 }
