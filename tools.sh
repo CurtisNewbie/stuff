@@ -574,7 +574,7 @@ function gen_weekly_report(){
 }
 
 # reset one git commit, '--stage' to keep files in stage area, '--y' or '--Y' to reset without confirmation
-function reset_one() {
+function resetone() {
 
     # do we need to restre --staged
     unstage=1
