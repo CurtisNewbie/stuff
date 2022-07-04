@@ -39,20 +39,19 @@ function lfind() {
     ls -a | grep "$1" -i
 }
 
-function trm() {
+function trash() {
     if [ -z $1 ]; then
-        echo_red "please specify file to remove"
+        return 0 
     fi
 
     trash_can_p=$(readlink -e "$trash_can")
-    echo "Trash can path: $trash_can_p"
 
     if [ ! -d $trash_can_p ]; then
         mkdir $trash_can_p 
     fi
 
     mv $1 $trash_can_p 
-    echo_green "Moved $1 to $trash_can_p"
+    echo_green "Trashed $1 to '$trash_can_p'"
 }
 
 function gstashpop() {
