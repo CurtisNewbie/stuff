@@ -44,14 +44,15 @@ function trash() {
         return 0 
     fi
 
-    trash_can_p=$(readlink -e "$trash_can")
+    # trash_can_p=$(readlink -e "$trash_can")
+    trash_can_p="$trash_can"
 
     if [ ! -d $trash_can_p ]; then
         mkdir $trash_can_p 
     fi
 
     mv $1 $trash_can_p 
-    echo_green "Trashed $1 to '$trash_can_p'"
+    echo_green "Trashed '$1' to '$trash_can_p'"
 }
 
 function gstashpop() {
