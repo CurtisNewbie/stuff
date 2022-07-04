@@ -364,6 +364,11 @@ def extract_comment(tokens, line_no) -> str:
                 # opening quote is not found, syntax error
                 assert_true(i < llen,
                             f'Syntax error, unable to find the opening quote for comment at line: {line_no}')
+
+                if tokens[i].rfind(quote) > qt[1]:
+                    h = i
+                    break
+
             else:
                 # which quote is used (' or ")
                 quote = qt[0]
@@ -381,12 +386,14 @@ def extract_comment(tokens, line_no) -> str:
                 break
         i += 1
 
+    # print(f"tokens: {tokens}, qt: {quote}, l: {l}, h: {h}")
+
     # no comment found
     if l == -1 or h == -1:
         return ''
 
     joined = ' '.join(tokens[l: h + 1])
-    # print(f"tokens: {tokens}, qt: {quote}, l: {l}, h: {h}, joined: {joined}, cmt: {cmt}")
+    # print(f"tokens: {tokens}, qt: {quote}, l: {l}, h: {h}, joined: {joined}")
     return joined[joined.find(quote) + 1: joined.rfind(quote)]
 
 
