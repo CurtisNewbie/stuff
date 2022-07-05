@@ -39,20 +39,20 @@ function lfind() {
     ls -a | grep "$1" -i
 }
 
-function trm() {
+function trash() {
     if [ -z $1 ]; then
-        echo_red "please specify file to remove"
+        return 0 
     fi
 
-    trash_can_p=$(readlink -e "$trash_can")
-    echo "Trash can path: $trash_can_p"
+    # trash_can_p=$(readlink -e "$trash_can")
+    trash_can_p="$trash_can"
 
     if [ ! -d $trash_can_p ]; then
         mkdir $trash_can_p 
     fi
 
     mv $1 $trash_can_p 
-    echo_green "Moved $1 to $trash_can_p"
+    echo_green "Trashed '$1' to '$trash_can_p'"
 }
 
 function gstashpop() {
@@ -252,19 +252,25 @@ function echo_cyan() {
     echo $cyan"$1"$colour_reset
 }
 
+# mvn test-compile 
+function mcpt() {
+    mvn test-compile
+}
+
+# mvn compile -o -f [0], or, mvn compile -o
 function mcp() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
             echo_red ">>> $1/pom.xml is not found, aborted"
         else
-            mvn clean compile -f $1 
+            mvn clean compile -o -f $1 
         fi
     else
         if [ ! -f "pom.xml" ]; then
             echo_red ">>> pom.xml is not found, aborted"
         else
-            mvn clean compile 
+            mvn clean compile -o 
         fi  
     fi
 }
@@ -568,19 +574,19 @@ function gen_weekly_report(){
 }
 
 # reset one git commit, '--stage' to keep files in stage area, '--y' or '--Y' to reset without confirmation
-function reset_one() {
+function resetone() {
 
     # do we need to restre --staged
     unstage=1
 
-    # do we need confirmation
-    need_confirm=1
+    # do we need confirmation, 'no' by default
+    need_confirm=0
 
     for arg in "$@"; do
         if [ $arg == '--stage' ]; then  
             unstage=0
-        elif [[ $arg =~ --[yY] ]]; then  
-            need_confirm=0
+        # elif [[ $arg =~ --[yY] ]]; then  
+        #     need_confirm=0
         fi 
     done 
 
@@ -686,12 +692,7 @@ function mem() {
     free -mh
 }
 
-function mcptest() {
-    mvn test-compile
-}
-
 function lcount() {
     ll | wc -l
 }
-
 
