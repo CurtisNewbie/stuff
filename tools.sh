@@ -690,4 +690,8 @@ function mcptest() {
     mvn test-compile
 }
 
+function lcount() {
+    ll | wc -l
+}
+
 
