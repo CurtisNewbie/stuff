@@ -692,4 +692,7 @@ function mem() {
     free -mh
 }
 
+function lcount() {
+    ll | wc -l
+}
 
