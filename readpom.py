@@ -41,6 +41,12 @@ if __name__ == '__main__':
     curr_t = root_t
 
     t = nexttag(nested_tags)
+
+    if t == 'project':
+        nested_tags = trimtag(nested_tags)
+        t = nexttag(nested_tags)
+
+
     while t is not None:
         # print(f"t: {t}, nested_tags: {nested_tags}, curr: {curr_t}")
         curr_t = curr_t.find(NAMESPACE + t)
