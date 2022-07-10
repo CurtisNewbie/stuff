@@ -48,13 +48,18 @@ if __name__ == '__main__':
 
 
     while t is not None:
-        # print(f"t: {t}, nested_tags: {nested_tags}, curr: {curr_t}")
+        print(f"t: {t}, nested_tags: {nested_tags}, curr: {curr_t}")
         curr_t = curr_t.find(NAMESPACE + t)
         if curr_t is None:
             raise RuntimeError(f"Element for tag: '{t}' is not found") 
 
         nested_tags = trimtag(nested_tags)
         t = nexttag(nested_tags)
+
+        # special case
+        if nexttag(trimtag(nested_tags)) == 'version': 
+            t += '.version' 
+            nested_tags = trimtag(nested_tags)
     
     print(f"tag: '{args[1]}', value: '{curr_t.text}'")
 

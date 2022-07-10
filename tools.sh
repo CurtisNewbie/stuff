@@ -696,3 +696,6 @@ function lcount() {
     ll | wc -l
 }
 
+function apiver() {
+    readpom ./pom.xml 'project.properties.api.version'
+}
