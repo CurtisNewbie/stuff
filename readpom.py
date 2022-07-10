@@ -28,10 +28,9 @@ if __name__ == '__main__':
         print("[1] - tag name (e.g., project.version)")
         sys.exit(1)
 
-    nested_tags = args[1]
+    nested_tags = args[0]
 
-    pom_path = args[0]
-    project_name = args[1]
+    pom_path = args[1]
 
     ET.register_namespace('', "http://maven.apache.org/POM/4.0.0")
     ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
