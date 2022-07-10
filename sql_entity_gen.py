@@ -16,10 +16,11 @@ EXTENDS_ARG: str = "--extends"
 #
 MYBATIS_PLUS_FLAG: str = "--mybatis-plus"
 LAMBOK_FLAG: str = "--lambok"
+LOMBOK_FLAG: str = "--lombok"
 HELP_FLAG: str = '--help'
 
 # set of flag key (flag doesn't need value, it's just a flag)
-flag_set: Set[str] = {MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG}  #
+flag_set: Set[str] = {MYBATIS_PLUS_FLAG, LAMBOK_FLAG, HELP_FLAG, LOMBOK_FLAG}  #
 # some constants
 #
 CREATE: str = "create"
@@ -84,7 +85,7 @@ def print_help():
     print(f"{T}'{EXCLUDE_ARG} $field' : one or move field to be excluded (delimited by \',\')")
     print(f"{T}'{MYBATIS_PLUS_FLAG}' : Enable mybatis-plus feature, e.g., @TableField, @TableName, etc")
     print(f"{T}'{OUTPUT_ARG}' : (Optional) Where the generate java class is written to")
-    print(f"{T}'{LAMBOK_FLAG}' : Enable lambok feature, e.g., @Data on class")
+    print(f"{T}'{LOMBOK_FLAG}' : Enable Lombok feature, e.g., @Data on class")
     print(f"{T}'{EXTENDS_ARG}' : Canonical class name that it extends, e.g., \'com.curtisnewbie.dao.BaseEntity\'\n")
     print("  For example:\n")
     print(
@@ -229,7 +230,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
 
     # features
     mbp_ft = ctx.is_present(MYBATIS_PLUS_FLAG)
-    lambok_ft = ctx.is_present(LAMBOK_FLAG)
+    lambok_ft = ctx.is_present(LAMBOK_FLAG) or ctx.is_present(LOMBOK_FLAG)
 
     # if the class name is specified, we used the given one instead of the one parsed from CREATE TABLE statement
     class_name = spec_class_name if spec_class_name is not None else table.supply_java_class_name()
