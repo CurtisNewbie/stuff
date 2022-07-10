@@ -60,5 +60,5 @@ if __name__ == '__main__':
             t += '.version' 
             nested_tags = trimtag(nested_tags)
     
-    print(f"tag: '{args[2]}', value: '{curr_t.text}'")
+    print(f"tag: '{args[0]}', value: '{curr_t.text}'")
 
