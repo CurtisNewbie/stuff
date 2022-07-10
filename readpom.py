@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
 
     while t is not None:
-        print(f"t: {t}, nested_tags: {nested_tags}, curr: {curr_t}")
+        # print(f"t: {t}, nested_tags: {nested_tags}, curr: {curr_t}")
         curr_t = curr_t.find(NAMESPACE + t)
         if curr_t is None:
             raise RuntimeError(f"Element for tag: '{t}' is not found") 
