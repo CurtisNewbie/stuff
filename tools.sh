@@ -697,5 +697,5 @@ function lcount() {
 }
 
 function apiver() {
-    readpom ./pom.xml 'project.properties.api.version'
+    readpom 'project.properties.api.version' 
 }
