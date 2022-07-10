@@ -681,10 +681,18 @@ function rmlogs() {
 }
 
 function fd_count() {
+    if [ -z "$1" ]; then
+        echo_red "Please enter PID"
+        return 1
+    fi
     sudo ls -l /proc/$1/fd/ | wc -l
 }
 
-function threadcount(){
+function threadcount() {
+    if [ -z "$1" ]; then
+        echo_red "Please enter PID"
+        return 1
+    fi
     sudo ls /proc/$1/task | wc -l 
 }
 
