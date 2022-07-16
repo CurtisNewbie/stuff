@@ -23,14 +23,14 @@ def trimtag(t: str) -> str:
 if __name__ == '__main__':
     args = sys.argv[1:]
     l = len(args)
-    if l < 2:
-        print("[0] - path to pom.xml")
-        print("[1] - tag name (e.g., project.version)")
+    if l < 1:
+        print("[0] - tag name (e.g., project.version)")
+        print("[1] - path to pom.xml")
         sys.exit(1)
 
     nested_tags = args[0]
 
-    pom_path = args[1]
+    pom_path = args[1] if l > 1 else "pom.xml"
 
     ET.register_namespace('', "http://maven.apache.org/POM/4.0.0")
     ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
