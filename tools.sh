@@ -711,3 +711,9 @@ function apiver() {
 function projver() {
     readpom 'project.version' 
 }
+
+function ebc() {
+    echo "$1" | bc -l
+}
+
+
