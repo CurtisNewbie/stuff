@@ -712,7 +712,7 @@ function projver() {
     readpom 'project.version' 
 }
 
-function ebc() {
+function echobc() {
     echo "$1" | bc -l
 }
 
