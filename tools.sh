@@ -12,7 +12,6 @@ trash_can="$HOME/tmp"
 complete -F _gbranch_completion gbranch 
 complete -F _reset_one_completion reset_one 
 
-
 _gbranch_completion()
 {
     if [ ${#COMP_WORDS[@]} -gt 2 ]; then
@@ -716,4 +715,10 @@ function echobc() {
     echo "$1" | bc -l
 }
 
+function codediff() {
+    code --diff "$1" "$2"
+}
 
+function codeopen() {
+    code -g "$1"
+}
