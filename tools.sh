@@ -25,6 +25,10 @@ function stuff() {
     echo
     echo "  ${green}echobc $yellow\$line$colourreset"
     echo
+    echo "find in ls (case-insensitive)"
+    echo
+    echo "  ${green}lfind $yellow\$target$colourreset"
+    echo
 }
 
 _gbranch_completion()
