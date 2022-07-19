@@ -1,7 +1,7 @@
 #!/bin/bash
 # colours https://www.shellhacks.com/bash-colors/
 
-colour_reset=$'\e[0m'
+colourreset=$'\e[0m'
 red=$'\e[1;31m'
 green=$'\e[1;32m'
 yellow=$'\e[1;33m'
@@ -11,6 +11,21 @@ trash_can="$HOME/tmp"
 # complete -W "-r" gbranch 
 complete -F _gbranch_completion gbranch 
 complete -F _reset_one_completion reset_one 
+
+function stuff() {
+    echo "open file or folder using vscode"
+    echo
+    echo "  ${green}codeopen $yellow\$file_or_folder$colourreset" 
+    echo
+    echo "diff two files using vscode" 
+    echo
+    echo "  ${green}codediff $yellow\$file1 \$file2$colourreset"
+    echo
+    echo "calculation using bc"
+    echo
+    echo "  ${green}echobc $yellow\$line$colourreset"
+    echo
+}
 
 _gbranch_completion()
 {
@@ -235,20 +250,20 @@ function diskusage() {
 }
 
 function echo_red() {
-    echo $red"$1"$colour_reset
+    echo $red"$1"$colourreset
 }
 
 function echo_green() {
-    echo $green"$1"$colour_reset
+    echo $green"$1"$colourreset
 }
 
 function echo_yellow() {
-    echo $yellow"$1"$colour_reset
+    echo $yellow"$1"$colourreset
 
 }
 
 function echo_cyan() {
-    echo $cyan"$1"$colour_reset
+    echo $cyan"$1"$colourreset
 }
 
 # mvn test-compile 
@@ -633,7 +648,7 @@ function pom_ver() {
     --non-recursive \
     exec:exec)
 
-    echo "'$name' Project.Version: $cyan $ver $colour_reset"
+    echo "'$name' Project.Version: $cyan $ver $colourreset"
 }
 
 function set_git_user() {
