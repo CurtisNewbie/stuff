@@ -1,9 +1,9 @@
 package com.curtisnewbie.generator.sql;
 
-import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
 import java.io.*;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -20,6 +20,29 @@ public class App {
         final String path = args[0];
         File file = new File(path);
         if (!file.exists()) {
+            if (file.createNewFile()) {
+                try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
+                    bw.write("{\n");
+                    bw.write("\t\"fields\": \"\",\n");
+                    bw.write("\t\"dbName\": \"\",\n");
+                    bw.write("\t\"tableName\": \"\",\n");
+                    bw.write("\t\"defaultParams\": {\n");
+                    bw.write("\t\t\"created_at\": \"CURRENT_TIMESTAMP\",\n");
+                    bw.write("\t\t\"created_by\": \"''\",\n");
+                    bw.write("\t\t\"updated_at\": \"CURRENT_TIMESTAMP\",\n");
+                    bw.write("\t\t\"updated_by\": \"''\",\n");
+                    bw.write("\t\t\"trace_id\": \"''\",\n");
+                    bw.write("\t\t\"del_flag\": \"'N'\",\n");
+                    bw.write("\t\t\"enable\": \"Y\"\n");
+                    bw.write("\t},\n");
+                    bw.write("\t\"excludedCsvFields\": \"created_at,created_by,updated_by,updated_at,trace_id,del_flag\",\n");
+                    bw.write("\t\"csvFilePath\": \"\"\n");
+                    bw.write("}\n");
+                }
+                System.out.printf("File: %s doesn't exist, generated new one with default config\n", path);
+                return;
+            }
+
             System.out.printf("File: %s doesn't exist\n", path);
             return;
         }
