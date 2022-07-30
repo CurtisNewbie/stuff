@@ -293,6 +293,10 @@ function mcp() {
     fi
 }
 
+function mdeploy() {
+    mvn deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+}
+
 function minstall() {
     if [ ! -z $1 ]
     then
