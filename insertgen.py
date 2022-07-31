@@ -1,11 +1,13 @@
 from genericpath import exists
-from io import TextIOWrapper
 import xlrd
 import sys
+import os
 
-# for development only
 debug = False
+mute = False
+flags = {"--debug", "--mute"}
 keywords: list[str] = ["CURRENT_TIMESTAMP", "NOW()"]
+env_default_values_key = "INSERTGEN_DEFAULT"
 
 
 # check if w is a sql keyword
@@ -21,35 +23,65 @@ def issqlkeyword(w: any) -> bool:
 python3 -m pip install xlrd
 
 [0] - input path
-[1] - output path
+[1] - database/table name
+[2] - output path
+
+'--debug' for debug mode
+'--mute' for not printing the generated sql on console
+
+Environmnet variable: 
+
+'INSERTGEN_DEFAULT=...' specify the default column and value
 
 yongj.Zhuang
 '''
 if __name__ == '__main__':
 
     la = len(sys.argv)
-    if la < 3:
+    if la < 2:
         print("\n insertgen.py by Yongj.Zhuang")
         print("\n Please provide following arguments:\n")
         print(" [0] - input path")
-        print(" [1] - output path")
-        print(" [2] - database/table name")
+        print(" [1] - database/table name")
+        print(" [2] - output path (optional)")
+        print("\n e.g., python3 insertgen.py myexcel.xls generated.sql mytable")
         print("\n '--debug' for debug mode")
-        print("\n E.g., python3 insertgen.py myexcel.xls generated.sql mytable\n")
+        print("\n '--mute' for not printing the generated sql on console")
+        print("\n 'INSERTGEN_DEFAULT' environment variable for sepcifying the default columns and values")
+        print(
+            "\n e.g., INSERTGEN_DEFAULT=\"created_at=CURRENT_TIMESTAMP,created_by=SYSTEM\"")
+        print()
         sys.exit(1)
 
     ip = sys.argv[1]
-    op = sys.argv[2]
-    tb = sys.argv[3] if la > 3 else None
+    tb = sys.argv[2]
+    op = sys.argv[3] if la > 3 and sys.argv[3] not in flags else None
 
     for i in range(2, la):
-        if sys.argv[i] == "--debug":
+        v = sys.argv[i]
+        if v == "--debug":
             debug = True
+        elif v == '--mute':
+            mute = True
+
+    # parse default columns and values
+    defaultenv = os.environ.get(env_default_values_key)
+    defaultk = []
+    defaultv = []
+    if defaultenv is not None:
+        tokens = defaultenv.split(",")
+        for i in range(len(tokens)):
+            ts = tokens[i].split("=")
+            defaultk.append(ts[0])
+            defaultv.append("\"\"" if len(ts) < 1 else ts[1])
 
     if debug:
         print(
+            f"[debug] default env: '{defaultenv}', columns: {defaultk}, values: {defaultv}")
+        print(
             f"[debug] input path: '{ip}', output path: '{op}', table name: '{tb}'")
 
+    # read and parse workbook
     if not exists(ip):
         print(f"Input file '{ip}' not found")
         sys.exit(1)
@@ -76,7 +108,8 @@ if __name__ == '__main__':
         h = sheet.cell_value(0, i)
         if h:
             headers.append(h)
-
+    for i in range(len(defaultk)):
+        headers.append(defaultk[i])
     nheaders = len(headers)
 
     if debug:
@@ -88,6 +121,8 @@ if __name__ == '__main__':
         r = []
         for j in range(cc):
             r.append(sheet.cell_value(i, j))
+        for k in range(len(defaultv)):
+            r.append(defaultv[k])
         body.append(r)
 
     if debug:
@@ -121,8 +156,10 @@ if __name__ == '__main__':
 
     insert += ";"
 
-    print(insert)
+    if not mute:
+        print(insert)
 
-    f = open(op, "w")
-    f.write(insert)
-    f.close()
+    if op is not None:
+        f = open(op, "w")
+        f.write(insert)
+        f.close()
