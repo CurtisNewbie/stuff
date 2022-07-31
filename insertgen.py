@@ -19,6 +19,12 @@ def issqlkeyword(w: any) -> bool:
     return False
 
 
+def escape(w: str) -> str:
+    if w == "\"\"":
+        return w
+    return w if issqlkeyword(w) else f"\"{w}\""
+
+
 '''
 python3 -m pip install xlrd
 
@@ -29,7 +35,7 @@ python3 -m pip install xlrd
 '--debug' for debug mode
 '--mute' for not printing the generated sql on console
 
-Environmnet variable: 
+Environmnet variable:
 
 'INSERTGEN_DEFAULT=...' specify the default column and value
 
@@ -73,7 +79,7 @@ if __name__ == '__main__':
         for i in range(len(tokens)):
             ts = tokens[i].split("=")
             defaultk.append(ts[0])
-            defaultv.append("\"\"" if len(ts) < 1 else ts[1])
+            defaultv.append("\"\"" if len(ts) < 1 else escape(ts[1]))
 
     if debug:
         print(
@@ -147,7 +153,7 @@ if __name__ == '__main__':
         preprocessed = []
 
         for j in range(nheaders):
-            w = f"{row[j]}" if issqlkeyword(row[j]) else f"\"{row[j]}\""
+            w = escape(row[j])
             preprocessed.append(w)
 
         insert += "\n  (" + ",".join(preprocessed) + ")"
