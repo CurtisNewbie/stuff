@@ -18,6 +18,8 @@ def issqlkeyword(w: any) -> bool:
 
 
 '''
+python3 -m pip install xlrd
+
 [0] - input path
 [1] - output path
 
