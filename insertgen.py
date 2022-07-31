@@ -4,7 +4,7 @@ import xlrd
 import sys
 
 # for development only
-debug = True
+debug = False
 
 '''
 [0] - input path
@@ -20,14 +20,12 @@ if __name__ == '__main__':
         print(" [0] - input path")
         print(" [1] - output path")
         print(" [2] - table name")
-        print(" [3] - database name")
-        print("\n python3 insertgen.py myexcel.xls generated.sql mytable mydb\n")
+        print("\n python3 insertgen.py myexcel.xls generated.sql mytable\n")
         sys.exit(1)
 
     ip = sys.argv[1]
     op = sys.argv[2]
     tb = sys.argv[3] if la > 3 else None
-    db = sys.argv[4] if la > 4 else None
 
     if debug:
         print(
@@ -76,13 +74,16 @@ if __name__ == '__main__':
     if debug:
         print(f"[debug] body: {body}")
 
+    # -------
+    #
     # starts generating the insert sql
+    #
+    # -------
+
     insert = "INSERT INTO "
-    if db is not None:
-        insert += db
 
     if tb is not None:
-        insert = insert + ("." + tb if db is not None else tb)
+        insert = insert + tb
 
     insert += "(" + ",".join(headers) + ") VALUES "
 
@@ -94,7 +95,7 @@ if __name__ == '__main__':
         for j in range(nheaders):
             preprocessed.append(f"\"{row[j]}\"")
 
-        insert += "\n(" + ",".join(preprocessed) + ")"
+        insert += "\n  (" + ",".join(preprocessed) + ")"
         if i < lbody - 1:
             insert += ","
 
