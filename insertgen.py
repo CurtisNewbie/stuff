@@ -5,6 +5,17 @@ import sys
 
 # for development only
 debug = False
+keywords: list[str] = ["CURRENT_TIMESTAMP", "NOW()"]
+
+
+# check if w is a sql keyword
+def issqlkeyword(w: any) -> bool:
+    lw = str(w).lower()
+    for i in range(len(keywords)):
+        if keywords[i].lower() == lw:
+            return True
+    return False
+
 
 '''
 [0] - input path
@@ -16,20 +27,26 @@ if __name__ == '__main__':
 
     la = len(sys.argv)
     if la < 3:
-        print("\nPlease provide following arguments\n")
+        print("\n insertgen.py by Yongj.Zhuang")
+        print("\n Please provide following arguments:\n")
         print(" [0] - input path")
         print(" [1] - output path")
-        print(" [2] - table name")
-        print("\n python3 insertgen.py myexcel.xls generated.sql mytable\n")
+        print(" [2] - database/table name")
+        print("\n '--debug' for debug mode")
+        print("\n E.g., python3 insertgen.py myexcel.xls generated.sql mytable\n")
         sys.exit(1)
 
     ip = sys.argv[1]
     op = sys.argv[2]
     tb = sys.argv[3] if la > 3 else None
 
+    for i in range(2, la):
+        if sys.argv[i] == "--debug":
+            debug = True
+
     if debug:
         print(
-            f"[debug] input path: '{ip}', output path: '{op}', table name: '{tb}', database: '{db}'")
+            f"[debug] input path: '{ip}', output path: '{op}', table name: '{tb}'")
 
     if not exists(ip):
         print(f"Input file '{ip}' not found")
@@ -93,7 +110,8 @@ if __name__ == '__main__':
         preprocessed = []
 
         for j in range(nheaders):
-            preprocessed.append(f"\"{row[j]}\"")
+            w = f"{row[j]}" if issqlkeyword(row[j]) else f"\"{row[j]}\""
+            preprocessed.append(w)
 
         insert += "\n  (" + ",".join(preprocessed) + ")"
         if i < lbody - 1:
