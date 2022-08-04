@@ -18,7 +18,7 @@ def isnumber(s: str) -> bool:
 
 
 def quoted(s: str) -> bool:
-    return True if s[0] == "\"" or s[0] == "\'" else False
+    return True if s[0] == "'" or s[0] == "'" else False
 
 
 def escape(s) -> str:
@@ -26,13 +26,13 @@ def escape(s) -> str:
         s = str(s)
 
     if s == "":
-        return "\"\""
+        return "''"
 
     if isnumber(s):
         return s
 
     if not quoted(s):
-        return f"\"{s}\""
+        return f"'{s}'"
 
     return s
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     # parse SET statements
     setcols = []
-    for i in range(0, firstwhere, ncols):
+    for i in range(0, firstwhere):
         c = sheet.cell_value(0, i)
         if c:
             setcols.append(c)
@@ -159,19 +159,19 @@ if __name__ == '__main__':
         update = f"UPDATE {tb} SET "
         row = values[i]
 
-        for k in range(0, firstwhere, ncols):
+        for k in range(firstwhere):
             if debug:
-                print("[debug] preparing SET ", "k:", k, "ncols:",
+                print("[debug] preparing SET ", "i:", i, "k:", k, "ncols:",
                       ncols, "firstwhere:", firstwhere, " -> ", row[k])
 
             update += setcols[k] + " = " + escape(row[k])
-            if k < firstwhere - 2:
+            if k < firstwhere - 1:
                 update += ", "
 
         update += " WHERE "
         for j in range(firstwhere, ncols):
             if debug:
-                print("[debug] preparing WHERE ", "j:", j, "ncols:",
+                print("[debug] preparing WHERE ", "i:", i,  "j:", j, "ncols:",
                       ncols, "firstwhere:", firstwhere, " -> ", row[j])
 
             if j < ncols and j > firstwhere:
