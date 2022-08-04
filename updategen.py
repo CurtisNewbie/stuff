@@ -18,7 +18,7 @@ def isnumber(s: str) -> bool:
 
 
 def quoted(s: str) -> bool:
-    return True if s[0] == "'" or s[0] == "'" else False
+    return True if s[0] == "'" or s[len(s) - 1] == "'" else False
 
 
 def escape(s) -> str:
