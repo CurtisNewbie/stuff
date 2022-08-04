@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     # -------
     #
-    # starts generating the insert sql
+    # starts generating the update sql
     #
     # -------
 
