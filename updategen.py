@@ -65,7 +65,7 @@ if __name__ == '__main__':
         print(" A     |    85   |   100     |  25   ")
         print(" B     |    70   |   85      |  25   ")
         print(" C     |    0    |   70      |  25   ")
-        print("\n Command: \"python3 updategen.py bbb.xls mytable 'age <'\"")
+        print("\n Command: \"python3 updategen.py bbb.xls mytable 'score > '\"")
         print("\n Generated SQL:\n")
         print(" UPDATE mytable SET grade = \"A\" WHERE score >  85 and score <= 100 and age < 25;")
         print(" UPDATE mytable SET grade = \"B\" WHERE score >  70 and score <= 85 and age < 25;")
