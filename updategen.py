@@ -56,7 +56,7 @@ if __name__ == '__main__':
         print("\n # Please provide following arguments:\n")
         print(" [0] - input path")
         print(" [1] - database/table name")
-        print(" [2] - index of first column for where condition (0 based)")
+        print(" [2] - name of first where column")
         print("\n e.g., python3 updategen.py myexcel.xls mytable 2")
         print("\n '--debug' for debug mode")
         print("\n # Example:\n")
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         print(" A     |    85   |   100     |  25   ")
         print(" B     |    70   |   85      |  25   ")
         print(" C     |    0    |   70      |  25   ")
-        print("\n Command: \"python3 updategen.py bbb.xls mytable 1\"")
+        print("\n Command: \"python3 updategen.py bbb.xls mytable 'age <'\"")
         print("\n Generated SQL:\n")
         print(" UPDATE mytable SET grade = \"A\" WHERE score >  85 and score <= 100 and age < 25;")
         print(" UPDATE mytable SET grade = \"B\" WHERE score >  70 and score <= 85 and age < 25;")
@@ -75,12 +75,7 @@ if __name__ == '__main__':
 
     ip: str = sys.argv[1]
     tb: str = sys.argv[2]
-    firstwhere: int = int(sys.argv[3])
-
-    if firstwhere < 1:
-        print(
-            f"Found no column for SET statement, because the 'index of first column for where condtion' is set to {firstwhere}")
-        sys.exit(1)
+    firstwherename: str = sys.argv[3]
 
     for i in range(3, la):
         c = sys.argv[i]
@@ -89,7 +84,7 @@ if __name__ == '__main__':
 
     if debug:
         print(
-            f"[debug] input path: '{ip}', table name: '{tb}', index of first column for where condition: '{firstwhere}'")
+            f"[debug] input path: '{ip}', table name: '{tb}', name of first WHERE column: '{firstwherename}'")
 
     # read and parse workbook
     if not exists(ip):
@@ -111,6 +106,19 @@ if __name__ == '__main__':
     ncols = sheet.ncols
     if debug:
         print(f"[debug] row count: {nrow}, col count: {ncols}")
+
+    # find the first WHERE condition
+    firstwhere: int = -1
+    for i in range(ncols):
+        c = sheet.cell_value(0, i)
+        if c and str(c) == firstwherename:
+            firstwhere = i
+            break
+    if firstwhere < 1:
+        print(f"unable to find column '{firstwherename}'")
+        sys.exit(1)
+    if debug:
+        print(f"[debug] found first WHERE condition at {firstwhere}")
 
     # parse SET statements
     setcols = []
