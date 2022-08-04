@@ -46,7 +46,7 @@ python3 -m pip install xlrd
 
 '--debug' for debug mode
 
-yongj.Zhuang
+Yongj.Zhuang
 '''
 if __name__ == '__main__':
 

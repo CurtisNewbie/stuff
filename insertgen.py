@@ -39,7 +39,7 @@ Environmnet variable:
 
 'INSERTGEN_DEFAULT=...' specify the default column and value
 
-yongj.Zhuang
+Yongj.Zhuang
 '''
 if __name__ == '__main__':
 
