@@ -32,6 +32,7 @@ if __name__ == '__main__':
     data_employee = ('Geert', 'Vanderkelen', tomorrow,
                      'M', datetime.date(1977, 6, 14))
     cursor.execute(add_employee, data_employee)
+    print(f"id: {cursor.lastrowid}")
     cursor.close()
     cnx.commit()
 
