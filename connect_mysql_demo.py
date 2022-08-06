@@ -1,4 +1,3 @@
-from tkinter import constants
 from mysql.connector import *
 from mysql.connector.cursor import *
 import datetime
