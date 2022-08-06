@@ -2,6 +2,7 @@ from genericpath import exists
 import sys
 import os
 import pandas
+import openpyxl  # for xlsx format excel
 
 debug = False
 mute = False
@@ -26,7 +27,9 @@ def escape(w: str) -> str:
 
 
 '''
-python3 -m pip install pandas 
+python3 -m pip install pandas openpyxl 
+
+(openpyxl is optional, it's used for *.xlsx files)
 
 [0] - input path
 [1] - database/table name
@@ -97,7 +100,7 @@ if __name__ == '__main__':
         print(f"[debug] opened workbook '{ip}', content: '{df}'")
 
     nrow = len(df)
-    ncol = len(df.columns) 
+    ncol = len(df.columns)
     if debug:
         print(f"[debug] row count: {nrow}, col count: {ncol}")
 
