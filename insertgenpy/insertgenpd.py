@@ -2,7 +2,6 @@ from genericpath import exists
 import sys
 import os
 import pandas
-import openpyxl  # for xlsx format excel
 
 debug = False
 mute = False
@@ -111,7 +110,7 @@ if __name__ == '__main__':
     for i in range(ncol):
         h = df.iat[0, i]
         if h:
-            headers.append(h)
+            headers.append(str(h))
     for i in range(len(defaultk)):
         headers.append(defaultk[i])
     nheaders = len(headers)
