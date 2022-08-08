@@ -3,7 +3,7 @@ import sys
 import os
 import pandas
 
-debug = False
+isdebug = False
 mute = False
 flags = {"--debug", "--mute"}
 keywords: list[str] = ["CURRENT_TIMESTAMP", "NOW()"]
@@ -17,6 +17,11 @@ def issqlkeyword(w: any) -> bool:
         if keywords[i].lower() == lw:
             return True
     return False
+
+
+def debug(callback):
+    if isdebug:
+        print("[debug] " + callback())
 
 
 def escape(w: str) -> str:
@@ -68,26 +73,24 @@ if __name__ == '__main__':
     for i in range(2, la):
         v = sys.argv[i]
         if v == "--debug":
-            debug = True
+            isdebug = True
         elif v == '--mute':
             mute = True
 
     # parse default columns and values
-    defaultenv = os.environ.get(env_default_values_key)
-    defaultk = []
-    defaultv = []
-    if defaultenv is not None:
-        tokens = defaultenv.split(",")
+    defkv = os.environ.get(env_default_values_key)
+    defk = []
+    defv = []
+    if defkv is not None:
+        tokens = defkv.split(",")
         for i in range(len(tokens)):
             ts = tokens[i].split("=")
-            defaultk.append(ts[0])
-            defaultv.append("\"\"" if len(ts) < 1 else escape(ts[1]))
+            defk.append(ts[0])
+            defv.append("\"\"" if len(ts) < 1 else escape(ts[1]))
 
-    if debug:
-        print(
-            f"[debug] default env: '{defaultenv}', columns: {defaultk}, values: {defaultv}")
-        print(
-            f"[debug] input path: '{ip}', output path: '{op}', table name: '{tb}'")
+    debug(lambda: f"default: '{defkv}', columns: {defk}, values: {defv}")
+    debug(
+        lambda: f"input path: '{ip}', output path: '{op}', table name: '{tb}'")
 
     # read and parse workbook
     if not exists(ip):
@@ -95,41 +98,34 @@ if __name__ == '__main__':
         sys.exit(1)
 
     df: pandas.DataFrame = pandas.read_excel(ip, 0)
-    if debug:
-        print(f"[debug] opened workbook '{ip}', content: '{df}'")
+    debug(lambda: f"opened workbook '{ip}', content: '{df}'")
 
     nrow = len(df)
     ncol = len(df.columns)
-    if debug:
-        print(f"[debug] row count: {nrow}, col count: {ncol}")
+    debug(lambda: f"row count: {nrow}, col count: {ncol}")
 
     ncolmap = {}
-
     # parse header
     headers = []
     for i in range(ncol):
-        h = df.iat[0, i]
+        h = df.columns[i]
         if h:
             headers.append(str(h))
-    for i in range(len(defaultk)):
-        headers.append(defaultk[i])
+    for i in range(len(defk)):
+        headers.append(defk[i])
     nheaders = len(headers)
-
-    if debug:
-        print(f"[debug] headers: {headers}")
+    debug(lambda: f"headers: {headers}")
 
     body: list[list[str]] = []
     # parse body
-    for i in range(1, nrow):
+    for i in range(nrow):
         r = []
         for j in range(ncol):
             r.append(df.iat[i, j])
-        for k in range(len(defaultv)):
-            r.append(defaultv[k])
+        for k in range(len(defv)):
+            r.append(defv[k])
         body.append(r)
-
-    if debug:
-        print(f"[debug] body: {body}")
+    debug(lambda: f"body: {body}")
 
     # -------
     #
