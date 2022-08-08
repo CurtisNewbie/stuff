@@ -49,6 +49,10 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
+function gdt() {
+    git difftool "$@" 
+}
+
 function clfind() {
     cd $(lfind "$1")
 }
