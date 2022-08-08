@@ -24,10 +24,13 @@ def debug(callback):
         print("[debug] " + callback())
 
 
-def escape(w: str) -> str:
-    if w == "\"\"":
+def escape(w) -> str:
+    debug(lambda: f"escaping, w: {w}, type: {type(w)}")
+    if pandas.isnull(w):
+        return "''"
+    if isinstance(w, str) and len(w) > 1 and w[0] == "'" and w[1] == "'":
         return w
-    return w if issqlkeyword(w) else f"\"{w}\""
+    return w if issqlkeyword(w) else f"'{w}'"
 
 
 '''
@@ -63,6 +66,7 @@ if __name__ == '__main__':
         print("\n 'INSERTGEN_DEFAULT' environment variable for sepcifying the default columns and values")
         print(
             "\n e.g., INSERTGEN_DEFAULT=\"created_at=CURRENT_TIMESTAMP,created_by=SYSTEM\"")
+        print("\n For values in excel, always \"\" instead of ''")
         print()
         sys.exit(1)
 
@@ -86,9 +90,11 @@ if __name__ == '__main__':
         for i in range(len(tokens)):
             ts = tokens[i].split("=")
             defk.append(ts[0])
-            defv.append("\"\"" if len(ts) < 1 else escape(ts[1]))
+            defv.append("''" if len(ts) < 1 else ts[1])
 
-    debug(lambda: f"default: '{defkv}', columns: {defk}, values: {defv}")
+    debug(lambda: f"defaultkv: '{defkv}'")
+    debug(lambda: f"default columns: {defk}")
+    debug(lambda: f"default values: {defv}")
     debug(
         lambda: f"input path: '{ip}', output path: '{op}', table name: '{tb}'")
 
