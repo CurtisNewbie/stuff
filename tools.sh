@@ -104,6 +104,11 @@ function gcb() {
         return 1;
     fi
 
+    branch=$(git status)
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
     branch=$(echo "$branch" | cut -d $'\n' -f 1)
     branch=${branch:10}
     branch=${branch%%$'\n'*}
