@@ -105,6 +105,15 @@ function gcb() {
     fi
 
     git checkout -b $1
+
+    if [ $? -eq 0 ]; then
+        branch=$(echo "$branch" | cut -d $'\n' -f 1)
+        branch=${branch:10}
+        branch=${branch%%$'\n'*}
+
+        GSWITCH_BACK="$branch"
+        echo_cyan "Previous was: $GSWITCH_BACK"
+    fi
 }
 
 function gp() {
