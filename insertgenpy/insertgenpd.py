@@ -10,8 +10,10 @@ keywords: list[str] = ["CURRENT_TIMESTAMP", "NOW()"]
 env_default_values_key = "INSERTGEN_DEFAULT"
 
 
-# check if w is a sql keyword
 def issqlkeyword(w: any) -> bool:
+    '''
+    check if the word is a sql keyword
+    '''
     lw = str(w).lower()
     for i in range(len(keywords)):
         if keywords[i].lower() == lw:
@@ -20,17 +22,27 @@ def issqlkeyword(w: any) -> bool:
 
 
 def debug(callback):
+    '''
+    print debug log, only if 'isdebug' = True
+    '''
     if isdebug:
         print("[debug] " + callback())
 
 
 def escape(w) -> str:
-    debug(lambda: f"escaping, w: {w}, type: {type(w)}")
+    '''
+    escape word
+    '''
+    ec = w
     if pandas.isnull(w):
-        return "''"
-    if isinstance(w, str) and len(w) > 1 and w[0] == "'" and w[1] == "'":
-        return w
-    return w if issqlkeyword(w) else f"'{w}'"
+        ec = "''"
+    elif isinstance(w, str) and len(w) > 1 and w[0] == "'" and w[1] == "'":
+        ec = w
+    else:
+        ec = w if issqlkeyword(w) else f"'{w}'"
+
+    debug(lambda: f"escaping word: '{w}', type: '{type(w)}', escaped: {ec}")
+    return ec
 
 
 '''
@@ -115,12 +127,16 @@ if __name__ == '__main__':
     headers = []
     for i in range(ncol):
         h = df.columns[i]
-        if h:
-            headers.append(str(h))
+        if not h:
+            break
+        headers.append(str(h))
+    debug(lambda: f"Last column is {headers[len(headers)-1]}")
+
+    debug(lambda: f"Start appending default columns")
     for i in range(len(defk)):
         headers.append(defk[i])
     nheaders = len(headers)
-    debug(lambda: f"headers: {headers}")
+    debug(lambda: f"final headers: {headers}")
 
     body: list[list[str]] = []
     # parse body
