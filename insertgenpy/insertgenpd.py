@@ -69,7 +69,7 @@ def escape(w) -> str:
     if quoted(w) or issqlkeyword(w):
         ec = w
     else:
-        ec = "'" + w.replace('\'', '\\\'').replace('\"', '\\\"') + "'"
+        ec = "\"" + w.replace('\'', '\\\'').replace('\"', '\\\"') + "\""
 
     debug(lambda: f"escaping word: '{w}', type: '{type(w)}', escaped: {ec}")
     return ec
