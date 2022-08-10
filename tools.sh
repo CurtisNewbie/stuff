@@ -760,6 +760,3 @@ function codediff() {
     code --diff "$1" "$2"
 }
 
-function codeopen() {
-    code -g "$1"
-}
