@@ -32,7 +32,8 @@ def escape(s) -> str:
         return s
 
     if not quoted(s):
-        return f"'{s}'"
+        ec = s.replace('\'', '\\\'').replace('\"', '\\\"')
+        return f"'{ec}'"
 
     return s
 
