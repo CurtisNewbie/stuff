@@ -6,7 +6,7 @@ import pandas
 isdebug = False
 mute = False
 flags = {"--debug", "--mute"}
-keywords: list[str] = ["CURRENT_TIMESTAMP", "NOW()"]
+keywords: set[str] = {"current_timestamp", "now()"}
 env_default_values_key = "INSERTGEN_DEFAULT"
 
 
@@ -15,10 +15,9 @@ def issqlkeyword(w: any) -> bool:
     check if the word is a sql keyword
     '''
     lw = str(w).lower()
-    for i in range(len(keywords)):
-        if keywords[i].lower() == lw:
-            return True
-    return False
+    iskw = lw in keywords
+    debug(lambda: f"word: '{w}' is keyword: {iskw}")
+    return iskw
 
 
 def debug(callback):
@@ -29,17 +28,48 @@ def debug(callback):
         print("[debug] " + callback())
 
 
+def isnumchar(c: str):
+    '''
+    check if the given character is a number character (0-9 or '.')
+    '''
+    return (c >= "0" and c <= "9") or c == "."
+
+
+def isnumber(s: str) -> bool:
+    '''
+    check if the given string is actually a number ([0-9.]+)
+    '''
+    if not s:
+        return False
+    for i in range(len(s)):
+        if not isnumchar(s[i]):
+            return False
+    return True
+
+
+def quoted(s: str) -> bool:
+    if not s:
+        return False
+    if len(s) < 2:
+        return False
+    return True if (s[0] == "'" or s[len(s) - 1] == "'") or (s[0] == "\"" or s[len(s) - 1] == "\"") else False
+
+
 def escape(w) -> str:
     '''
     escape word
     '''
-    ec = w
     if pandas.isnull(w):
         ec = "''"
-    elif isinstance(w, str) and len(w) > 1 and w[0] == "'" and w[1] == "'":
+        debug(
+            lambda: f"escaping word: '{w}', type: '{type(w)}', escaped: {ec}")
+        return ec
+
+    w = str(w)
+    if quoted(w) or issqlkeyword(w):
         ec = w
     else:
-        ec = w if issqlkeyword(w) else f"'{w}'"
+        ec = "'" + w.replace('\'', '\\\'').replace('\"', '\\\"') + "'"
 
     debug(lambda: f"escaping word: '{w}', type: '{type(w)}', escaped: {ec}")
     return ec
