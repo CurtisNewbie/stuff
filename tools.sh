@@ -12,22 +12,55 @@ trash_can="$HOME/tmp"
 complete -F _gbranch_completion gbranch 
 complete -F _reset_one_completion reset_one 
 
+function pprint() {
+    printf ' %-35s %-35s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
+}
+
 function stuff() {
-    echo "open file or folder using vscode"
+    
     echo
-    echo "  ${green}codeopen $yellow\$file_or_folder$colourreset" 
-    echo
-    echo "diff two files using vscode" 
-    echo
-    echo "  ${green}codediff $yellow\$file1 \$file2$colourreset"
-    echo
-    echo "calculation using bc"
-    echo
-    echo "  ${green}echobc $yellow\$line$colourreset"
-    echo
-    echo "find in ls (case-insensitive)"
-    echo
-    echo "  ${green}lfind $yellow\$target$colourreset"
+
+    pprint "codediff" "\$file1 \$file2" "vscode diff"
+    pprint "echobc" "\$line" "echo to bc"
+    pprint "lfind" "\$target" "find from ls -l"
+    pprint "clfind" "\$target" "find from ls -l & cd"
+    pprint "gdt" "\$file1 \$file2" "git difftool"
+    pprint "trash" "\$file1" "move into \$trash_can"
+    pprint "gcb" "\$new_branch_name" "create new branch"
+    pprint "gstash" "" "git stash"
+    pprint "gstashpop" "" "git stash pop"
+    pprint "gp" "" "git pull"
+    pprint "gf" "" "git fetch"
+    pprint "gl" "" "git log"
+    pprint "gs" "" "git status"
+    pprint "gd" "" "git diff"
+    pprint "gds" "" "git diff --staged"
+    pprint "gfp" "" "git fetch pull"
+    pprint "resetone" "" "git reset --soft HEAD~1"
+    pprint "gpush" "" "git push"
+    pprint "gmerge" "\$branch_name" "git merge"
+    pprint "gshow" "" "git show"
+    pprint "guntrack" "\$file" "git rm --cache"
+    pprint "grestore" "\$file" "git unstage"
+    pprint "rkcmt" "" "git commit with generate message"
+    pprint "mpackage" "/some/pom.xml" "mvn package -f ...pom.xml"
+    pprint "mcp" "/some/pom.xml" "mvn compile -o -f ...pom.xml"
+    pprint "minstall" "/some/pom.xml" "mvn clean install -o -f ...pom.xml" 
+    pprint "mtest" "/some/pom.xml" "mvn clean test -f ...pom.xml"
+    pprint "mclean" "" "mvn clean"
+    pprint "mresolve" "" "mvn dependency:resolve"
+    pprint "gadd" "\$file" "git add" 
+    pprint "gclone" "\$url" "git clone" 
+    pprint "glike" "\$pattern" "grep from git branch" 
+    pprint "gbranch" "" "git branch" 
+    pprint "gamd" "" "git commit --amend" 
+    pprint "gswitch" "\$branch_name" "git switch" 
+    pprint "gswitchback" "" "git switch back to previous branch" 
+    pprint "gcmt" "\$msg" "git commit -m ..." 
+    pprint "ps_grep" "\$pname" "ps -ef | grep ..." 
+    pprint "apiver" "" "read 'project.properties.api.version'" 
+    pprint "projver" "" "read 'project.version'" 
+
     echo
 }
 
