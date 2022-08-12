@@ -1,6 +1,7 @@
 from genericpath import exists
 import sys
 import os
+from typing import Callable
 import pandas
 
 isdebug = False
@@ -20,7 +21,7 @@ def issqlkeyword(w: any) -> bool:
     return iskw
 
 
-def debug(callback):
+def debug(callback: Callable[[], str]):
     '''
     print debug log, only if 'isdebug' = True
     '''
