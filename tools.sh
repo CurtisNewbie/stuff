@@ -753,6 +753,22 @@ function rmlogs() {
     done
 }
 
+function rmtarget() {
+    find . -type d -name "target" | while read f; do 
+        echo "found $f"
+    done
+
+    read -p "confirm ? [Y/y] "
+    ans=$REPLY
+    if [ $ans = "Y" ] || [ $ans = 'y' ]; then
+        find . -type d -name "target" | while read f; do 
+            echo "removed $f"
+            rm -r $f
+        done
+    fi
+
+}
+
 function fd_count() {
     if [ -z "$1" ]; then
         echo_red "Please enter PID"
