@@ -256,12 +256,10 @@ function gcmt() {
 
     msg="$1"
 
-    git add .
-
     if [ -z "$msg" ]; then
-        git commit
+        git commit -a
     else
-        git commit -m "$msg"
+        git commit -am "$msg"
     fi
 }
 
