@@ -13,13 +13,14 @@ complete -F _gbranch_completion gbranch
 complete -F _reset_one_completion reset_one 
 
 function pprint() {
-    printf ' %-35s %-35s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
+    printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
 }
 
 function stuff() {
     
     echo
-
+    pprint "Command" "Arguments" "Description"
+    echo
     pprint "codediff" "\$file1 \$file2" "vscode diff"
     pprint "echobc" "\$line" "echo to bc"
     pprint "lfind" "\$target" "find from ls -l"
@@ -58,6 +59,8 @@ function stuff() {
     pprint "gswitch" "\$branch_name" "git switch" 
     pprint "gswitchback" "" "git switch back to previous branch" 
     pprint "gcmt" "\$msg" "git commit -m ..." 
+    pprint "gxpatch" "\$path_in_repo \$path_to_patch" "extract git history as a path"
+    pprint "gapplypatch" "\$patch_file" "apply git history (patch)"
     pprint "ps_grep" "\$pname" "ps -ef | grep ..." 
     pprint "apiver" "" "read 'project.properties.api.version'" 
     pprint "projver" "" "read 'project.version'" 
@@ -261,10 +264,11 @@ function gcmt() {
 
     msg="$1"
 
+    git add .
     if [ -z "$msg" ]; then
-        git commit -a
+        git commit 
     else
-        git commit -am "$msg"
+        git commit -m "$msg"
     fi
 }
 
@@ -812,3 +816,31 @@ function codediff() {
     code --diff "$1" "$2"
 }
 
+# Extract git history
+function gxpatch() {
+    if [ -z "$1" ]; then
+        echo_red "please specify where the generated patch will be"
+        return 1
+    fi
+
+    base="$2"
+    if [ -z "$base" ]; then 
+        base="." 
+    fi 
+
+    git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$2" > "$1"
+}
+
+function gapplypatch(){
+    if [ -z "$1" ]; then
+        echo_red "please specify where the generated patch is"
+        return 1
+    fi
+
+    if [ ! -f "$1" ]; then
+        echo_red "file $1 not found"
+        return 1
+    fi
+
+    git am < "$1"
+}
