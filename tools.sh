@@ -23,6 +23,7 @@ function stuff() {
     pprint "codediff" "\$file1 \$file2" "vscode diff"
     pprint "echobc" "\$line" "echo to bc"
     pprint "lfind" "\$target" "find from ls -l"
+    pprint "ffind" "\$target" "find file recursively using 'find'"
     pprint "clfind" "\$target" "find from ls -l & cd"
     pprint "gdt" "\$file1 \$file2" "git difftool"
     pprint "trash" "\$file1" "move into \$trash_can"
@@ -92,6 +93,10 @@ function clfind() {
 
 function lfind() {
     ls -a | grep "$1" -i
+}
+
+function ffind() {
+    find . -type f -name "$1"
 }
 
 function trash() {
