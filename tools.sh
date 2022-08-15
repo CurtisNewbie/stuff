@@ -102,7 +102,7 @@ function ffind() {
     find . -type f -name "$1"
 }
 
-function frfind() {
+function rfind() {
     if [ $(uname) == 'Darwin' ]; then
         find -E . -type f -regex "$1"
     else 
