@@ -102,6 +102,14 @@ function ffind() {
     find . -type f -name "$1"
 }
 
+function frfind() {
+    if [ $(uname) == 'Darwin' ]; then
+        find -E . -type f -regex "$1"
+    else 
+        find -regextype posix-extended . -type f -regex "$1"
+    fi
+}
+
 function trash() {
     if [ -z $1 ]; then
         return 0 
