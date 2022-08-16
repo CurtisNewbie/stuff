@@ -99,7 +99,7 @@ function lfind() {
 }
 
 function ffind() {
-    find . -type f -name "$1"
+    find . -type f -name "*$1*"
 }
 
 function rfind() {
