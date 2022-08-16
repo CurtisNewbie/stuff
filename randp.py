@@ -1,6 +1,8 @@
 import random
 import sys
 
+DEFAULT_LEN = 25
+
 
 def buildcharset() -> str:
     s = ""
@@ -15,7 +17,7 @@ def buildcharset() -> str:
 
 if __name__ == '__main__':
     letters = buildcharset()
-    length = 20
+    length = DEFAULT_LEN 
 
     if len(sys.argv) > 1: 
         length = int(sys.argv[1])
