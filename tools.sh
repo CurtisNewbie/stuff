@@ -95,7 +95,7 @@ function clfind() {
 }
 
 function lfind() {
-    ls -a | grep "$1" -i
+    ls -al | grep "$1" -i
 }
 
 function ffind() {
