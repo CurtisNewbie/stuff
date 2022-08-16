@@ -26,7 +26,7 @@ def trimtag(t: str) -> str:
 
 def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Tool for reading attributes in pom.xml (Yongj.Zhuang)")
+        description="Tool for reading attributes in pom.xml (by Yongj.Zhuang)")
     parser.add_argument('-p', '--path', type=str,
                         help="path to pom.xml", default="pom.xml")
 
