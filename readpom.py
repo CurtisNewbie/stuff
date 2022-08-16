@@ -27,10 +27,12 @@ def trimtag(t: str) -> str:
 def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Tool for reading attributes in pom.xml")
-    parser.add_argument('-t', '--tag', type=str,
-                        help="tag name (e.g., project.version)", required=True)
     parser.add_argument('-p', '--path', type=str,
                         help="path to pom.xml", default="pom.xml")
+
+    ag = parser.add_argument_group("required arguments")
+    ag.add_argument('-t', '--tag', type=str,
+                    help="tag name (e.g., project.version)", required=True)
     return parser
 
 
