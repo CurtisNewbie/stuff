@@ -809,11 +809,11 @@ function lcount() {
 }
 
 function apiver() {
-    readpom 'project.properties.api.version' 
+    readpom -t 'project.properties.api.version' 
 }
 
 function projver() {
-    readpom 'project.version' 
+    readpom -t 'project.version' 
 }
 
 function echobc() {
