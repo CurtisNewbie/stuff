@@ -40,7 +40,8 @@ def geniv() -> bytes:
 
 def argparser() -> argp.ArgumentParser:
 
-    ap = argp.ArgumentParser(description=DESC)
+    ap = argp.ArgumentParser(
+        description=DESC, formatter_class=argp.RawTextHelpFormatter)
     required = ap.add_argument_group('required arguments')
     required.add_argument('-m', '--mode', type=str,
                           help=f"encrypt/decrypt Mode, either '{ENCRYPT_MODE}' or '{DECRYPT_MODE}'", required=True)
