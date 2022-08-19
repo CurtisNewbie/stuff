@@ -45,8 +45,6 @@ def argparser() -> argp.ArgumentParser:
     required = ap.add_argument_group('required arguments')
     required.add_argument('-m', '--mode', type=str,
                           help=f"encrypt/decrypt Mode, either '{ENCRYPT_MODE}' or '{DECRYPT_MODE}'", required=True)
-    required.add_argument('-d', '--data', type=str,
-                          help="data to be encrypted or decrypted", required=True)
     return ap
 
 
@@ -64,8 +62,6 @@ if __name__ == '__main__':
     parser: argp.ArgumentParser = argparser()
     args: argp.Namespace = parser.parse_args()
 
-    password = getpass.getpass("Please provide your password:")
-
     mode = args.mode
     if not is_legal_mode(mode):
         print(
@@ -73,10 +69,23 @@ if __name__ == '__main__':
         sys.exit(1)
 
     isencrypt = mode.lower() == ENCRYPT_MODE
+    print("Please enter the data that you want to encrypt/decrypt:")
+    if isencrypt:
+        lines = []
+        while True:
+            line = input()
+            if line:
+                lines.append(line)
+            else:
+                break
+        data = '\n'.join(lines)
+    else: 
+        data = input()
+    password = getpass.getpass("Please provide your password:")
 
     if isencrypt:
         cipher = AES.new(key=padzero(password), mode=AES.MODE_CBC)
-        bdata = args.data.encode('utf-8')
+        bdata = data.encode('utf-8')
         ctbytes = cipher.encrypt(pad(bdata, AES.block_size))
         iva = bytearray(cipher.iv)
         cta = bytearray(ctbytes)
@@ -85,7 +94,7 @@ if __name__ == '__main__':
 
         print(b64encode(iva).decode('utf-8'))
     else:
-        decoded: bytes = b64decode(args.data)
+        decoded: bytes = b64decode(data)
         darray = bytearray(decoded)
 
         # iv is the first 16 bytes

@@ -8,6 +8,11 @@ yellow=$'\e[1;33m'
 cyan=$'\e[1;36m'
 trash_can="$HOME/tmp"
 
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export LANG=en_US.UTF-8
+
 # complete -W "-r" gbranch 
 complete -F _gbranch_completion gbranch 
 complete -F _reset_one_completion reset_one 
@@ -852,3 +857,49 @@ function gapplypatch(){
 
     git am < "$1"
 }
+
+function encrypt() { 
+  	python3 "$STUFF/aes.py" -m encrypt
+}
+
+function decrypt() { 
+  	python3 "$STUFF/aes.py" -m decrypt
+}
+
+function split() {
+	python3 "$STUFF/split.py" $@
+}
+
+function jsonarray() {
+	python3 "$STUFF/json_array.py" $@
+}
+
+function strlen() {
+	python3 "$STUFF/strlen.py" $@
+}
+
+function readpom() {
+  if [ ! -z "$2" ]; then
+    pom_p="$2"
+  else
+    pom_p="./pom.xml"
+  fi
+  python3 "$STUFF/readpom.py" "$1" "$pom_p"
+}
+
+function monday() {
+	python3 "$STUFF/monday.py" 
+}
+
+function rand() {
+	python3 "$STUFF/randp.py 30" 
+}
+
+function dectohex() {
+  python3 "$STUFF/dec_to_hex.py" "$1"
+}
+
+function hextodec() {
+  python3 "$STUFF/hex_to_dec.py" "$1"
+}
+
