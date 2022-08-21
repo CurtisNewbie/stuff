@@ -104,7 +104,11 @@ function lfind() {
 }
 
 function ffind() {
-    find . -type f -name "*$1*"
+    if [ $# -gt 1 ]; then
+        find "$1" -type f -name "*$2*"
+    else 
+        find . -type f -name "*$1*"
+    fi
 }
 
 function rfind() {
