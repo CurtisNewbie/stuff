@@ -852,3 +852,29 @@ function gapplypatch(){
 
     git am < "$1"
 }
+
+function attachcli(){
+    docker exec -it "$1" /bin/sh
+}
+
+function docker-compose-rebuild(){
+    if [ -z $1 ]; then
+        echo "Must specify service name"
+        return 1;
+    fi
+    # docker-compose up -d --no-deps --build $1
+    docker-compose up -d --build $1 
+} 
+
+function docker-compose-up(){
+    docker-compose up -d --build --remove-orphans
+}
+
+function docker-compose-down(){
+    docker-compose down
+}
+
+function docker-compose-re-up(){
+    docker-compose-down
+    docker-compose-up
+}
