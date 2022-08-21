@@ -81,6 +81,11 @@ if __name__ == '__main__':
         data = '\n'.join(lines)
     else:
         data = input()
+
+    if not data:
+        print("Have nothing to " + "encrypt" if isencrypt else "decrypt")
+        sys.exit(0)
+
     password = getpass.getpass("Please provide your password:")
 
     if isencrypt:
