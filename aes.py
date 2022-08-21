@@ -56,7 +56,7 @@ def is_legal_mode(mode: str) -> bool:
 '''
 aes.py by Yongj.Zhuang
 
-pip install pycrypto
+pip install pycryptodome
 '''
 if __name__ == '__main__':
     parser: argp.ArgumentParser = argparser()
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     isencrypt = mode.lower() == ENCRYPT_MODE
-    print("Please enter the data that you want to encrypt/decrypt:")
+    print("Please enter the data that you want to encrypt/decrypt: (Press again 'Enter' to finish)")
     if isencrypt:
         lines = []
         while True:
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             else:
                 break
         data = '\n'.join(lines)
-    else: 
+    else:
         data = input()
     password = getpass.getpass("Please provide your password:")
 
