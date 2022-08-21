@@ -461,7 +461,7 @@ function is_master(){
     return 0 
 }
 
-function check() {
+function gcheck() {
     debug=0
     fetch=0
     pull=0
@@ -561,9 +561,9 @@ function repocheck () {
         # non-hidden directories
         if [ "${line:0}" != "." ]; then
             if [ ! -z $1 ]; then
-                check "$abs_path" "$1"
+                gcheck "$abs_path" "$1"
             else
-                check "$abs_path"
+                gcheck "$abs_path"
             fi
         fi
     done
@@ -703,7 +703,7 @@ function resetone() {
     git status 
 }
 
-function ps_grep() {
+function psgrep() {
     ps -ef | grep $1 | grep -v grep
 }
 
