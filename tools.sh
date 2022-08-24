@@ -133,7 +133,7 @@ function trash() {
     fi
 
     mv $1 $trash_can_p 
-    echo_green "Trashed '$1' to '$trash_can_p'"
+    echogreen "Trashed '$1' to '$trash_can_p'"
 }
 
 function gstashpop() {
@@ -144,13 +144,13 @@ function mpackage() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
-            echo_red ">>> $1/pom.xml is not found, aborted"
+            echored ">>> $1/pom.xml is not found, aborted"
         else
             mvn package -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
         fi
     else
         if [ ! -f "pom.xml" ]; then
-            echo_red ">>> pom.xml is not found, aborted"
+            echored ">>> pom.xml is not found, aborted"
         else
             mvn package -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
         fi
@@ -159,7 +159,7 @@ function mpackage() {
 
 function gcb() {
     if [ -z $1 ]; then
-        echo_red "please enter branch name" 
+        echored "please enter branch name" 
         return 1;
     fi
 
@@ -176,7 +176,7 @@ function gcb() {
 
     if [ $? -eq 0 ]; then
         GSWITCH_BACK="$branch"
-        echo_cyan "Previous was: $GSWITCH_BACK"
+        echocyan "Previous was: $GSWITCH_BACK"
     fi
 }
 
@@ -266,7 +266,7 @@ function gswitch() {
         branch=${branch%%$'\n'*}
 
         GSWITCH_BACK="$branch"
-        echo_cyan "Previous was: $GSWITCH_BACK"
+        echocyan "Previous was: $GSWITCH_BACK"
     fi
 }
 
@@ -274,7 +274,7 @@ function gswitchback() {
     if [ ! -z $GSWITCH_BACK ]; then
         gswitch $GSWITCH_BACK
     else
-        echo_red "No branch to switch back"
+        echored "No branch to switch back"
     fi
 }
 
@@ -329,22 +329,25 @@ function diskusage() {
     du -d 1 -h
 }
 
-function echo_red() {
+function echored() {
     echo $red"$1"$colourreset
 }
+export -f echored
 
-function echo_green() {
+function echogreen() {
     echo $green"$1"$colourreset
 }
+export -f echogreen
 
-function echo_yellow() {
+function echoyellow() {
     echo $yellow"$1"$colourreset
-
 }
+export -f echoyellow
 
-function echo_cyan() {
+function echocyan() {
     echo $cyan"$1"$colourreset
 }
+export -f echocyan
 
 # mvn test-compile 
 function mcpt() {
@@ -356,13 +359,13 @@ function mcp() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
-            echo_red ">>> $1/pom.xml is not found, aborted"
+            echored ">>> $1/pom.xml is not found, aborted"
         else
             mvn clean compile -o -f $1 
         fi
     else
         if [ ! -f "pom.xml" ]; then
-            echo_red ">>> pom.xml is not found, aborted"
+            echored ">>> pom.xml is not found, aborted"
         else
             mvn clean compile -o 
         fi  
@@ -377,13 +380,13 @@ function minstall() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
-            echo_red ">>> $1/pom.xml is not found, aborted"
+            echored ">>> $1/pom.xml is not found, aborted"
         else
             mvn clean install -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
         fi
     else
         if [ ! -f "pom.xml" ]; then
-            echo_red ">>> pom.xml is not found, aborted"
+            echored ">>> pom.xml is not found, aborted"
         else
             mvn clean install -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
         fi
@@ -394,13 +397,13 @@ function mtest() {
     if [ ! -z $1 ]
     then
         if [ ! -f "$1/pom.xml" ]; then
-            echo_red ">>> $1/pom.xml is not found, aborted"
+            echored ">>> $1/pom.xml is not found, aborted"
         else
             mvn clean test -f $1 
         fi
     else
         if [ ! -f "pom.xml" ]; then
-            echo_red ">>> pom.xml is not found, aborted"
+            echored ">>> pom.xml is not found, aborted"
         else
             mvn clean test  
         fi
@@ -440,13 +443,13 @@ function rkcmt() {
 
     git commit -m "$lines"
     if [ $? -eq 0 ]; then
-        echo_green ">>> you recklessly committed a change"
+        echogreen ">>> you recklessly committed a change"
     fi
 }
 
 function reloadrc() {
     source ~/.bashrc
-    echo_green ">>> reloaded bashrc :D"
+    echogreen ">>> reloaded bashrc :D"
 }
 
 # check whether $1 is in master branch, return 1-true, 0-false
@@ -465,6 +468,7 @@ function is_master(){
     fi
     return 0 
 }
+export -f is_master 
 
 function gcheck() {
     debug=0
@@ -474,12 +478,12 @@ function gcheck() {
     if [ ! -z "$2" ]; then
         if [ "$2" == "--debug" ]; then
             debug=1
-            # echo_green "--debug mode turned on"
+            # echogreen "--debug mode turned on"
         elif [ "$2" == "--fetch" ]; then
-            fetch=1 # echo_green "--fetch mode turned on"
+            fetch=1 # echogreen "--fetch mode turned on"
         elif [ "$2" == "--pull" ]; then
             pull=1
-            # echo_green "--pull mode turned pn"
+            # echogreen "--pull mode turned pn"
         fi
     fi
 
@@ -488,7 +492,7 @@ function gcheck() {
             cd "$1"
 
             if [ $debug -eq 1 ]; then 
-                echo_green "debug: cd $1"
+                echogreen "debug: cd $1"
             fi
 
             # not a git repo
@@ -503,7 +507,7 @@ function gcheck() {
                 exit_if_failed $? "failed to fetch from remote"
 
                 if [ $debug -eq 1 ]; then 
-                    echo_green "debug: git fetch in $1"
+                    echogreen "debug: git fetch in $1"
                 fi
 
             fi
@@ -511,17 +515,17 @@ function gcheck() {
             status=`git status`
 
             if [ $debug -eq 1 ]; then 
-                echo_green "called git status in $1"
+                echogreen "called git status in $1"
             fi
 
             # check whether repo is up-to-date
             utd=`echo $status | grep "Your branch is up to date"`
             if [ -z "$utd" ] || [ "$utd" == "" ]; then
-                echo_red "found changes from upstream repository in $1"
+                echored "found changes from upstream repository in $1"
                 master=`is_master $1`
 
                 if [ $pull -eq 1 ] && [ $master -eq 1 ] ; then
-                    echo_green "pulling changes from upstream"
+                    echogreen "pulling changes from upstream"
                     git pull
                 fi
             fi        
@@ -529,29 +533,29 @@ function gcheck() {
             # find uncommited changes
             tbc=`echo $status | grep 'Changes to be committed'`
             if [ ! -z "$tbc" ] && [ "$tbc" != "" ]; then
-                echo_red "found uncommited changes in $1"
+                echored "found uncommited changes in $1"
             fi  
             
             # find untracked files 
             utf=`echo $status | grep 'Untracked files'`
             if [ ! -z "$utf" ] && [ "$utf" != "" ]; then
-                echo_red "found untracked files in $1"
+                echored "found untracked files in $1"
             fi
  
             # find changes not staged
             changes=`echo $status | grep 'Changes not staged'`
             if [ ! -z "$changes" ] && [ "$changes" != "" ]; then            
-                echo_red "found uncommited changes in $1"
+                echored "found uncommited changes in $1"
             fi
 
             # find commits not pushed
             commits=`echo $status | grep 'Your branch is ahead of'`
             if [ ! -z "$commits" ] && [ "$commits" != "" ]; then            
-                echo_red "found commits not yet pushed in $1"
+                echored "found commits not yet pushed in $1"
             fi
 
             if [ $debug -eq 1 ]; then 
-                echo_green "debug: finished checking $1"
+                echogreen "debug: finished checking $1"
             fi
         )
     fi
@@ -576,15 +580,15 @@ function repocheck () {
 
 # fetch and pull
 function gfp () {
-    echo_green "Fetching..."
+    echogreen "Fetching..."
     msg=`git fetch 2>&1`
 
     if [ $? -ne 0 ]; then 
-        echo_red "$msg"
+        echored "$msg"
         return 1
     fi
 
-    echo_green "Pulling..."
+    echogreen "Pulling..."
     git pull;
 }
 
@@ -592,7 +596,7 @@ function gfp () {
 function exit_if_failed() {
     if [ $1 -ne 0 ]; then
         if [ ! -z $2 ]; then
-            echo_red $2
+            echored $2
         fi
         return 1;
     fi
@@ -631,7 +635,7 @@ function last_weekly_report(){
 # generate a new weekly report
 function gen_weekly_report(){
     if [ -z $1 ]; then
-        echo_red "please specify base path first..."
+        echored "please specify base path first..."
         return 1;
     fi
 
@@ -640,12 +644,12 @@ function gen_weekly_report(){
     target=$base/week-$num.md
 
     if [ -f $target ]; then
-        echo_red "file: '$target' exists, aborting..."
+        echored "file: '$target' exists, aborting..."
         return 1;
     fi
 
     touch $target
-    echo_green "touched file: '$target', initializing content"
+    echogreen "touched file: '$target', initializing content"
 
     # initialize content
     echo "# Week-$num" >> $target
@@ -665,7 +669,7 @@ function gen_weekly_report(){
     echo "暂无" >> $target
     echo >> $target
             
-    echo_green "'$target' content initialized, finished" 
+    echogreen "'$target' content initialized, finished" 
 
     # open file using vscode
     code $target  
@@ -693,7 +697,7 @@ function resetone() {
         ans=$REPLY
 
         if [ -z $ans ] || [[ $ans =~ [^yY] ]]; then
-            echo_green "Aborting ..."
+            echogreen "Aborting ..."
             return 1
         fi
     fi
@@ -704,7 +708,7 @@ function resetone() {
         git restore --staged .
     fi
 
-    echo_green "Resetted one git commit"
+    echogreen "Resetted one git commit"
     git status 
 }
 
@@ -721,7 +725,7 @@ function pom_ver() {
  
     name="$root/pom.xml"
     if [ ! -f $name ]; then
-        echo_red "Unable to find $name"
+        echored "Unable to find $name"
         return 1
     fi
 
@@ -796,7 +800,7 @@ function rmtarget() {
 
 function fd_count() {
     if [ -z "$1" ]; then
-        echo_red "Please enter PID"
+        echored "Please enter PID"
         return 1
     fi
     sudo ls -l /proc/$1/fd/ | wc -l
@@ -804,7 +808,7 @@ function fd_count() {
 
 function threadcount() {
     if [ -z "$1" ]; then
-        echo_red "Please enter PID"
+        echored "Please enter PID"
         return 1
     fi
     sudo ls /proc/$1/task | wc -l 
@@ -837,7 +841,7 @@ function codediff() {
 # Extract git history
 function gxpatch() {
     if [ -z "$1" ]; then
-        echo_red "please specify where the generated patch will be"
+        echored "please specify where the generated patch will be"
         return 1
     fi
 
@@ -851,12 +855,12 @@ function gxpatch() {
 
 function gapplypatch(){
     if [ -z "$1" ]; then
-        echo_red "please specify where the generated patch is"
+        echored "please specify where the generated patch is"
         return 1
     fi
 
     if [ ! -f "$1" ]; then
-        echo_red "file $1 not found"
+        echored "file $1 not found"
         return 1
     fi
 
@@ -917,11 +921,12 @@ function readpom() {
   fi
   python3 "$STUFF/readpom.py" "$1" "$pom_p"
 }
+export -f readpom 
 
 function monday() {
 	python3 "$STUFF/monday.py" 
 }
-
+export -f monday 
 
 function rands() {
     n="$1"
@@ -946,7 +951,9 @@ export -f randn
 function dectohex() {
   python3 "$STUFF/dec_to_hex.py" "$1"
 }
+export -f dectohex
 
 function hextodec() {
   python3 "$STUFF/hex_to_dec.py" "$1"
 }
+export -f hextodec
