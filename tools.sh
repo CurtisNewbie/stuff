@@ -957,3 +957,8 @@ function hextodec() {
   python3 "$STUFF/hex_to_dec.py" "$1"
 }
 export -f hextodec
+
+function tzone() {
+  python3 "$STUFF/tzone.py" $@
+}
+export -f tzone 
