@@ -939,7 +939,7 @@ function randn() {
         n="10"
     fi
 
-	python3 "$STUFF/rands.py" "$n"
+	python3 "$STUFF/randn.py" "$n"
 }
 export -f randn
 
