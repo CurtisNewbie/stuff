@@ -8,6 +8,7 @@ BRANCH_PREFIX_LEN = len(BRANCH_PREFIX)
 if __name__ == '__main__':
     root = "./"
     entries: list[str] = os.listdir(root)
+    s = ''
 
     for i in range(len(entries)):
         # print(entries[i])
@@ -37,4 +38,6 @@ if __name__ == '__main__':
                 continue
 
             branch = firstline[i + BRANCH_PREFIX_LEN:]
-            print(f"{folder:<30} {branch}")
+            s = s + f"{folder:<30} {branch}\n"
+
+    print(s)

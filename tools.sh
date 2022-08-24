@@ -923,7 +923,7 @@ function monday() {
 }
 
 function rand() {
-	python3 "$STUFF/randp.py 30" 
+	python3 "$STUFF/randp.py" "30"
 }
 
 function dectohex() {
