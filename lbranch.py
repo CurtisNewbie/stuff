@@ -1,11 +1,14 @@
 from genericpath import exists
 import subprocess
 import os
+import time
 
 BRANCH_PREFIX = "On branch "
 BRANCH_PREFIX_LEN = len(BRANCH_PREFIX)
 
 if __name__ == '__main__':
+    start = time.perf_counter()
+
     root = "./"
     entries: list[str] = os.listdir(root)
     s = ''
@@ -40,4 +43,6 @@ if __name__ == '__main__':
             branch = firstline[i + BRANCH_PREFIX_LEN:]
             s = s + f"{folder:<30} {branch}\n"
 
+    end = time.perf_counter()
+    print(f"-- Finished, took {end - start:0.4f}s -- \n")
     print(s)
