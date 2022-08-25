@@ -2,19 +2,17 @@ import pytz
 import datetime
 import sys
 
-dformat = "%Y-%m-%d"
-tformat = "%Y-%m-%d %H:%M:%S"
-utc = "UTC"
-timezones = ['Asia/Shanghai', utc, 'Europe/London', 'Asia/Singapore']
+D_FORMAT = "%Y-%m-%d"
+T_FORMAT = "%Y-%m-%d %H:%M:%S"
+UTC = "UTC"
+timezones = [UTC, 'Asia/Shanghai', 'Europe/London', 'Asia/Singapore']
 
 
 def printnow():
-    t = datetime.datetime.now(pytz.timezone(utc))
-    t = t.replace(tzinfo=pytz.utc)
+    utct = datetime.datetime.utcnow()
 
     for tz in timezones:
-        localDatetime = t.astimezone(pytz.timezone(tz))
-        print(f"{tz:<15} {localDatetime.strftime(tformat)}")
+        print(f"{tz:<15} {utct.astimezone(pytz.timezone(tz))}")
 
 
 def printspecified(s: str):
@@ -24,13 +22,13 @@ def printspecified(s: str):
         scn = scn + 1
 
     print()
-    _printtz(s, utc)
+    _printtz(s, UTC)
     print()
 
 
 def _printtz(s: str, tz: str):
-    fmt = datetime.datetime.now().strftime(dformat) + " " + s
-    t = pytz.timezone(tz).localize(datetime.datetime.strptime(fmt, tformat))
+    fmt = datetime.datetime.now().strftime(D_FORMAT) + " " + s
+    t = pytz.timezone(tz).localize(datetime.datetime.strptime(fmt, T_FORMAT))
     print(f'From {tz:<15} {t}\n')
     for tzz in timezones:
         if tzz == tz:
