@@ -13,9 +13,22 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 export LANG=en_US.UTF-8
 
+set -eE -o functrace
+
 # complete -W "-r" gbranch 
 complete -F _gbranch_completion gbranch 
 complete -F _reset_one_completion reset_one 
+
+# trap error
+function traperr(){
+    trap 'print_failure ${LINENO} "$BASH_COMMAND" "$@"' ERR
+}
+
+function print_failure() {
+  local lineno=$1
+  local msg=$2
+  echo "Failed at $lineno: $msg, extra: $3"
+}
 
 function pprint() {
     printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
@@ -470,6 +483,9 @@ function is_master(){
 export -f is_master 
 
 function gcheck() {
+
+    traperr
+
     debug=0
     fetch=0
     pull=0
