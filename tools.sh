@@ -13,7 +13,7 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 export LANG=en_US.UTF-8
 
-set -eE -o functrace
+# set -eE -o functrace
 
 # complete -W "-r" gbranch 
 complete -F _gbranch_completion gbranch 
