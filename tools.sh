@@ -369,20 +369,29 @@ function mcpt() {
 
 # mvn compile -o -f [0], or, mvn compile -o
 function mcp() {
-    if [ ! -z $1 ]
-    then
-        if [ ! -f "$1/pom.xml" ]; then
-            echored ">>> $1/pom.xml is not found, aborted"
-        else
-            mvn clean compile -o -f $1 
-        fi
-    else
-        if [ ! -f "pom.xml" ]; then
-            echored ">>> pom.xml is not found, aborted"
-        else
-            mvn clean compile -o 
-        fi  
+
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn clean compile -o -f $pom 
     fi
+
+#    if [ ! -z $1 ]
+#    then
+#        if [ ! -f "$1/pom.xml" ]; then
+#            echored ">>> $1/pom.xml is not found, aborted"
+#        else
+#            mvn clean compile -o -f $1 
+#        fi
+#    else
+#        if [ ! -f "pom.xml" ]; then
+#            echored ">>> pom.xml is not found, aborted"
+#        else
+#            mvn clean compile -o 
+#        fi  
+#    fi
 }
 
 function mdeploy() {
