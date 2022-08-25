@@ -13,6 +13,7 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 export LANG=en_US.UTF-8
 
+# for debugging
 # set -eE -o functrace
 
 # complete -W "-r" gbranch 
@@ -483,8 +484,8 @@ function is_master(){
 export -f is_master 
 
 function gcheck() {
-
-    traperr
+    # set -eE -o functrace
+    # traperr
 
     debug=0
     fetch=0
@@ -535,7 +536,7 @@ function gcheck() {
 
             # check whether repo is up-to-date
             utd=`echo $status | grep "Your branch is up to date"`
-            if [ -z "$utd" ] || [ "$utd" == "" ]; then
+            if [ $? -eq 0 ] && [ -z "$utd" ] || [ "$utd" == "" ]; then
                 echored "found changes from upstream repository in $1"
                 master=`is_master $1`
 
@@ -547,25 +548,25 @@ function gcheck() {
             
             # find uncommited changes
             tbc=`echo $status | grep 'Changes to be committed'`
-            if [ ! -z "$tbc" ] && [ "$tbc" != "" ]; then
+            if [ $? -eq 0 ] && [ ! -z "$tbc" ] && [ "$tbc" != "" ]; then
                 echored "found uncommited changes in $1"
             fi  
             
             # find untracked files 
             utf=`echo $status | grep 'Untracked files'`
-            if [ ! -z "$utf" ] && [ "$utf" != "" ]; then
+            if [ $? -eq 0 ] && [ ! -z "$utf" ] && [ "$utf" != "" ]; then
                 echored "found untracked files in $1"
             fi
  
             # find changes not staged
             changes=`echo $status | grep 'Changes not staged'`
-            if [ ! -z "$changes" ] && [ "$changes" != "" ]; then            
+            if [ $? -eq 0 ] && [ ! -z "$changes" ] && [ "$changes" != "" ]; then
                 echored "found uncommited changes in $1"
             fi
 
             # find commits not pushed
             commits=`echo $status | grep 'Your branch is ahead of'`
-            if [ ! -z "$commits" ] && [ "$commits" != "" ]; then            
+            if [ $? -eq 0 ] && [ ! -z "$commits" ] && [ "$commits" != "" ]; then            
                 echored "found commits not yet pushed in $1"
             fi
 
