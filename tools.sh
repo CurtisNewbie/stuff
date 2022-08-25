@@ -390,20 +390,27 @@ function mdeploy() {
 }
 
 function minstall() {
-    if [ ! -z $1 ]
-    then
-        if [ ! -f "$1/pom.xml" ]; then
-            echored ">>> $1/pom.xml is not found, aborted"
-        else
-            mvn clean install -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-        fi
-    else
-        if [ ! -f "pom.xml" ]; then
-            echored ">>> pom.xml is not found, aborted"
-        else
-            mvn clean install -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-        fi
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn clean install -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
+
+#    if [ ! -z $1 ]; then
+#        if [ ! -f "$1/pom.xml" ]; then
+#            echored ">>> $1/pom.xml is not found, aborted"
+#        else
+#            mvn clean install -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+#        fi
+#    else
+#        if [ ! -f "pom.xml" ]; then
+#            echored ">>> pom.xml is not found, aborted"
+#        else
+#            mvn clean install -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+#        fi
+#    fi
 }
 
 function mtest() {
@@ -984,3 +991,8 @@ function lbranch() {
   python3 $STUFF/lbranch.py
 }
 export -f lbranch
+
+function findpom(){
+  python3 $STUFF/findpom.py $@
+}
+export -f findpom 
