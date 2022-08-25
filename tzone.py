@@ -5,7 +5,7 @@ import sys
 D_FORMAT = "%Y-%m-%d"
 T_FORMAT = "%Y-%m-%d %H:%M:%S"
 UTC = "UTC"
-timezones = [UTC, 'Asia/Shanghai', 'Europe/London', 'Asia/Singapore']
+timezones = [UTC, 'Asia/Shanghai', 'Europe/London']
 
 
 def printnow():
