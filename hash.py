@@ -34,24 +34,32 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser(
         description=DESC, formatter_class=argparse.RawTextHelpFormatter)
 
-    required = ap.add_argument_group('required arguments')
-    required.add_argument('-m', '--mode', type=str,
+    ap.add_argument('-m', '--mode', type=str,
                           help=f"hashing mode, {MODES}", default='sha256')
+    ap.add_argument('-c', '--content', type=str,
+                          help=f"content (for multi-line content, do not specify this argument)", default='')
     args = ap.parse_args()
     ms = args.mode
 
     mod = resolvemod(ms)
     print(f"\nUsing Algorithm: {ms.upper()}\n")
 
-    print("Please enter the data that you want to hash: (Press again 'Enter' to finish)")
-    lines = []
-    while True:
-        line = input()
-        if line:
-            lines.append(line)
-        else:
-            break
-    ctn = '\n'.join(lines)
+    ctn = args.content
+    if not ctn:
+        print(
+            "Please enter the data that you want to hash: (Press again 'Enter' to finish)")
+        lines = []
+        while True:
+            line = input()
+            if line:
+                lines.append(line)
+            else:
+                break
+        ctn = '\n'.join(lines)
+
+    if not ctn:
+        print("Have nothing to hash, aborting...\n")
+        sys.exit(0)
 
     newm = getattr(mod, "new")
     hashobj = newm(data=ctn.encode('utf-8'))
