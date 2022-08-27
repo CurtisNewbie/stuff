@@ -1005,3 +1005,8 @@ function findpom(){
   python3 $STUFF/findpom.py $@
 }
 export -f findpom 
+
+pyhash() {
+  python3 $STUFF/hash.py $@
+}
+export -f pyhash 

@@ -37,16 +37,23 @@ if __name__ == '__main__':
     required = ap.add_argument_group('required arguments')
     required.add_argument('-m', '--mode', type=str,
                           help=f"hashing mode, {MODES}", default='sha256')
-    required.add_argument('-c', '--content', type=str,
-                          help=f"content to be hashed", required=True)
     args = ap.parse_args()
     ms = args.mode
 
     mod = resolvemod(ms)
-    print(f"\nAlgorithm: {ms.upper()}\n")
+    print(f"\nUsing Algorithm: {ms.upper()}\n")
+
+    print("Please enter the data that you want to hash: (Press again 'Enter' to finish)")
+    lines = []
+    while True:
+        line = input()
+        if line:
+            lines.append(line)
+        else:
+            break
+    ctn = '\n'.join(lines)
 
     newm = getattr(mod, "new")
-    ctn: str = args.content
     hashobj = newm(data=ctn.encode('utf-8'))
 
     print(base64.b64encode(hashobj.digest()).decode('utf-8'))
