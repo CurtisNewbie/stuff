@@ -12,6 +12,8 @@ DECRYPT_MODE = 'decrypt'
 DESC = '''
 aes.py by Yongj.Zhuang
 
+Powered by pycryptodome
+
 This tool use AES256 + CBC Mode for encryption/decryption
 
 When encrypting data, a random 16 bytes initialization vector is generated and inserted into the begining of the cipher text
