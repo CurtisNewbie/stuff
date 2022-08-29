@@ -1016,3 +1016,8 @@ pyhash() {
   python3 $STUFF/hash.py $@
 }
 export -f pyhash 
+
+insertgen(){
+  python3 $STUFF/insertgenpy/insertgenpd.py $@
+}
+export -f insertgen
