@@ -523,18 +523,18 @@ function gcheck() {
         (
             cd "$1"
 
-            # echocyan "debug: $1, 1"
+            #echocyan "debug: $1, 1"
 
             if [ "$debug" -eq 1 ]; then 
                 echogreen "debug: cd $1"
             fi
 
-            # echocyan "debug: $1, 2"
+            #echocyan "debug: $1, 2"
 
             # not a git repo
-            gitdir="$(pwd).git"
+            gitdir="$(pwd)/.git"
 
-            # echocyan "debug: $1, 3, $gitdir"
+            #echocyan "debug: $1, 3, $gitdir"
 
             if [ ! -d "$gitdir" ]; then
                 return 0
@@ -545,8 +545,10 @@ function gcheck() {
             if [ $fetch -eq 1 ]; then
                 # always fetch first, but we don't print the result
                 git fetch &> /dev/null            
-
-                exit_if_failed $? "failed to fetch from remote"
+                if [ ! $? -eq 0 ]; then
+                    echored "failed to fetch from remote"
+                    return 0
+                fi
 
                 if [ $debug -eq 1 ]; then 
                     echogreen "debug: git fetch in $1"
@@ -561,44 +563,48 @@ function gcheck() {
             fi
 
             # check whether repo is up-to-date
-            utd=`echo $status | grep "Your branch is up to date"`
+            utd=`echo "$status" | grep "Your branch is up to date"`
             if [ $? -eq 0 ] && [ -z "$utd" ] || [ "$utd" == "" ]; then
                 echored "found changes from upstream repository in $1"
-                master=`is_master $1`
+                master=`is_master "$1"`
 
-                if [ $pull -eq 1 ] && [ $master -eq 1 ] ; then
+                if [ "$pull" -eq 1 ] && [ "$master" -eq 1 ] ; then
                     echogreen "pulling changes from upstream"
                     git pull
                 fi
             fi        
             
             # find uncommited changes
-            tbc=`echo $status | grep 'Changes to be committed'`
+            tbc=`echo "$status" | grep 'Changes to be committed'`
             if [ $? -eq 0 ] && [ ! -z "$tbc" ] && [ "$tbc" != "" ]; then
                 echored "found uncommited changes in $1"
+                return 0
             fi  
             
             # find untracked files 
-            utf=`echo $status | grep 'Untracked files'`
+            utf=`echo "$status" | grep 'Untracked files'`
             if [ $? -eq 0 ] && [ ! -z "$utf" ] && [ "$utf" != "" ]; then
                 echored "found untracked files in $1"
+                return 0
             fi
  
             # find changes not staged
-            changes=`echo $status | grep 'Changes not staged'`
+            changes=`echo "$status" | grep 'Changes not staged'`
             if [ $? -eq 0 ] && [ ! -z "$changes" ] && [ "$changes" != "" ]; then
                 echored "found uncommited changes in $1"
+                return 0
             fi
 
             # find commits not pushed
-            commits=`echo $status | grep 'Your branch is ahead of'`
+            commits=`echo "$status" | grep 'Your branch is ahead of'`
             if [ $? -eq 0 ] && [ ! -z "$commits" ] && [ "$commits" != "" ]; then            
                 echored "found commits not yet pushed in $1"
+                return 0
             fi
 
-            if [ $debug -eq 1 ]; then 
-                echogreen "debug: finished checking $1"
-            fi
+            # if [ "$debug" -eq 1 ]; then 
+            # fi
+            echogreen "finished checking $1"
         )
     fi
 
@@ -632,16 +638,6 @@ function gfp () {
 
     echogreen "Pulling..."
     git pull;
-}
-
-# [0]: command return value ($?), [1]: error message
-function exit_if_failed() {
-    if [ $1 -ne 0 ]; then
-        if [ ! -z $2 ]; then
-            echored $2
-        fi
-        return 1;
-    fi
 }
 
 function last_weekly_report(){
