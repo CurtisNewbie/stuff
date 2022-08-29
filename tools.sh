@@ -523,14 +523,24 @@ function gcheck() {
         (
             cd "$1"
 
-            if [ $debug -eq 1 ]; then 
+            # echocyan "debug: $1, 1"
+
+            if [ "$debug" -eq 1 ]; then 
                 echogreen "debug: cd $1"
             fi
 
+            # echocyan "debug: $1, 2"
+
             # not a git repo
-            if [ ! -d ".git" ]; then
+            gitdir="$(pwd).git"
+
+            # echocyan "debug: $1, 3, $gitdir"
+
+            if [ ! -d "$gitdir" ]; then
                 return 0
             fi
+
+            #echocyan "debug: $1, 4"
 
             if [ $fetch -eq 1 ]; then
                 # always fetch first, but we don't print the result
@@ -601,7 +611,7 @@ function repocheck () {
 
         # non-hidden directories
         if [ "${line:0}" != "." ]; then
-            if [ ! -z $1 ]; then
+            if [ ! -z "$1" ]; then
                 gcheck "$abs_path" "$1"
             else
                 gcheck "$abs_path"
