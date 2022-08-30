@@ -154,19 +154,12 @@ function gstashpop() {
 }
 
 function mpackage() {
-    if [ ! -z $1 ]
-    then
-        if [ ! -f "$1/pom.xml" ]; then
-            echored ">>> $1/pom.xml is not found, aborted"
-        else
-            mvn package -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-        fi
-    else
-        if [ ! -f "pom.xml" ]; then
-            echored ">>> pom.xml is not found, aborted"
-        else
-            mvn package -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-        fi
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn package -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 }
 
