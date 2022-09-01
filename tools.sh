@@ -207,7 +207,7 @@ function mclean() {
 }
 
 function mresolve() {
-    mvn dependency:resolve
+    mvn dependency:resolve -U
 }
 
 function gadd() {
