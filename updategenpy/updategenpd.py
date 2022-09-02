@@ -108,7 +108,7 @@ if __name__ == '__main__':
         print(f"Input file '{ip}' not found")
         sys.exit(1)
 
-    df: pandas.DataFrame = pandas.read_excel(ip, 0)
+    df: pandas.DataFrame = pandas.read_excel(ip, 0, dtype="string")
     debug(lambda: f"opened workbook '{ip}', content: '{df}'")
 
     nrow = len(df)
