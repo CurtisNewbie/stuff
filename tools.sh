@@ -254,6 +254,10 @@ function gbranch() {
     git branch --sort=-committerdate $extra
 }
 
+function gtag() {
+    git tag --sort=-committerdate $extra
+}
+
 function gamd() {
     git commit --amend 
 }
@@ -866,7 +870,7 @@ function echobc() {
 }
 
 function codediff() {
-    code --diff "$1" "$2"
+    /usr/local/bin/code --diff "$1" "$2"
 }
 
 function rl() {
