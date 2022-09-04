@@ -869,6 +869,15 @@ function codediff() {
     code --diff "$1" "$2"
 }
 
+function rl() {
+    p=$(readlink -e "$1")
+    echo "$p"
+    if [ $(uname) == 'Darwin' ]; then
+        echo "$p" | pbcopy
+        echo "copied to clipboard"
+    fi
+}
+
 # Extract git history
 function gxpatch() {
     if [ -z "$1" ]; then
