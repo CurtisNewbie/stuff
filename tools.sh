@@ -880,17 +880,17 @@ function rl() {
 
 # Extract git history
 function gxpatch() {
-    if [ -z "$1" ]; then
+    if [ -z "$2" ]; then
         echored "please specify where the generated patch will be"
         return 1
     fi
 
-    base="$2"
-    if [ -z "$base" ]; then 
-        base="." 
-    fi 
+    if [ -z "$1" ]; then
+        echored "please specify where the git history will be extracted"
+        return 1
+    fi
 
-    git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$2" > "$1"
+    git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$1" > "$2"
 }
 
 function gapplypatch(){
