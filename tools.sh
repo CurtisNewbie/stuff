@@ -873,7 +873,7 @@ function rl() {
     p=$(readlink -e "$1")
     echo "$p"
     if [ $(uname) == 'Darwin' ]; then
-        echo "$p" | pbcopy
+        echo "$p" | tr -d '\n' | pbcopy
         echo "copied to clipboard"
     fi
 }
