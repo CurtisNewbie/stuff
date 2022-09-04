@@ -114,7 +114,7 @@ function clfind() {
 }
 
 function lfind() {
-    ls -al | grep "$1" -i
+    ls -a | grep "$1" -i
 }
 
 function ffind() {
@@ -251,7 +251,7 @@ function gbranch() {
         extra="$@"
     fi
 
-    git branch $extra
+    git branch --sort=-committerdate $extra
 }
 
 function gamd() {
