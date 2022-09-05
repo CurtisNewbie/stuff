@@ -436,37 +436,43 @@ function mtest() {
     fi
 }
 
-function rkcmt() {
+function gencmtmsg() {
     git add .
+    python3 $STUFF/gencmtmsg.py
+}
+export -f gencmt
 
-    #Set the field separator to new line
-    IFS=$'\n'
+function rkcmt() {
+    # git add .
 
-    msg=`git diff --staged --raw`
-    lines=""
+    # #Set the field separator to new line
+    # IFS=$'\n'
 
-    for line in $msg; do
-        t="${line:31:1}"
-        s_line="${line:33}"$'\n'
-        t_name=""
+    # msg=`git diff --staged --raw`
+    # lines=""
 
-        if [ $t == 'M' ]; then
-            t_name="Modified" 
-        elif [ $t == 'A' ]; then
-            t_name="Added"
-        elif [ $t == 'D' ]; then
-            t_name="Deleted"
-        else 
-            t="${line:31:4}"
-            if [ $t == "R092" ]; then
-                t_name="Renamed"
-                s_line="${line:36}"$'\n'
-            fi
-        fi
+    # for line in $msg; do
+    #     t="${line:31:1}"
+    #     s_line="${line:33}"$'\n'
+    #     t_name=""
 
-        lines+="$t_name: $s_line"
-    done
+    #     if [ $t == 'M' ]; then
+    #         t_name="Modified" 
+    #     elif [ $t == 'A' ]; then
+    #         t_name="Added"
+    #     elif [ $t == 'D' ]; then
+    #         t_name="Deleted"
+    #     else 
+    #         t="${line:31:4}"
+    #         if [ $t == "R092" ]; then
+    #             t_name="Renamed"
+    #             s_line="${line:36}"$'\n'
+    #         fi
+    #     fi
 
+    #     lines+="$t_name: $s_line"
+    # done
+    lines=`gencmtmsg`
     git commit -m "$lines"
     if [ $? -eq 0 ]; then
         echogreen ">>> you recklessly committed a change"
@@ -954,7 +960,7 @@ function jsonarray() {
 }
 
 function strlen() {
-	python3 "$STUFF/strlen.py" $@
+	python3 "$STUFF/strlen.py" "$@"
 }
 
 function readpom() {
