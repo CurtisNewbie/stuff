@@ -437,13 +437,12 @@ function mtest() {
 }
 
 function gencmtmsg() {
-    git add .
     python3 $STUFF/gencmtmsg.py
 }
 export -f gencmt
 
 function rkcmt() {
-    # git add .
+    git add .
 
     # #Set the field separator to new line
     # IFS=$'\n'
