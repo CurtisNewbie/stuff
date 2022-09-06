@@ -372,7 +372,7 @@ function mcp() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn compile -T 1C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
+        mvn compile -T 0.5C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
     fi
 
 #    if [ ! -z $1 ]
@@ -392,7 +392,7 @@ function mcp() {
 }
 
 function mdeploy() {
-    mvn -T 1C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+    mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
 }
 
 function minstall() {
@@ -401,7 +401,7 @@ function minstall() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn install -T 1C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn install -T 0.5C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 
 #    if [ ! -z $1 ]; then
@@ -440,7 +440,7 @@ function mtest() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn test -T 1C -f $pom 
+        mvn test -T 0.5C -f $pom 
     fi
 }
 
