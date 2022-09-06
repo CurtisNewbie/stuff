@@ -439,7 +439,7 @@ function mtest() {
 function gencmtmsg() {
     python3 $STUFF/gencmtmsg.py
 }
-export -f gencmt
+export -f gencmtmsg
 
 function rkcmt() {
     git add .
@@ -1038,11 +1038,13 @@ function rmr() {
     return 0
   fi
 
-  read -p "Sure you want to reset one commit? [y/Y] "
+  read -p "Sure you want to reset one commit? To cancel: [n/N] "
   ans=$REPLY
 
-  if [[ $ans =~ [yY] ]]; then
-    echogreen "Removing (rm -rvf) $1"
-    rm -rvf "$1"  
+  if [[ $ans =~ [Nn] ]]; then
+    return 0
   fi
+
+  echogreen "Removing (rm -rv) $1"
+  rm -rv "$1"  
 }
