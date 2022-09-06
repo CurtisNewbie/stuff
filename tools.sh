@@ -372,7 +372,7 @@ function mcp() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn clean compile -o -f $pom 
+        mvn compile -T 1C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
     fi
 
 #    if [ ! -z $1 ]
@@ -392,7 +392,7 @@ function mcp() {
 }
 
 function mdeploy() {
-    mvn deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+    mvn -T 1C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
 }
 
 function minstall() {
@@ -401,7 +401,7 @@ function minstall() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn clean install -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn install -T 1C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 
 #    if [ ! -z $1 ]; then
@@ -420,19 +420,27 @@ function minstall() {
 }
 
 function mtest() {
-    if [ ! -z $1 ]
-    then
-        if [ ! -f "$1/pom.xml" ]; then
-            echored ">>> $1/pom.xml is not found, aborted"
-        else
-            mvn clean test -f $1 
-        fi
-    else
-        if [ ! -f "pom.xml" ]; then
-            echored ">>> pom.xml is not found, aborted"
-        else
-            mvn clean test  
-        fi
+#    if [ ! -z $1 ]
+#    then
+#        if [ ! -f "$1/pom.xml" ]; then
+#            echored ">>> $1/pom.xml is not found, aborted"
+#        else
+#            mvn test -f $1 
+#        fi
+#    else
+#        if [ ! -f "pom.xml" ]; then
+#            echored ">>> pom.xml is not found, aborted"
+#        else
+#            mvn test  
+#        fi
+#    fi
+
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn test -T 1C -f $pom 
     fi
 }
 
@@ -878,12 +886,22 @@ function codediff() {
     /usr/local/bin/code --diff "$1" "$2"
 }
 
+# check if current OS is MAC, return 1 is true, else 0
+function ismac() {
+    if [ $(uname) == 'Darwin' ]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
+# readlink -e with 'copied to clipboard'
 function rl() {
     p=$(readlink -e "$1")
     echo "$p"
-    if [ $(uname) == 'Darwin' ]; then
+    if [ "$(ismac)" == "1" ]; then
         echo "$p" | tr -d '\n' | pbcopy
-        echo "copied to clipboard"
+        echogreen "copied to clipboard..."
     fi
 }
 
