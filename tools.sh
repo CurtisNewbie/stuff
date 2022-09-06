@@ -1023,12 +1023,26 @@ function findpom(){
 }
 export -f findpom 
 
-pyhash() {
+function pyhash() {
   python3 $STUFF/hash.py $@
 }
 export -f pyhash 
 
-insertgen(){
+function insertgen(){
   python3 $STUFF/insertgenpy/insertgenpd.py $@
 }
 export -f insertgen
+
+function rmr() {
+  if [ -z "$1" ]; then
+    return 0
+  fi
+
+  read -p "Sure you want to reset one commit? [y/Y] "
+  ans=$REPLY
+
+  if [[ $ans =~ [yY] ]]; then
+    echogreen "Removing (rm -rvf) $1"
+    rm -rvf "$1"  
+  fi
+}
