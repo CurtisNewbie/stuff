@@ -6,10 +6,13 @@ if __name__ == '__main__':
         sys.exit(0)
 
     candidates: set[str] = set(sys.argv[1].split(","))
-    curr = sys.argv[3:]
-    if len(curr) < 1:
+    curr = sys.argv[2]
+    if curr == "":
         print(" ".join(candidates))
         sys.exit(0)
 
-    diff = candidates.difference(curr)
+    currset: set[str] = set(curr.split(" "))
+    diff = candidates.difference(currset)
+    #print(f"currset: {currset}, diff: {diff}")
+
     print(" ".join(diff))
