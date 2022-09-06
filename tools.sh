@@ -1045,6 +1045,6 @@ function rmr() {
     return 0
   fi
 
-  echogreen "Removing (rm -rv) $1"
-  rm -rv "$1"  
+  echogreen "Removing (rm -rvf) $1"
+  rm -rvf "$1"  
 }
