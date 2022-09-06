@@ -311,6 +311,9 @@ function gl() {
 }
 
 function gs() {
+    if [ ! -d ".git" ];then
+        return 0
+    fi
     git status
 }
 
