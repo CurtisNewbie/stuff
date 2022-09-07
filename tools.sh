@@ -301,10 +301,6 @@ function gcmt() {
 }
 
 function gl() {
-    if [ ! -d ".git" ];then
-        return 0
-    fi
-
     extra=""
     if [ $# -gt 0 ]; then
         extra="$@"
@@ -314,9 +310,6 @@ function gl() {
 }
 
 function gs() {
-    if [ ! -d ".git" ];then
-        return 0
-    fi
     git status
 }
 
