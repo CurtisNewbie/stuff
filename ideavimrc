@@ -2,21 +2,29 @@ set incsearch
 set ignorecase
 set smartcase
 set clipboard+=unnamed
+set splitright
 
 Plug 'preservim/nerdtree'
 
 :command W w
-:command Q q
+:command Wq wq
 
 nnoremap gs :action SearchEverywhere<CR>
 nnoremap == :action ReformatCode<CR>
 nnoremap gh :action QuickJavaDoc<CR>
 nnoremap gc :action GotoImplementation<CR>
 nnoremap gu :action GotoSuperMethod<CR>
-nnoremap gb :action Back<CR>
-nnoremap gf :action Forward<CR>
+" nnoremap gb :action Back<CR>
+" nnoremap gf :action Forward<CR>
 nnoremap ge :action Generate<CR>
 nnoremap th :action TypeHierarchy<CR>
 nnoremap -- :action Tool.GotoRequestService<CR>
 nnoremap <C-n> :NERDTreeFocus<CR>
 
+" nnoremap <C-n> :NERDTreeToggle<CR>
+
+" :map gb <Action>(Back)
+" :map gf <Action>(Forward)
+
+:map <C-o> <Action>(Back)
+:map <C-i> <Action>(Forward)

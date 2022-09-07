@@ -6,10 +6,16 @@
 :set number
 :syntax enable 
 
+:set tabstop=2
+:set shiftwidth=2
+
 filetype plugin indent on
 nnoremap <C-n> :NERDTreeToggle<CR>
 
 :command W w
+:command Wq wq
+
+set splitright
 
 set laststatus=2
 if !has('gui_running')
@@ -29,3 +35,4 @@ Plug 'sheerun/vim-polyglot'
 
 " Initialize plugin system
 call plug#end()
+
