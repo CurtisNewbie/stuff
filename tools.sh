@@ -1,12 +1,17 @@
 #!/bin/bash
+
 # colours https://www.shellhacks.com/bash-colors/
+# bash coloring https://gist.github.com/vratiu/9780109
 
 colourreset=$'\e[0m'
 red=$'\e[1;31m'
 green=$'\e[1;32m'
 yellow=$'\e[1;33m'
+blue=$'\e[1;34m'
+purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
-trash_can="$HOME/tmp"
+white=$'\e[1;37m'
+trash_can="$HOME/trash"
 
 export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
 export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
@@ -144,8 +149,14 @@ function trash() {
     if [ ! -d $trash_can_p ]; then
         mkdir $trash_can_p 
     fi
+    # echo "Using trash: $trash_can_p"
 
-    mv $1 $trash_can_p 
+    if [ -d "$1" ]; then
+        cp -r "$1" "$trash_can_p"
+        rm -r "$1"
+    else
+        mv "$1" "$trash_can_p"
+    fi
     echogreen "Trashed '$1' to '$trash_can_p'"
 }
 
