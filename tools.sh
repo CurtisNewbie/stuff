@@ -512,9 +512,13 @@ function is_master(){
     if [ ! -z "$status" ] && [ "$status" != "" ]; then
         echo 1 
     else 
-        echo 0
+        status=`git status | grep "On branch main"`
+        if [ ! -z "$status" ] && [ "$status" != "" ]; then
+            echo 1 
+        else 
+            echo 0
+        fi
     fi
-    return 0 
 }
 export -f is_master 
 
