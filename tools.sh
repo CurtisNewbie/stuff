@@ -2,7 +2,6 @@
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
-
 colourreset=$'\e[0m'
 red=$'\e[1;31m'
 green=$'\e[1;32m'
@@ -1081,5 +1080,7 @@ function grepcode() {
   if [ -z "$1" ];then
     return 0
   fi
-  grep -R "$1" . --exclude-dir target --exclude-dir .git
+
+  echogreen "Searching $1"
+  grep -R "$1" . --exclude-dir "target" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "node_modules" --exclude-dir "dist" --exclude-dir "logs" --exclude-dir "log"
 }
