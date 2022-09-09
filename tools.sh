@@ -1029,24 +1029,9 @@ function monday() {
 export -f monday 
 
 function rands() {
-    n="$1"
-    if [ -z "$n" ]; then
-        n="30"
-    fi
-
-	python3 "$STUFF/rands.py" "$n"
+	python3 "$STUFF/rands.py" "$@"
 }
 export -f rands
-
-function randn() {
-    n="$1"
-    if [ -z "$n" ]; then
-        n="10"
-    fi
-
-	python3 "$STUFF/randn.py" "$n"
-}
-export -f randn
 
 function dectohex() {
   python3 "$STUFF/dec_to_hex.py" "$1"
