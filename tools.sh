@@ -1076,3 +1076,10 @@ function rmr() {
   echogreen "Removing (rm -rvf) $1"
   rm -rvf "$1"  
 }
+
+function grepcode() {
+  if [ -z "$1" ];then
+    return 0
+  fi
+  grep -R "$1" . --exclude-dir target --exclude-dir .git
+}
