@@ -1082,5 +1082,5 @@ function grepcode() {
   fi
 
   echogreen "Searching $1"
-  grep -R "$1" . --exclude-dir "target" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "node_modules" --exclude-dir "dist" --exclude-dir "logs" --exclude-dir "log"
+  grep -R "$1" . --exclude-dir "target" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "node_modules" --exclude-dir "dist" --exclude-dir "logs" --exclude-dir "log" -l
 }
