@@ -173,6 +173,26 @@ function mpackage() {
     fi
 }
 
+function gpushup() {
+    branch=$(git status)
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    branch=$(echo "$branch" | cut -d $'\n' -f 1)
+    branch=${branch:10}
+    branch=${branch%%$'\n'*}
+
+    read -p "Creating remote branch '$branch'. To cancel: [n/N] "
+    ans=$REPLY
+
+    if [[ $ans =~ [Nn] ]]; then
+      return 0
+    fi
+
+    git push -u origin "$branch"
+}
+
 function gcb() {
     if [ -z $1 ]; then
         echored "please enter branch name" 
