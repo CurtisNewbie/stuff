@@ -623,7 +623,7 @@ function gcheck() {
 
             # if [ "$debug" -eq 1 ]; then 
             # fi
-            echogreen "finished checking $1"
+            # echogreen "finished checking $1"
         )
     fi
 
