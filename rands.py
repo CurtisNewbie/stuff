@@ -11,12 +11,21 @@ BOTH = "both"
 case_set = {UPPER, LOWER, BOTH}
 charset_set = {ALPHA, NUMERIC, BOTH}
 
-# is BOTH or 
+
 def is_both_or(s: str, target: str) -> bool:
+    '''
+    is BOTH or
+    '''
     return s == BOTH or s == target
 
-# build charset based on provided options
+
 def buildcharset(charset: str, case: str) -> str:
+    '''
+    build charset based on provided options
+    '''
+    charset = charset.lower()
+    case = case.lower()
+
     if case not in case_set:
         case = BOTH
     if charset not in charset_set:
