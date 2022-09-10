@@ -40,19 +40,19 @@ def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-l', '--length', type=int,
-                        help=f"length", required=False, default=DEFAULT_LEN)
+                        help=f"Length", required=False, default=DEFAULT_LEN)
     parser.add_argument('-t', '--times', type=int,
-                        help=f"number of random str", required=False, default=1)
+                        help=f"Number of random str", required=False, default=1)
 
-    csj = "/".join(charset_set)
+    csj = "/".join([ALPHA, NUMERIC, BOTH])
     parser.add_argument('-s', '--charset', type=str,
-                        help=f"charset: {csj}", required=False, default=BOTH)
+                        help=f"Charset: {csj}", required=False, default=BOTH)
 
-    csj = "/".join(case_set)
+    csj = "/".join([UPPER, LOWER, BOTH])
     parser.add_argument('-c', '--case', type=str,
-                        help=f"case: {csj}", required=False, default=BOTH)
+                        help=f"Case: {csj}", required=False, default=BOTH)
     parser.add_argument('-p', '--prefix', type=str,
-                        help=f"prefix", required=False, default="")
+                        help=f"Prefix", required=False, default="")
     return parser.parse_args()
 
 
