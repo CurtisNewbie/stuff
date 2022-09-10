@@ -11,7 +11,11 @@ BOTH = "both"
 case_set = {UPPER, LOWER, BOTH}
 charset_set = {ALPHA, NUMERIC, BOTH}
 
+# is BOTH or 
+def is_both_or(s: str, target: str) -> bool:
+    return s == BOTH or s == target
 
+# build charset based on provided options
 def buildcharset(charset: str, case: str) -> str:
     if case not in case_set:
         case = BOTH
@@ -21,22 +25,22 @@ def buildcharset(charset: str, case: str) -> str:
     s = ""
     charset = charset.lower()
 
-    if charset == BOTH or charset == ALPHA:
+    if is_both_or(charset, ALPHA):
         if case == BOTH or case == LOWER:
             for i in range(26):
                 s = s + chr(i + ord('a'))
 
-        if case == BOTH or case == UPPER:
+        if is_both_or(case, UPPER):
             for i in range(26):
                 s = s + chr(i + ord('A'))
 
-    if charset == BOTH or charset == NUMERIC:
+    if is_both_or(charset, NUMERIC):
         for i in range(10):
             s = s + chr(i + ord('0'))
     return s
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-l', '--length', type=int,
