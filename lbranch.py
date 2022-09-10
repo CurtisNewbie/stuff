@@ -11,7 +11,6 @@ if __name__ == '__main__':
 
     root = "./"
     entries: list[str] = os.listdir(root)
-    s = ''
 
     for i in range(len(entries)):
         # print(entries[i])
@@ -41,8 +40,7 @@ if __name__ == '__main__':
                 continue
 
             branch = firstline[i + BRANCH_PREFIX_LEN:]
-            s = s + f"{folder:<30} {branch}\n"
+            print(f"{folder:<30} {branch}")
 
     end = time.perf_counter()
     print(f"-- Finished, took {end - start:0.4f}s -- \n")
-    print(s)
