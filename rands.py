@@ -4,7 +4,7 @@ import random
 UPPER = "upper"
 LOWER = "lower"
 NUMERIC = "numeric"
-ALPHA = "alpha"
+ALPHA = "alphabetic"
 DEFAULT_LEN = 25
 BOTH = "both"
 
