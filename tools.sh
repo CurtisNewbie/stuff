@@ -993,11 +993,11 @@ function docker-compose-re-up(){
     docker-compose-up
 }
 
-function encrypt() { 
+function encrypt() {
   	python3 "$STUFF/aes.py" -m encrypt
 }
 
-function decrypt() { 
+function decrypt() {
   	python3 "$STUFF/aes.py" -m decrypt
 }
 
@@ -1023,8 +1023,8 @@ function readpom() {
 }
 export -f readpom 
 
-function monday() {
-	python3 "$STUFF/monday.py" 
+function monday() {	
+  python3 "$STUFF/monday.py" 
 }
 export -f monday 
 
@@ -1037,39 +1037,43 @@ function rands() {
 }
 export -f rands
 
+function dectobin() {
+  python3 "$STUFF/dec_to_bin.py" "$1" 
+}
+export -f dectobin
+
 function dectohex() {
-  python3 "$STUFF/dec_to_hex.py" "$1"
+  python3 "$STUFF/dec_to_hex.py" "$1" 
 }
 export -f dectohex
 
 function hextodec() {
-  python3 "$STUFF/hex_to_dec.py" "$1"
+  python3 "$STUFF/hex_to_dec.py" "$1" 
 }
 export -f hextodec
 
 function tzone() {
-  python3 "$STUFF/tzone.py" $@
+  python3 "$STUFF/tzone.py" $@ 
 }
 export -f tzone 
 
-
 function lbranch() {
-  python3 $STUFF/lbranch.py
+  python3 $STUFF/lbranch.py 
 }
 export -f lbranch
 
-function findpom(){
-  python3 $STUFF/findpom.py $@
+function findpom() {
+  python3 $STUFF/findpom.py $@ 
 }
 export -f findpom 
 
 function pyhash() {
-  python3 $STUFF/hash.py $@
+  python3 $STUFF/hash.py $@ 
 }
 export -f pyhash 
 
-function insertgen(){
-  python3 $STUFF/insertgenpy/insertgenpd.py $@
+function insertgen() {
+  python3 $STUFF/insertgenpy/insertgenpd.py $@ 
 }
 export -f insertgen
 
