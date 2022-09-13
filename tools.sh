@@ -1052,6 +1052,11 @@ function hextodec() {
 }
 export -f hextodec
 
+function hextobin() {
+  python3 "$STUFF/hex_to_bin.py" "$1" 
+}
+export -f hextobin
+
 function tzone() {
   python3 "$STUFF/tzone.py" $@ 
 }
