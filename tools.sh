@@ -1106,3 +1106,11 @@ function grepcode() {
   echogreen "Searching $1"
   grep -R "$1" . --exclude-dir "target" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "node_modules" --exclude-dir "dist" --exclude-dir "logs" --exclude-dir "log" -l
 }
+
+function tdump() {
+    # -n not dns resolution stuff
+    # -X similar to -A, prints out all header, content
+    # -S absolute seq num
+    # -s size, 0 means all
+    sudo tcpdump -nXS -s 0 $@
+}
