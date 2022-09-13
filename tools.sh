@@ -1082,6 +1082,11 @@ function insertgen() {
 }
 export -f insertgen
 
+function updategen() {
+  python3 $STUFF/updategenpy/updategenpd.py $@ 
+}
+export -f updategen 
+
 function rmr() {
   if [ -z "$1" ]; then
     return 0
