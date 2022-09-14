@@ -934,8 +934,10 @@ function rl() {
     echo "$p"
     if [ "$(ismac)" == "1" ]; then
         echo "$p" | tr -d '\n' | pbcopy
-        echogreen "copied to clipboard..."
+    else 
+        echo "$p" | tr -d '\n' | xclip -selection clipboard
     fi
+    echogreen "copied to clipboard..."
 }
 
 # Extract git history
