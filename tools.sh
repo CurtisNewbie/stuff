@@ -1117,5 +1117,8 @@ function tdump() {
     # -X similar to -A, prints out all header, content
     # -S absolute seq num
     # -s size, 0 means all
+    # -w $somefile.pcap 
+    # src $host 
+    # dst $host 
     sudo tcpdump -nXS -s 0 $@
 }
