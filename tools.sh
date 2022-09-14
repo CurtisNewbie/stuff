@@ -1029,10 +1029,10 @@ function monday() {
 export -f monday 
 
 function rands() {
-    if [ ${#@} -eq 0 ]; then 
-        python3 "$STUFF/rands.py" -h
-        return 0
-    fi
+    # if [ ${#@} -eq 0 ]; then 
+    #     python3 "$STUFF/rands.py" -h
+    #     return 0
+    # fi
 	python3 "$STUFF/rands.py" "$@"
 }
 export -f rands
