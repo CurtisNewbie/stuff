@@ -935,6 +935,7 @@ function rl() {
     if [ "$(ismac)" == "1" ]; then
         echo "$p" | tr -d '\n' | pbcopy
     else 
+        # apt install xclip 
         echo "$p" | tr -d '\n' | xclip -selection clipboard
     fi
     echogreen "copied to clipboard..."
