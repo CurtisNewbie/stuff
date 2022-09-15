@@ -173,7 +173,7 @@ function mpackage() {
     fi
 }
 
-function gpushup() {
+function gpushorigin() {
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
