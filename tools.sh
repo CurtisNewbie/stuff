@@ -121,6 +121,14 @@ function lfind() {
     ls -a | grep "$1" -i
 }
 
+function dfind() {
+    if [ $# -gt 1 ]; then
+        find "$1" -type d -name "*$2*"
+    else 
+        find . -type d -name "*$1*"
+    fi
+}
+
 function ffind() {
     if [ $# -gt 1 ]; then
         find "$1" -type f -name "*$2*"
