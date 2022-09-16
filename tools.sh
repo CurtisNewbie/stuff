@@ -1103,7 +1103,11 @@ function rmr() {
     return 0
   fi
 
-  read -p "Sure you want to reset one commit? To cancel: [n/N] "
+  if [ -f "$1" ]; then
+    read -p "Sure you want to remove '$1'? To cancel: [n/N] "
+  else 
+    read -p "Sure you want to remove all in '$1'? To cancel: [n/N] "
+  fi 
   ans=$REPLY
 
   if [[ $ans =~ [Nn] ]]; then
