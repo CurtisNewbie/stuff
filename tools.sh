@@ -1141,6 +1141,6 @@ function tdump() {
 }
 
 function fixfname() {
-    python3 $STUFF/fixfname.py $@
+    python3 $STUFF/fixfname.py "$@"
 }
 export -f fixfname
