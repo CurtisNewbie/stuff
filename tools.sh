@@ -1140,7 +1140,7 @@ function tdump() {
     sudo tcpdump -nnAS -s 0 -i any $@
 }
 
-function fixfname() {
+function fxname() {
     python3 $STUFF/fixfname.py "$@"
 }
-export -f fixfname
+export -f fxname 
