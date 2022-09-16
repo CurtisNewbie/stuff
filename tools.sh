@@ -181,7 +181,7 @@ function mpackage() {
     fi
 }
 
-function gpushorigin() {
+function grpush() {
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
