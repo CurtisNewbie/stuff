@@ -1135,5 +1135,7 @@ function tdump() {
     # -w $somefile.pcap 
     # src $host 
     # dst $host 
-    sudo tcpdump -nXS -s 0 $@
+    # port $port
+    # i interface, tcpdump -D
+    sudo tcpdump -nnAS -s 0 -i any $@
 }
