@@ -1139,3 +1139,8 @@ function tdump() {
     # i interface, tcpdump -D
     sudo tcpdump -nnAS -s 0 -i any $@
 }
+
+function fixfname() {
+    python3 $STUFF/fixfname.py $@
+}
+export -f fixfname
