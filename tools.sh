@@ -1125,3 +1125,10 @@ function tdump() {
     # dst $host 
     sudo tcpdump -nXS -s 0 $@
 }
+
+
+function npmci() {
+    # alternative to npm install, without writing package.json :D
+    npm ci
+}
+export -f npmci
