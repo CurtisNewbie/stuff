@@ -121,6 +121,14 @@ function lfind() {
     ls -a | grep "$1" -i
 }
 
+function dfind() {
+    if [ $# -gt 1 ]; then
+        find "$1" -type d -name "*$2*"
+    else 
+        find . -type d -name "*$1*"
+    fi
+}
+
 function ffind() {
     if [ $# -gt 1 ]; then
         find "$1" -type f -name "*$2*"
@@ -173,7 +181,7 @@ function mpackage() {
     fi
 }
 
-function gpushup() {
+function grpush() {
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
@@ -1095,7 +1103,11 @@ function rmr() {
     return 0
   fi
 
-  read -p "Sure you want to reset one commit? To cancel: [n/N] "
+  if [ -f "$1" ]; then
+    read -p "Sure you want to remove '$1'? To cancel: [n/N] "
+  else 
+    read -p "Sure you want to remove all in '$1'? To cancel: [n/N] "
+  fi 
   ans=$REPLY
 
   if [[ $ans =~ [Nn] ]]; then
@@ -1123,9 +1135,15 @@ function tdump() {
     # -w $somefile.pcap 
     # src $host 
     # dst $host 
-    sudo tcpdump -nXS -s 0 $@
+    # port $port
+    # i interface, tcpdump -D
+    sudo tcpdump -nnAS -s 0 -i any $@
 }
 
+function fxname() {
+    python3 $STUFF/fixfname.py "$@"
+}
+export -f fxname 
 
 function npmci() {
     # alternative to npm install, without writing package.json :D
