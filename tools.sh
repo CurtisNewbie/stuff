@@ -130,11 +130,15 @@ function dfind() {
 }
 
 function ffind() {
-    if [ $# -gt 1 ]; then
-        find "$1" -type f -name "*$2*"
-    else 
-        find . -type f -name "*$1*"
-    fi
+    find . -type f -name "*$1*" \
+        -not \( -path "**/target/*" -prune \) \
+        -not \( -path "**/.git/*" -prune \) \
+        -not \( -path "**/.vscode/*" -prune \) \
+        -not \( -path "**/node_modules/*" -prune \) \
+        -not \( -path "**/dist/*" -prune \) \
+        -not \( -path "**/logs/*" -prune \) \
+        -not \( -path "**/log/*" -prune \) \
+        -not \( -path "**/.idea/*" -prune \) 
 }
 
 function rfind() {
@@ -1124,7 +1128,16 @@ function grepcode() {
   fi
 
   echogreen "Searching $1"
-  grep -R "$1" . --exclude-dir "target" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "node_modules" --exclude-dir "dist" --exclude-dir "logs" --exclude-dir "log" -l
+  grep -R "$1" . \
+  --exclude-dir "target" \
+  --exclude-dir ".git" \
+  --exclude-dir ".vscode" \
+  --exclude-dir "node_modules" \
+  --exclude-dir "dist" \
+  --exclude-dir "logs" \
+  --exclude-dir "log" \
+  --exclude-dir ".idea" \
+  -l
 }
 
 function tdump() {
@@ -1149,3 +1162,9 @@ function grepconflict() {
     grepcode "======="
 }
 export -f grepconflict 
+
+function npmci() {
+    # alternative to npm install, without writing package.json :D
+    npm ci
+}
+export -f npmci
