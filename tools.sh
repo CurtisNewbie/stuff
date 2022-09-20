@@ -175,6 +175,10 @@ function gstashpop() {
     git stash pop
 }
 
+function gstashshow(){
+    git stash show -p
+}
+
 function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
@@ -1168,3 +1172,5 @@ function npmci() {
     npm ci
 }
 export -f npmci
+
+
