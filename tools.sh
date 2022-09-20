@@ -1144,3 +1144,8 @@ function fxname() {
     python3 $STUFF/fixfname.py "$@"
 }
 export -f fxname 
+
+function grepconflict() {
+    grepcode "======="
+}
+export -f grepconflict 
