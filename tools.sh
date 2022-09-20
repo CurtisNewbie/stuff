@@ -1158,10 +1158,10 @@ function fxname() {
 }
 export -f fxname 
 
-function grepconflict() {
+function conflict() {
     grepcode "======="
 }
-export -f grepconflict 
+export -f conflict
 
 function npmci() {
     # alternative to npm install, without writing package.json :D
