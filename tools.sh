@@ -1173,4 +1173,7 @@ function npmci() {
 }
 export -f npmci
 
+function ghead() {
+    git rev-parse HEAD
+}
 
