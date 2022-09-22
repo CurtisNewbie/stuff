@@ -944,16 +944,23 @@ function ismac() {
     fi
 }
 
+function clipboard() {
+    read c 
+    # echo "clipboard: $c"
+    if [ "$(ismac)" == "1" ]; then
+        echo "$c" | tr -d '\n' | pbcopy 
+    else 
+        # apt install xclip 
+        echo "$c" | tr -d '\n' | xclip -selection clipboard
+    fi
+}
+export -f clipboard
+
 # readlink -e with 'copied to clipboard'
 function rl() {
     p=$(readlink -e "$1")
     echo "$p"
-    if [ "$(ismac)" == "1" ]; then
-        echo "$p" | tr -d '\n' | pbcopy
-    else 
-        # apt install xclip 
-        echo "$p" | tr -d '\n' | xclip -selection clipboard
-    fi
+    echo "$p" | clipboard
     echogreen "copied to clipboard..."
 }
 
@@ -1174,6 +1181,9 @@ function npmci() {
 export -f npmci
 
 function ghead() {
-    git rev-parse HEAD
+    out=$(git rev-parse HEAD)
+    echo "$out"
+    echo "$out" | clipboard
+    echogreen "copied to clipboard..."
 }
 
