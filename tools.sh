@@ -1130,7 +1130,7 @@ function rmr() {
   fi
 
   echogreen "Removing (rm -rvf) $1"
-  rm -rvf "$1"  
+  time rm -rvf "$1"  
 }
 
 function grepcode() {
