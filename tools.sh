@@ -300,7 +300,7 @@ function gbranch() {
     git branch --sort=-committerdate $extra
 }
 
-function gt() {
+function gtag() {
     git tag --sort=-committerdate $extra
 }
 
