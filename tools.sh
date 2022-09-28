@@ -301,7 +301,7 @@ function gbranch() {
 }
 
 function gtag() {
-    git tag --sort=-committerdate $extra
+    git tag --sort=-committerdate 
 }
 
 function gamd() {
