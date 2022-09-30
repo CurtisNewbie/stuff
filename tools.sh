@@ -406,7 +406,7 @@ export -f echocyan
 
 # mvn test-compile 
 function mcpt() {
-    mvn test-compile
+    mvn -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
 }
 
 # mvn compile -o -f [0], or, mvn compile -o
