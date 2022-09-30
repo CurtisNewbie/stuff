@@ -1032,7 +1032,9 @@ function split() {
 }
 
 function jsonarray() {
-	python3 "$STUFF/json_array.py" $@
+	res=$(python3 "$STUFF/json_array.py" $@) 
+    echo $res
+    echo $res | clipboard  
 }
 
 function strlen() {
