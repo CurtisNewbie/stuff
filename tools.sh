@@ -1149,8 +1149,8 @@ function grepcode() {
   --exclude-dir "dist" \
   --exclude-dir "logs" \
   --exclude-dir "log" \
-  --exclude-dir ".idea" \
-  -l
+  --exclude-dir ".idea"
+  # -l
 }
 
 function tdump() {
