@@ -189,7 +189,7 @@ function mpackage() {
     fi
 }
 
-function grpush() {
+function gpushremote() {
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
