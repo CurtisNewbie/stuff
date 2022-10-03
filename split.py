@@ -14,7 +14,10 @@ def print_help():
     print('arg[1] - delimiter')
 
 
-def main():
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print_help()
+
     text = sys.argv[1]
     if len(sys.argv) > 2:
         delimiter = sys.argv[2]
@@ -22,8 +25,3 @@ def main():
         delimiter = ','
 
     split(text, delimiter)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print_help()
