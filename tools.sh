@@ -953,6 +953,7 @@ function clipboard() {
         # apt install xclip 
         echo "$c" | tr -d '\n' | xclip -selection clipboard
     fi
+    echogreen "copied to clipboard..."
 }
 export -f clipboard
 
@@ -961,7 +962,6 @@ function rl() {
     p=$(readlink -e "$1")
     echo "$p"
     echo "$p" | clipboard
-    echogreen "copied to clipboard..."
 }
 
 # Extract git history
@@ -1028,7 +1028,9 @@ function decrypt() {
 }
 
 function split() {
-	python3 "$STUFF/split.py" $@
+	res=$(python3 "$STUFF/split.py" $@)
+    echo $res
+    echo $res | clipboard  
 }
 
 function jsonarray() {
@@ -1186,6 +1188,5 @@ function ghead() {
     out=$(git rev-parse HEAD)
     echo "$out"
     echo "$out" | clipboard
-    echogreen "copied to clipboard..."
 }
 
