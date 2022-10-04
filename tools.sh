@@ -1190,3 +1190,18 @@ function ghead() {
     echo "$out" | clipboard
 }
 
+# $1: username, $2: database, $3: table, $4: where
+function dumpinsert() {
+    if [ "${#@}" -lt 3 ]; then
+        echored "Please provide arguments: \$1: username, \$2: database, \$3: table, \$4: where (optional)"
+        return 1
+    fi
+
+    # --where=" = ''"
+    if [ ! -z "$4" ]; then
+        mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables --where="$4"
+    else
+        mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables
+    fi
+}
+
