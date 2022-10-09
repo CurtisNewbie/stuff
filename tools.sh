@@ -1151,7 +1151,17 @@ function grepcode() {
   --exclude-dir "dist" \
   --exclude-dir "logs" \
   --exclude-dir "log" \
-  --exclude-dir ".idea"
+  --exclude-dir ".idea" \
+  --exclude "*.dmg" \
+  --exclude "*.jar" \
+  --exclude "*.zip" \
+  --exclude "*.gzip" \
+  --exclude "*.tar" \
+  --exclude "*.mp4" \
+  --exclude "*.mov" \
+  --exclude "*.jpg" \
+  --exclude "*.jpeg" \
+  --exclude "*.png"
   # -l
 }
 
