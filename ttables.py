@@ -23,15 +23,17 @@ def show_create_table(cursor, table, database):
 
 def parsearg():
     ap = argparse.ArgumentParser("ttables.py by Yongj.Zhuang")
-    ap.add_argument("-user", help="username", type=str, required=True)
-    ap.add_argument("-password", help="password",
+    required = ap.add_argument_group('required arguments')
+    required.add_argument("-user", help="username", type=str, required=True)
+    required.add_argument(
+        "-database", help="database name", type=str, required=True)
+
+    ap.add_argument("-password", help="password (by default it's not provided)",
                     type=str, default="", required=False)
     ap.add_argument(
         "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
     ap.add_argument(
-        "-database", help="database name", type=str, required=True)
-    ap.add_argument(
-        "-table", help="table name (optional)", type=str, required=False)
+        "-table", help="table name (if not specified, all tables' DDL are queried and printed)", type=str, required=False)
     ap.add_argument(
         "-debug", help="debug mode", action="store_true", required=False)
     return ap.parse_args()

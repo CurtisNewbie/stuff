@@ -1199,6 +1199,7 @@ function ghead() {
     echo "$out"
     echo "$out" | clipboard
 }
+export -f ghead
 
 # $1: username, $2: database, $3: table, $4: where
 function dumpinsert() {
@@ -1214,4 +1215,9 @@ function dumpinsert() {
         mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables
     fi
 }
+
+function ttables() {
+    python3 $STUFF/ttables.py
+}
+export -f ttables
 
