@@ -11,13 +11,16 @@ def show_create_table(cursor, table, database):
     cursor.execute(f'show create table {table}')
     trs: list = cursor.fetchall()
     ddl = trs[0][1]
+    debug(lambda: f"original ddl: {ddl}")
 
     ddl = re.sub("CREATE TABLE `[a-zA-Z_]+` ",
                  f"CREATE TABLE IF NOT EXISTS {database}.{table} ", ddl)
 
     ddl = re.sub(
-        "AUTO_INCREMENT=[0-9]+ DEFAULT CHARSET=[0-9a-zA-Z]+ ", "", ddl)
-    ddl = ddl + ";"
+        "AUTO_INCREMENT=[0-9]+ ", "", ddl)
+    ddl = re.sub(
+        "COLLATE=[0-9a-zA-Z_]+", "", ddl)
+    ddl = ddl.strip() + ";"
     print(f"{ddl}\n")
 
 

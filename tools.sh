@@ -1217,7 +1217,7 @@ function dumpinsert() {
 }
 
 function ttables() {
-    python3 $STUFF/ttables.py
+    python3 $STUFF/ttables.py $@
 }
 export -f ttables
 
