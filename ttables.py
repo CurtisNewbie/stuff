@@ -28,7 +28,7 @@ def parsearg():
     required.add_argument(
         "-database", help="database name", type=str, required=True)
 
-    ap.add_argument("-password", help="password (by default it's not provided)",
+    ap.add_argument("-password", help="password (by default it's empty string)",
                     type=str, default="", required=False)
     ap.add_argument(
         "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
