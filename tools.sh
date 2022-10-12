@@ -1177,6 +1177,7 @@ function tdump() {
     # i interface, tcpdump -D
     sudo tcpdump -nnAS -s 0 -i any $@
 }
+export -f tdump
 
 function fxname() {
     python3 $STUFF/fixfname.py "$@"
@@ -1215,6 +1216,7 @@ function dumpinsert() {
         mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables
     fi
 }
+export -f dumpinsert 
 
 function ttables() {
     python3 $STUFF/ttables.py $@
