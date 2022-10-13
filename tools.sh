@@ -168,7 +168,7 @@ function trash() {
     else
         mv "$1" "$trash_can_p"
     fi
-    echogreen "Trashed '$1' to '$trash_can_p'"
+    echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
 function gstashpop() {
@@ -610,7 +610,7 @@ function gcheck() {
                 fi
 
                 if [ $debug -eq 1 ]; then 
-                    echogreen "debug: git fetch in $1"
+                    echogreen ">>> debug: git fetch in $1"
                 fi
 
             fi
@@ -618,7 +618,7 @@ function gcheck() {
             status=`git status`
 
             if [ $debug -eq 1 ]; then 
-                echogreen "called git status in $1"
+                echogreen ">>> called git status in $1"
             fi
 
             # check whether repo is up-to-date
@@ -628,7 +628,7 @@ function gcheck() {
                 master=`is_master "$1"`
 
                 if [ "$pull" -eq 1 ] && [ "$master" -eq 1 ] ; then
-                    echogreen "pulling changes from upstream"
+                    echogreen ">>> pulling changes from upstream"
                     git pull
                 fi
             fi        
@@ -687,7 +687,7 @@ function repocheck () {
 
 # fetch and pull
 function gfp () {
-    echogreen "Fetching..."
+    echogreen ">>> fetching..."
     msg=`git fetch 2>&1`
 
     if [ $? -ne 0 ]; then 
@@ -695,7 +695,7 @@ function gfp () {
         return 1
     fi
 
-    echogreen "Pulling..."
+    echogreen ">>> pulling..."
     git pull;
 }
 
@@ -746,7 +746,7 @@ function gen_weekly_report(){
     fi
 
     touch $target
-    echogreen "touched file: '$target', initializing content"
+    echogreen ">>> touched file: '$target', initializing content"
 
     # initialize content
     echo "# Week-$num" >> $target
@@ -766,7 +766,7 @@ function gen_weekly_report(){
     echo "暂无" >> $target
     echo >> $target
             
-    echogreen "'$target' content initialized, finished" 
+    echogreen ">>> '$target' content initialized, finished" 
 
     # open file using vscode
     code $target  
@@ -794,7 +794,7 @@ function resetone() {
         ans=$REPLY
 
         if [ -z $ans ] || [[ $ans =~ [^yY] ]]; then
-            echogreen "Aborting ..."
+            echogreen ">>> Aborting ..."
             return 1
         fi
     fi
@@ -805,7 +805,7 @@ function resetone() {
         git restore --staged .
     fi
 
-    echogreen "Resetted one git commit"
+    echogreen ">>>> resetted one git commit"
     git status 
 }
 
@@ -953,7 +953,7 @@ function clipboard() {
         # apt install xclip 
         echo "$c" | tr -d '\n' | xclip -selection clipboard
     fi
-    echogreen "copied to clipboard..."
+    echogreen ">>> copied to clipboard..."
 }
 export -f clipboard
 
@@ -1142,7 +1142,8 @@ function grepcode() {
     return 0
   fi
 
-  echogreen "Searching $1"
+  # echogreen "Searching $1"
+
   grep -R "$1" . \
   --exclude-dir "target" \
   --exclude-dir ".git" \
@@ -1186,6 +1187,8 @@ export -f fxname
 
 function conflict() {
     grepcode "======="
+    grepcode ">>>>"
+    grepcode "<<<<"
 }
 export -f conflict
 
@@ -1224,6 +1227,15 @@ function ttables() {
 export -f ttables
 
 function quotejoin() {
-    python3 $STUFF/quotejoin.py $@
+    out=$(python3 $STUFF/quotejoin.py $@)
+    echo "$out"
+    echo "$out" | clipboard
 }
 export -f quotejoin 
+
+function unquote() {
+    out=$(python3 $STUFF/unquote.py $@)
+    echo "$out"
+    echo "$out" | clipboard
+}
+export -f unquote 
