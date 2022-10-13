@@ -15,10 +15,10 @@ def quote_join(args: list[str]) -> None:
         arr = args[j].split(' ')
         for i in range(len(arr)):
             c = c + 1
-            print(f'[{c}] - {arr[i]}')
+            # print(f'[{c}] - {arr[i]}')
             tbj.append(quote(arr[i]))
 
-    print("\n(" + ",".join(tbj) + ")\n")
+    print("(" + ",".join(tbj) + ")")
 
 
 if __name__ == "__main__":
