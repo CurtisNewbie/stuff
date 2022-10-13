@@ -1223,3 +1223,7 @@ function ttables() {
 }
 export -f ttables
 
+function quotejoin() {
+    python3 $STUFF/quotejoin.py $@
+}
+export -f quotejoin 
