@@ -1072,6 +1072,11 @@ function dectobin() {
 }
 export -f dectobin
 
+function bintodec() {
+  python3 "$STUFF/bin_to_dec.py" "$1" 
+}
+export -f bintodec
+
 function dectohex() {
   python3 "$STUFF/dec_to_hex.py" "$1" 
 }

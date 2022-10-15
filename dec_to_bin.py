@@ -7,7 +7,7 @@ num_upper_bound = ord('9')
 alpha_lower_bound = ord('a')
 
 
-def to_hex(n: int) -> str:
+def tobin(n: int) -> str:
     if n < 10:
         c = chr(num_lower_bound + n)
     else:
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     s = ''
     while num > 0:
         rem = num % 2
-        s = to_hex(rem) + s
+        s = tobin(rem) + s
         num = int(num / 2)
 
     print(f"dec: \"{n}\" to bin: \"{s}\"")
