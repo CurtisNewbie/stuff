@@ -1246,6 +1246,8 @@ function unquote() {
 export -f unquote 
 
 today() {
-    date +'%Y-%m-%d' 
+    out=$(date +'%Y-%m-%d') 
+    echo "$out"
+    echo "$out" | clipboard
 }
 export -f today
