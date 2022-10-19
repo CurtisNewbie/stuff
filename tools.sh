@@ -1244,3 +1244,8 @@ function unquote() {
     echo "$out" | clipboard
 }
 export -f unquote 
+
+today() {
+    date +'%Y-%m-%d' 
+}
+export -f today
