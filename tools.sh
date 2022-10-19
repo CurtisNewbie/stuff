@@ -1251,3 +1251,7 @@ today() {
     echo "$out" | clipboard
 }
 export -f today
+
+pport() {
+    lsof -i ":$1"    
+}
