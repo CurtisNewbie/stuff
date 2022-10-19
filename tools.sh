@@ -1026,7 +1026,9 @@ function encrypt() {
 }
 
 function decrypt() {
-  	python3 "$STUFF/aes.py" -m decrypt
+  	out=$(python3 "$STUFF/aes.py" -m decrypt)
+    echo "$out"
+    echo $out | clipboard  
 }
 
 function split() {
