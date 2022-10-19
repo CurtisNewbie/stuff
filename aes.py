@@ -2,9 +2,11 @@ import argparse as argp
 from base64 import b64decode, b64encode
 import getpass
 import sys
+from sys import platform
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
+import subprocess
 
 ENCRYPT_MODE = 'encrypt'
 DECRYPT_MODE = 'decrypt'
@@ -73,16 +75,16 @@ if __name__ == '__main__':
     isencrypt = mode.lower() == ENCRYPT_MODE
     if isencrypt:
         data = getpass.getpass(
-            "Please enter the data that you want to encrypt/decrypt:")
+            "Please enter the data that you want to encrypt:")
     else:
-        print("Please enter the data that you want to encrypt/decrypt:")
-        data = input()
+        data = input("Please enter the data that you want to decrypt:\n")
 
     if not data:
         print("Have nothing to " + ("encrypt" if isencrypt else "decrypt") + " :D")
         sys.exit(0)
 
     password = getpass.getpass("Please provide your password:")
+    out = None
 
     if isencrypt:
         cipher = AES.new(key=padzero(password), mode=AES.MODE_CBC)
@@ -93,7 +95,7 @@ if __name__ == '__main__':
         for i in range(len(cta)):
             iva.append(cta[i])
 
-        print(b64encode(iva).decode('utf-8'))
+        out = b64encode(iva).decode('utf-8')
     else:
         decoded: bytes = b64decode(data)
         darray = bytearray(decoded)
@@ -105,4 +107,15 @@ if __name__ == '__main__':
 
         ct: bytearray = darray[16:]
         pt: bytes = unpad(cipher.decrypt(ct), AES.block_size)
-        print(pt.decode('utf-8'))
+        out = pt.decode('utf-8')
+
+    # print(f"os: {platform}")
+    if "linux" in platform:
+        subprocess.run("xclip -selection clipboard",
+                       universal_newlines=True, input=out)
+        print("Success! Output has been copied to clipboard")
+    elif "darwin" in platform:
+        subprocess.run("pbcopy", universal_newlines=True, input=out)
+        print("Success! Output has been copied to clipboard")
+    else:
+        print(out)

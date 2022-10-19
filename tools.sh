@@ -1020,15 +1020,11 @@ function docker-compose-re-up(){
 }
 
 function encrypt() {
-  	out=$(python3 "$STUFF/aes.py" -m encrypt)
-    echo "$out"
-    echo $out | clipboard  
+  	python3 "$STUFF/aes.py" -m encrypt
 }
 
 function decrypt() {
-  	out=$(python3 "$STUFF/aes.py" -m decrypt)
-    echo "$out"
-    echo $out | clipboard  
+  	python3 "$STUFF/aes.py" -m decrypt
 }
 
 function split() {
