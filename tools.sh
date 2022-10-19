@@ -1022,7 +1022,7 @@ function docker-compose-re-up(){
 function encrypt() {
   	out=$(python3 "$STUFF/aes.py" -m encrypt)
     echo "$out"
-    echo $res | clipboard  
+    echo $out | clipboard  
 }
 
 function decrypt() {
