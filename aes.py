@@ -71,17 +71,11 @@ if __name__ == '__main__':
         sys.exit(1)
 
     isencrypt = mode.lower() == ENCRYPT_MODE
-    print("Please enter the data that you want to encrypt/decrypt: (Press again 'Enter' to finish)")
     if isencrypt:
-        lines = []
-        while True:
-            line = input()
-            if line:
-                lines.append(line)
-            else:
-                break
-        data = '\n'.join(lines)
+        data = getpass.getpass(
+            "Please enter the data that you want to encrypt/decrypt:")
     else:
+        print("Please enter the data that you want to encrypt/decrypt:")
         data = input()
 
     if not data:
