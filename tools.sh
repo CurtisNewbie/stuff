@@ -284,6 +284,7 @@ function gf() {
 
 function gpush() {
     git push "$@"
+    ghead
 }
 
 function glike() {
