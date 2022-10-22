@@ -17,6 +17,8 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 export LANG=en_US.UTF-8
 
+alias bc="bc -l"
+
 # for debugging
 # set -eE -o functrace
 
