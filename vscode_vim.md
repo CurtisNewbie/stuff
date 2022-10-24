@@ -34,6 +34,17 @@ In `settings.json`, to use `gs` for searching symbols, `gc` to go to implementat
                     "command": "java.action.navigateToSuperImplementation"
                 }
             ]
+        },
+        {
+            "before": [
+                "=",
+                "="
+            ],
+            "commands": [
+                {
+                    "command": "editor.action.formatDocument"
+                }
+            ]
         }
     ],
 ```
