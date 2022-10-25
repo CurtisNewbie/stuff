@@ -1260,18 +1260,26 @@ export -f today
 pport() {
     lsof -i ":$1"    
 }
+export -f pport
 
-certinfo(){
+certinfo() {
     openssl x509 -noout -text -inform pem -in "$1"
 }
+export -f certinfo
 
-certfingerprint(){
+certfingerprint() {
     openssl x509 -noout -fingerprint -sha256 -inform pem -in "$1"
     openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1"
 }
+export -f certfingerprint
 
-fetchcert(){
+fetchcert() {
     openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null | openssl x509 -text
 }
+export -f fetchcert
 
+use_vimdiff_for_git() {
+    git config --global diff.tool vimdiff
+    git config --global merge.tool vimdiff
+}
 
