@@ -1258,3 +1258,15 @@ export -f today
 pport() {
     lsof -i ":$1"    
 }
+
+certinfo(){
+    openssl x509 -noout -text -inform pem -in "$1"
+}
+
+certfingerprint(){
+    openssl x509 -noout -fingerprint -sha256 -inform pem -in "$1"
+    openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1"
+}
+
+
+
