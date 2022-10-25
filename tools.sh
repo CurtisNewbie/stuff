@@ -286,7 +286,9 @@ function gf() {
 
 function gpush() {
     git push "$@"
-    ghead
+    if [ $! -eq 0 ]; then 
+        ghead
+    fi
 }
 
 function glike() {
