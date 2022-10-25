@@ -1268,5 +1268,8 @@ certfingerprint(){
     openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1"
 }
 
+fetchcert(){
+    openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null | openssl x509 -text
+}
 
 

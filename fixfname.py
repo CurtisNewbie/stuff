@@ -16,7 +16,7 @@ if __name__ == '__main__':
             print(f"file {f} not found")
             sys.exit(1)
 
-        ff = re.sub("[ \\-）（,\'+]", "_", f.strip())
+        ff = re.sub("[ \\-）（\\(\\),\'+]", "_", f.strip())
         ff = re.sub("_+", "_", ff)
         if f == ff:
             sys.exit(0)
