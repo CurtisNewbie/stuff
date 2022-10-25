@@ -370,7 +370,7 @@ function gd() {
         extra="$@"
     fi
 
-    git diff $extra
+    git diff --color-words $extra
 }
 
 function gds() {
