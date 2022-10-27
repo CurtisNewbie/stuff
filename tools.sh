@@ -451,7 +451,7 @@ function minstall() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn install -T 0.5C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn clean install -T 0.5C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 
 #    if [ ! -z $1 ]; then
