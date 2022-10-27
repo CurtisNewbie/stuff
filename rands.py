@@ -5,21 +5,22 @@ UPPER = "upper"
 LOWER = "lower"
 NUMERIC = "numeric"
 ALPHA = "alphabetic"
+SYMBOLS = "!@#$%&*"
 DEFAULT_LEN = 25
-BOTH = "both"
+ALL = "all"
 
-case_set = {UPPER, LOWER, BOTH}
-charset_set = {ALPHA, NUMERIC, BOTH}
+case_set = {UPPER, LOWER, ALL}
+charset_set = {ALPHA, NUMERIC, ALL}
 
 
-def is_both_or(s: str, target: str) -> bool:
+def is_all_or(s: str, target: str) -> bool:
     '''
-    is BOTH or
+    is ALL or
     '''
-    return s == BOTH or s == target
+    return s == ALL or s == target
 
 
-def buildcharset(charset: str, case: str) -> str:
+def buildcharset(charset: str, case: str, include_symbols: bool) -> str:
     '''
     build charset based on provided options
     '''
@@ -27,25 +28,29 @@ def buildcharset(charset: str, case: str) -> str:
     case = case.lower()
 
     if case not in case_set:
-        case = BOTH
+        case = ALL
     if charset not in charset_set:
-        charset = BOTH
+        charset = ALL
 
     s = ""
     charset = charset.lower()
 
-    if is_both_or(charset, ALPHA):
-        if case == BOTH or case == LOWER:
+    if is_all_or(charset, ALPHA):
+        if is_all_or(case, LOWER):
             for i in range(26):
                 s = s + chr(i + ord('a'))
 
-        if is_both_or(case, UPPER):
+        if is_all_or(case, UPPER):
             for i in range(26):
                 s = s + chr(i + ord('A'))
 
-    if is_both_or(charset, NUMERIC):
+    if is_all_or(charset, NUMERIC):
         for i in range(10):
             s = s + chr(i + ord('0'))
+
+    if include_symbols:
+        s = s + SYMBOLS
+
     return s
 
 
@@ -57,13 +62,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-t', '--times', type=int,
                         help=f"Number of random str", required=False, default=1)
 
-    csj = "/".join([ALPHA, NUMERIC, BOTH])
+    csj = "/".join([ALPHA, NUMERIC, ALL])
     parser.add_argument('-s', '--charset', type=str,
-                        help=f"Charset: {csj}", required=False, default=BOTH)
+                        help=f"Charset: {csj}", required=False, default=ALL)
+    parser.add_argument('-b', '--symbol', type=str,
+                        help="Include symbols", required=False, default='false')
 
-    csj = "/".join([UPPER, LOWER, BOTH])
+    csj = "/".join([UPPER, LOWER, ALL])
     parser.add_argument('-c', '--case', type=str,
-                        help=f"Case: {csj}", required=False, default=BOTH)
+                        help=f"Case: {csj}", required=False, default=ALL)
     parser.add_argument('-p', '--prefix', type=str,
                         help=f"Prefix", required=False, default="")
     return parser.parse_args()
@@ -75,7 +82,7 @@ if __name__ == '__main__':
     len = args.length
     times = args.times
 
-    letters = buildcharset(args.charset, args.case)
+    letters = buildcharset(args.charset, args.case, args.symbol.lower() == 'true')
     prefix = args.prefix
 
     for i in range(times):
