@@ -187,7 +187,7 @@ function mpackage() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn package -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn clean package -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 }
 
