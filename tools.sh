@@ -1283,7 +1283,11 @@ use_vimdiff_for_git() {
     git config --global merge.tool vimdiff
 }
 
-gzip_decompressall() {
+decompressall_gzip() {
     find . -name '*.gz' -type f -exec gzip -d {} \;
+}
+
+decompressall_tar() {
+    find . -name '*.tar' -type f -exec tar -xf {} \;
 }
 
