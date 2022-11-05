@@ -255,7 +255,8 @@ function mclean() {
 }
 
 function mresolve() {
-    mvn dependency:resolve -U
+    mvn dependency:sources
+    mvn dependency:resolve -U -Dclassifier=javadoc
 }
 
 function gadd() {
@@ -1288,6 +1289,5 @@ decompressall_gzip() {
 }
 
 decompressall_tar() {
-    find . -name '*.tar' -type f -exec tar -xf {} \;
+    find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;
 }
-
