@@ -260,6 +260,16 @@ function mresolve() {
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
+        mvn dependency:resolve -f "$pom" -U
+    fi
+}
+
+function mresolvesrc() {
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
         mvn dependency:sources -f "$pom"
         mvn dependency:resolve -f "$pom" -U -Dclassifier=javadoc
     fi
