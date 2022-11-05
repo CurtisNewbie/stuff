@@ -255,8 +255,14 @@ function mclean() {
 }
 
 function mresolve() {
-    mvn dependency:sources
-    mvn dependency:resolve -U -Dclassifier=javadoc
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn dependency:sources -f "$pom"
+        mvn dependency:resolve -f "$pom" -U -Dclassifier=javadoc
+    fi
 }
 
 function gadd() {
@@ -412,7 +418,13 @@ export -f echocyan
 
 # mvn test-compile 
 function mcpt() {
-    mvn -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else 
+        echogreen ">>> found $pom"
+        mvn -f "$pom" -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
+    fi
 }
 
 # mvn compile -o -f [0], or, mvn compile -o
