@@ -254,7 +254,7 @@ function mclean() {
     mvn clean
 }
 
-function mresolve() {
+mresolve() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
@@ -264,14 +264,21 @@ function mresolve() {
     fi
 }
 
-function mresolvesrc() {
-    pom=$(python3 $STUFF/findpom.py $@)
+mresolve_src() {
+    pom=$(python3 $STUFF/findpom.py)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
     else 
         echogreen ">>> found $pom"
-        mvn dependency:sources -f "$pom"
-        mvn dependency:resolve -f "$pom" -U -Dclassifier=javadoc
+        if [ $# -gt 0 ]; then
+            echogreen ">>> resolving sources for '$1'"
+            mvn dependency:sources -f "$pom" -DincludeArtifactIds="$1"
+            mvn dependency:resolve -f "$pom" -Dclassifier=javadoc -DincludeArtifactIds="$1"
+        else 
+            echogreen ">>> resolving sources for all dependencies"
+            mvn dependency:sources -f "pom" 
+            mvn dependency:resolve -f "$pom" -Dclassifier=javadoc 
+        fi 
     fi
 }
 
