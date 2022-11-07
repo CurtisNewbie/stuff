@@ -561,6 +561,7 @@ function rkcmt() {
 
 function reloadrc() {
     source ~/.bashrc
+    tmux source-file ~/.tmux.conf
     echogreen ">>> reloaded bashrc :D"
 }
 
