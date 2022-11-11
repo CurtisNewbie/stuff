@@ -40,18 +40,18 @@ def show_create_table(cursor, table, database):
 def parsearg():
     ap = argparse.ArgumentParser("ttables.py by Yongj.Zhuang")
     required = ap.add_argument_group('required arguments')
-    required.add_argument("-user", help="username", type=str, required=True)
+    required.add_argument("-user", '-u', help="username", type=str, required=True)
     required.add_argument(
-        "-database", help="database name", type=str, required=True)
+        "-database", '-db', help="database name", type=str, required=True)
 
-    ap.add_argument("-password", help="password (by default it's empty string)",
+    ap.add_argument("-password", '-p', help="password (by default it's empty string)",
                     type=str, default="", required=False)
     ap.add_argument(
-        "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
+        "-host", '-ho', help="host (by default it's localhost)", type=str, default="localhost", required=False)
     ap.add_argument(
-        "-table", help="table name (if not specified, all tables' DDL are queried and printed), there can be multiple table names delimited by comma", type=str, required=False)
+        "-table", '-t', help="table name (if not specified, all tables' DDL are queried and printed), there can be multiple table names delimited by comma", type=str, required=False)
     ap.add_argument(
-        "-exclschema", help="exclude schema name", action="store_true", required=False)
+        "-exclschema", help="exclude schema name in CREATE TABLE DDL", action="store_true", required=False)
     ap.add_argument(
         "-debug", help="debug mode", action="store_true", required=False)
     return ap.parse_args()
