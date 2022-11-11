@@ -8,6 +8,13 @@ isdebug = False
 
 
 def show_create_table(cursor, table, database):
+    """
+    print SHOW CREATE TABLE DDL 
+
+    database name is excluded if it's absent, else if it's present, it will be concatenated to 
+    the table name, e.g., 'some_db.some_table'
+    """
+
     cursor.execute(f'show create table {table}')
     trs: list = cursor.fetchall()
     ddl = trs[0][1]
@@ -42,7 +49,7 @@ def parsearg():
     ap.add_argument(
         "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
     ap.add_argument(
-        "-table", help="table name (if not specified, all tables' DDL are queried and printed)", type=str, required=False)
+        "-table", help="table name (if not specified, all tables' DDL are queried and printed), there can be multiple table names delimited by comma", type=str, required=False)
     ap.add_argument(
         "-exclschema", help="exclude schema name", action="store_true", required=False)
     ap.add_argument(
@@ -79,8 +86,14 @@ if __name__ == '__main__':
     debug(lambda: f"database connected")
 
     if args.table:
-        show_create_table(cursor, args.table,
-                          None if args.exclschema else database)
+        tables = str.split(args.table, ",")
+    else:
+        tables = []
+
+    if len(tables) > 0:
+        for i in range(len(tables)):
+            debug(lambda: f"i: {i}, table: {tables[i]}")
+            show_create_table(cursor, tables[i], None if args.exclschema else database)
     else:
         cursor.execute('show tables')
         resultset: list = cursor.fetchall()
