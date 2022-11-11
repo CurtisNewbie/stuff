@@ -314,6 +314,7 @@ function gpush() {
         echo ""
         head=$(git rev-parse HEAD)
         echo "HEAD: $head"
+        echo ""
     fi
 }
 
