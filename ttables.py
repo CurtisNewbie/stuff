@@ -13,13 +13,19 @@ def show_create_table(cursor, table, database):
     ddl = trs[0][1]
     debug(lambda: f"original ddl: {ddl}")
 
-    ddl = re.sub("CREATE TABLE `[a-zA-Z_]+` ",
-                 f"CREATE TABLE IF NOT EXISTS {database}.{table} ", ddl)
+    if database:
+        ddl = re.sub("CREATE TABLE `[a-zA-Z_]+` ",
+                     f"CREATE TABLE IF NOT EXISTS {database}.{table} ", ddl)
+    else:
+        ddl = re.sub("CREATE TABLE `[a-zA-Z_]+` ",
+                     f"CREATE TABLE IF NOT EXISTS {table} ", ddl)
 
     ddl = re.sub(
-        "AUTO_INCREMENT=[0-9]+ ", "", ddl)
+        "DEFAULT CHARSET=[a-zA-Z_0-9]+ AUTO_INCREMENT=[0-9]+ ?", "", ddl)
     ddl = re.sub(
-        "COLLATE=[0-9a-zA-Z_]+", "", ddl)
+        "DEFAULT CHARSET=[a-zA-Z_0-9]+ ?", "", ddl)
+    ddl = re.sub(
+        "COLLATE=[0-9a-zA-Z_]+ ?", "", ddl)
     ddl = ddl.strip() + ";"
     print(f"{ddl}\n")
 
@@ -37,6 +43,8 @@ def parsearg():
         "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
     ap.add_argument(
         "-table", help="table name (if not specified, all tables' DDL are queried and printed)", type=str, required=False)
+    ap.add_argument(
+        "-exclschema", help="exclude schema name", action="store_true", required=False)
     ap.add_argument(
         "-debug", help="debug mode", action="store_true", required=False)
     return ap.parse_args()
@@ -71,7 +79,8 @@ if __name__ == '__main__':
     debug(lambda: f"database connected")
 
     if args.table:
-        show_create_table(cursor, args.table, database)
+        show_create_table(cursor, args.table,
+                          None if args.exclschema else database)
     else:
         cursor.execute('show tables')
         resultset: list = cursor.fetchall()
@@ -80,7 +89,8 @@ if __name__ == '__main__':
             debug(lambda: f"rs {resultset[i][0]}")
             table = str(resultset[i][0])
             debug(lambda: f"table: {table}, i: {i}")
-            show_create_table(cursor, table, database)
+            show_create_table(
+                cursor, table, None if args.exclschema else database)
 
     cursor.close()
     cnx.close()

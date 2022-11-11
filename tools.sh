@@ -1268,7 +1268,9 @@ function dumpinsert() {
 export -f dumpinsert 
 
 function ttables() {
-    python3 $STUFF/ttables.py $@
+    out=$(python3 $STUFF/ttables.py $@)
+    echo "$out"
+    echo "$out" | clipboard
 }
 export -f ttables
 
