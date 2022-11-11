@@ -311,7 +311,9 @@ function gf() {
 function gpush() {
     git push "$@"
     if [ "$?" -eq 0 ]; then 
-        git rev-parse HEAD
+        echo ""
+        head=$(git rev-parse HEAD)
+        echo "HEAD: $head"
     fi
 }
 
