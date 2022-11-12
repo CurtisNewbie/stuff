@@ -852,8 +852,11 @@ function resetone() {
 }
 
 function psgrep() {
+    if [ -z "$1" ]; then
+        return 0
+    fi
     ps -ef | head -1
-    ps -ef | grep -r "$1" | grep -v grep
+    ps -ef | grep "$1" | grep -v grep
 }
 
 function pom_ver() {
