@@ -565,7 +565,7 @@ if __name__ == '__main__':
 
     l = 0
     for i in range(len(all_lines)):
-        if all_lines[i].find(";") > 0:
+        if all_lines[i].rfind(";") > 0:
             lines_per_table.append(all_lines[l:i+1])
             l = i + 1
 
