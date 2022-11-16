@@ -560,31 +560,51 @@ if __name__ == '__main__':
     # read file
     assert_true(ctx.is_present(PATH_ARG), f'Argument for "{PATH_ARG}" is not found')
     path = ctx.get_first(PATH_ARG)
-    lines = read_file(path)
+    all_lines = read_file(path)
+    lines_per_table: List[List[str]] = []
 
-    # parse ddl
-    table: SQLTable = parse_ddl(lines, ctx)
-    print()  # extra line break
-    print(table)
+    l = 0
+    for i in range(len(all_lines)):
+        if all_lines[i].find(";") > 0:
+            lines_per_table.append(all_lines[l:i+1])
+            l = i + 1
 
-    # check whether file name is specified, it does affect the java class name that we are about to use
-    if ctx.is_present(OUTPUT_ARG):
-        fn = ctx.get_first(OUTPUT_ARG)
-        hi = fn.rindex('.java')
-        lo = fn.rfind('/')
-        if lo == -1:
-            lo = 0
-        else:
-            lo = lo + 1
-        java_class_name = fn[lo: hi]
-    else:
-        java_class_name = table.supply_java_class_name()
-        fn = java_class_name + ".java"
+    # print(f"lines_per_table: {lines_per_table}")
 
-    # generate java class                                       
-    generated = generate_java_class(table, ctx, java_class_name, guess_package(fn))
+    for i in range(len(lines_per_table)): 
+        lines = lines_per_table[i]
+        # parse ddl
+        table: SQLTable = parse_ddl(lines, ctx)
+        print()  # extra line break
+        print(table)
 
-    # write to file
+        # check whether file name is specified, it does affect the java class name that we are about to use
+        java_class_name = None
+        fn = ""
 
-    write_file(fn, generated)
-    print(f"Java class generated and written to \'{fn}\'")
+        if ctx.is_present(OUTPUT_ARG):
+            fn: str = ctx.get_first(OUTPUT_ARG)
+            hi = fn.rfind('.java')
+
+            if hi > -1:
+                lo = fn.rfind('/')
+                if lo == -1:
+                    lo = 0
+                else:
+                    lo = lo + 1
+                java_class_name = fn[lo: hi]
+            else:
+                print(f"fn: {fn}")
+                fn = fn if fn.endswith("/") else fn + "/"
+
+        if java_class_name == None:
+            java_class_name = table.supply_java_class_name()
+            fn = fn + java_class_name + ".java"
+
+        # generate java class                                       
+        generated = generate_java_class(table, ctx, java_class_name, guess_package(fn))
+
+        # write to file
+
+        write_file(fn, generated)
+        print(f"Java class generated and written to \'{fn}\'")
