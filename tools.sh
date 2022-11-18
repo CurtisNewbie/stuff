@@ -1217,6 +1217,21 @@ function grepcode() {
   # -l
 }
 
+function tips_tdump() {
+    echo
+    echocyan " sudo tcpdump -nnAS -s 0 -i any $@"
+    echo
+    pprint "-n" "not dns resolution stuff"
+    pprint "-X" "similar to -A, prints out all header, content"
+    pprint "-S" "absolute seq num"
+    pprint "-s" "size, 0 means all"
+    pprint "-w" "\$somefile.pcap"
+    pprint "src" "\$host"
+    pprint "dst" "\$host"
+    pprint "port" "\$port"
+    pprint "i" "interface, tcpdump -D"
+}
+
 function tdump() {
     # -n not dns resolution stuff
     # -X similar to -A, prints out all header, content
