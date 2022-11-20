@@ -115,12 +115,8 @@ function gdt() {
     git difftool "$@" 
 }
 
-function clfind() {
-    cd $(lfind "$1")
-}
-
 function lfind() {
-    ls -a | grep "$1" -i
+    ls -al | grep "$1" -i
 }
 
 function dfind() {
