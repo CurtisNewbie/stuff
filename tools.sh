@@ -1164,6 +1164,10 @@ function updategen() {
 }
 export -f updategen 
 
+function tips_rmr() {
+  echocyan " time rm -rvf \$1"
+}
+
 function rmr() {
   if [ -z "$1" ]; then
     return 0
