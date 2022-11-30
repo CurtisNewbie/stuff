@@ -1376,3 +1376,7 @@ unquotejoin() {
     python3 $STUFF/unquotejoin.py $@
 }
 export -f unquotejoin
+
+mac_javahome() {
+    /usr/libexec/java_home -V
+}
