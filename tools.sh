@@ -260,6 +260,10 @@ mresolve() {
     fi
 }
 
+tips_mresolve() {
+    echocyan " mvn dependency:resolve -f \"$pom\" -U"
+}
+
 mresolve_src() {
     pom=$(python3 $STUFF/findpom.py)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
