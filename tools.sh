@@ -1299,14 +1299,14 @@ export -f ttables
 function quotejoin() {
     out=$(python3 $STUFF/quotejoin.py $@)
     echo "$out"
-    echo "$out" | clipboard
+    # echo "$out" | clipboard
 }
 export -f quotejoin 
 
 function unquote() {
     out=$(python3 $STUFF/unquote.py $@)
     echo "$out"
-    echo "$out" | clipboard
+    # echo "$out" | clipboard
 }
 export -f unquote 
 
@@ -1350,3 +1350,8 @@ decompressall_gzip() {
 decompressall_tar() {
     find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;
 }
+
+substr() {
+    python3 sub.py "$1" "$2" "$3"
+}
+export -f substr
