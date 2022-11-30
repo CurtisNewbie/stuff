@@ -34,8 +34,6 @@ def get_clipboard_text():
 
 
 if __name__ == "__main__":
-
-    print()
     if len(sys.argv) < 2:
         txt = get_clipboard_text()
         if txt:

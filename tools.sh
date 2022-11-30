@@ -1352,6 +1352,11 @@ decompressall_tar() {
 }
 
 substr() {
-    python3 sub.py "$1" "$2" "$3"
+    python3 $STUFF/sub.py "$1" "$2" "$3"
 }
 export -f substr
+
+unquotejoin() {
+    python3 $STUFF/unquotejoin.py $@
+}
+export -f unquotejoin
