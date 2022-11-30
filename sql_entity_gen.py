@@ -1,5 +1,6 @@
 #!/bin/python3
 
+from pandas.io.clipboard import clipboard_get
 from util import *
 
 #
@@ -29,7 +30,7 @@ TABLE: str = "table"
 # some keywords (lowercase) that we care, may not contain all of them
 sql_keywords = {'unsigned'}
 # sql data types
-sql_types = {"varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint", "char"}
+sql_types = {"varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint", "char", "json"}
 
 # sql type -> java type mapping (dict)
 sql_java_type_mapping = {
@@ -41,7 +42,8 @@ sql_java_type_mapping = {
     'short': 'Integer',
     'bigint': 'Long',
     'decimal': 'BigDecimal',
-    'char': 'String'
+    'char': 'String',
+    'json': 'String'
 }
 
 
@@ -537,6 +539,10 @@ def guess_package(path: str) -> str or None:
     return path[lo + len(pat) + 1: hi].replace('/', '.')
 
 
+def get_clipboard_text():
+    return clipboard_get()
+
+
 """ 
 SQL to Java Entity Generator  
 
@@ -558,11 +564,16 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # read file
-    assert_true(ctx.is_present(PATH_ARG), f'Argument for "{PATH_ARG}" is not found')
-    path = ctx.get_first(PATH_ARG)
-    all_lines = read_file(path)
-    lines_per_table: List[List[str]] = []
+    if ctx.is_present(PATH_ARG): 
+        path = ctx.get_first(PATH_ARG)
+        all_lines = read_file(path)
+    else:
+        cpt = get_clipboard_text()
+        if not cpt:
+            sys.exit(0)
+        all_lines = cpt.split("\n")
 
+    lines_per_table: List[List[str]] = []
     l = 0
     for i in range(len(all_lines)):
         if all_lines[i].rfind(";") > 0:
