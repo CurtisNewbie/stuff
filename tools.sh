@@ -1317,6 +1317,10 @@ today() {
 }
 export -f today
 
+tips_pport() {
+    echocyan "lsof -i \":\$1\""
+}
+
 pport() {
     lsof -i ":$1"    
 }
@@ -1343,12 +1347,24 @@ use_vimdiff_for_git() {
     git config --global merge.tool vimdiff
 }
 
+tips_decompressall_gzip() {
+    echocyan "find . -name '*.gz' -type f -exec gzip -d {} \; " 
+}
+
 decompressall_gzip() {
     find . -name '*.gz' -type f -exec gzip -d {} \;
 }
 
+tips_decompressall_tar() {
+    echocyan "find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;"
+}
+
 decompressall_tar() {
     find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;
+}
+
+tips_substr() {
+    echocyan "python3 \$STUFF/sub.py \"\$1\" \"\$2\" \"\$3\""
 }
 
 substr() {
