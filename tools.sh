@@ -1380,3 +1380,7 @@ export -f unquotejoin
 mac_javahome() {
     /usr/libexec/java_home -V
 }
+
+camelcase() {
+    python3 $STUFF/camelcase.py $@
+}
