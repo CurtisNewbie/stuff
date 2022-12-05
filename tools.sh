@@ -1384,3 +1384,9 @@ mac_javahome() {
 camelcase() {
     python3 $STUFF/camelcase.py $@
 }
+export -f camelcase
+
+hmac() {
+    python3 $STUFF/hmac.py $@
+}
+export -f hmac
