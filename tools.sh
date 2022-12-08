@@ -1392,3 +1392,8 @@ hmac() {
     python3 $STUFF/hmac.py $@
 }
 export -f hmac
+
+gobuildall() {
+    go build ./...
+}
+export -f gobuildall

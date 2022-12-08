@@ -28,7 +28,7 @@ def show_create_table(cursor, table, database):
                      f"CREATE TABLE IF NOT EXISTS {table} ", ddl)
 
     ddl = re.sub(
-        "DEFAULT CHARSET=[a-zA-Z_0-9]+ AUTO_INCREMENT=[0-9]+ ?", "", ddl)
+        "AUTO_INCREMENT=[0-9]+ ?", "", ddl)
     ddl = re.sub(
         "DEFAULT CHARSET=[a-zA-Z_0-9]+ ?", "", ddl)
     ddl = re.sub(
