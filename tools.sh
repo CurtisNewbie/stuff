@@ -1382,7 +1382,9 @@ mac_javahome() {
 }
 
 camelcase() {
-    python3 $STUFF/camelcase.py $@
+    out=$(python3 $STUFF/camelcase.py $@)
+    echo $out
+    echo "$out" | clipboard
 }
 export -f camelcase
 
