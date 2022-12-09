@@ -1197,9 +1197,8 @@ function grepcode() {
     return 0
   fi
 
-  # echogreen "Searching $1"
-
   grep -R "$1" . \
+  -C 1 \
   --color \
   --exclude-dir "target" \
   --exclude-dir ".git" \
