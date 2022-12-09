@@ -1200,6 +1200,7 @@ function grepcode() {
   # echogreen "Searching $1"
 
   grep -R "$1" . \
+  --color \
   --exclude-dir "target" \
   --exclude-dir ".git" \
   --exclude-dir ".vscode" \

@@ -114,4 +114,6 @@ if __name__ == '__main__':
     print(",".join(fields))
     print("\ndelimited by tab:\n")
     print("\t".join(fields))
+    print("\ndelimited by space:\n")
+    print(" ".join(fields))
     print()
