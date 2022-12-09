@@ -1389,7 +1389,7 @@ camelcase() {
 export -f camelcase
 
 hmac() {
-    python3 $STUFF/hmac.py $@
+    python3 $STUFF/phmac.py $@
 }
 export -f hmac
 
