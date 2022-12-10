@@ -1397,3 +1397,8 @@ gobuildall() {
     go build ./...
 }
 export -f gobuildall
+
+buondua() {
+    python3 $STUFF/buondua.py $@
+}
+export -f buondua 
