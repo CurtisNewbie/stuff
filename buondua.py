@@ -90,6 +90,7 @@ def download(input_file: str, target_dir: str):
         all = f.read().replace("\t", "\n")
         lines = all.splitlines()
 
+        dcnt = 0
         t = len(lines)
         for i in range(t):
             url = lines[i]
@@ -100,6 +101,7 @@ def download(input_file: str, target_dir: str):
             if os.path.exists(filename): 
                 print(f"[{i+1}/{t}] File '{filename}' already downloaded")
                 continue
+            dcnt = dcnt + 1
 
             try:
                 response = requests.get(url, timeout=down_timeout)
@@ -110,14 +112,15 @@ def download(input_file: str, target_dir: str):
                 failed.append(url)
                 print(f"[{i+1}/{t}] Failed to download '{url}', error: {e}")
 
-    remaining = ""
     if failed:
         remaining = "\n".join(failed)
-        print(f"\nSome failed, please try again: \n{remaining}")
-
-    with open(input_file, "w") as f:
-        f.write(remaining)
-
+        print(f"\nSome failed, please run again to download them: \n{remaining}")
+        with open(input_file, "w") as f:
+            f.write(remaining)
+    else:
+        print(f"Successfully downloaded {dcnt} files")
+        os.remove(input_file)
+    
 
 def load_sites(file: str) -> list[str]:
     with open(file, "r") as f:
@@ -127,26 +130,27 @@ def load_sites(file: str) -> list[str]:
 
 
 if __name__ == "__main__":
-    parsed = 'download_url.txt'
-    ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'buondua-input.txt'",
+    parsed = 'parse_url.txt'
+    ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-d", "--dir", help="Download directory", required=True)
-    ap.add_argument("-f", "--file", help="Input file with all the website urls, by default it looks for 'buondua-input.txt'", required=False, default="buondua-input.txt")
-    ap.add_argument("-m", "--mode", help="Mode: [ extract, download ], by default it's 'all', which is essentially extract + downlod", required=False, default="all")
+    ap.add_argument("-f", "--file", help="Input file with all the website urls, by default it looks for 'download_url.txt'", required=False, default="download_url.txt")
 
     args = ap.parse_args()
     dir = args.dir if args.dir.endswith("/") else args.dir + "/"
-    sites = load_sites(args.file)
-    # print(f"Loaded sites: {sites}")
-    if not sites:
-        print("Input file contain not website urls")
-        sys.exit(0)
 
-    m = args.mode 
-    if not m: m = "all"
+    if not os.path.exists(parsed): 
+        inputf = args.file
+        if not os.path.exists(inputf):
+            open(inputf, "a").close() # touch empty file
+            print(f"Please provide website urls in {inputf}")
+            sys.exit(0)
 
-    if m == "all" or m == "extract": 
+        sites = load_sites(inputf)
+        # print(f"Loaded sites: {sites}")
+        if not sites:
+            print(f"Found no website urls in {inputf}")
+            sys.exit(0)
         parse_urls(sites, parsed)
 
-    if m == "all" or m == "download":
-        download(parsed, dir)
+    download(parsed, dir)
