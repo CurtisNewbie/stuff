@@ -82,7 +82,7 @@ def extract_name(url: str) -> str:
     raise ValueError(f'Failed to extract filename for "{url}"')
 
 
-def download(input_file: str, target_dir: str):
+def download(input_file: str, target_dir: str) -> bool:
     print(f"opening file: {input_file}\n")
 
     failed = []
@@ -117,9 +117,11 @@ def download(input_file: str, target_dir: str):
         print(f"\nSome failed, please run again to download them: \n{remaining}")
         with open(input_file, "w") as f:
             f.write(remaining)
+        return False
     else:
-        print(f"Successfully downloaded {dcnt} files")
         os.remove(input_file)
+        print(f"Successfully downloaded {dcnt} files, removed {input_file}")
+        return True
     
 
 def load_sites(file: str) -> list[str]:
@@ -133,14 +135,14 @@ if __name__ == "__main__":
     parsed = 'parse_url.txt'
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("-d", "--dir", help="Download directory", required=True)
+    ap.add_argument("-d", "--dir", help="Download directory, by default it's current directory", required=False, default="./")
     ap.add_argument("-f", "--file", help="Input file with all the website urls, by default it looks for 'download_url.txt'", required=False, default="download_url.txt")
 
     args = ap.parse_args()
     dir = args.dir if args.dir.endswith("/") else args.dir + "/"
 
+    inputf = args.file
     if not os.path.exists(parsed): 
-        inputf = args.file
         if not os.path.exists(inputf):
             open(inputf, "a").close() # touch empty file
             print(f"Please provide website urls in {inputf}")
@@ -153,4 +155,5 @@ if __name__ == "__main__":
             sys.exit(0)
         parse_urls(sites, parsed)
 
-    download(parsed, dir)
+    if download(parsed, dir):
+        os.remove(inputf)
