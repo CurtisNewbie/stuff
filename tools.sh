@@ -328,11 +328,11 @@ function gbranch() {
         extra="$@"
     fi
 
-    git branch --sort=-committerdate $extra
+    git branch $extra
 }
 
 function gtag() {
-    git tag --sort=-committerdate 
+    git tag
 }
 
 function gamd() {
