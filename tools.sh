@@ -474,49 +474,22 @@ function mcp() {
 }
 
 function mdeploy() {
-    mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+    if [ $# -gt 0 ]; then
+        mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
+    else
+        mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+    fi
 }
 
 function minstall() {
-    pom=$(python3 $STUFF/findpom.py $@)
-    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
-        echored ">>> pom.xml is not found, aborted"
-    else 
-        echogreen ">>> found $pom"
-        mvn clean install -T 0.5C -o -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+    if [ $# -gt 0 ]; then
+        mvn clean install -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
+    else
+        mvn clean install -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
-
-#    if [ ! -z $1 ]; then
-#        if [ ! -f "$1/pom.xml" ]; then
-#            echored ">>> $1/pom.xml is not found, aborted"
-#        else
-#            mvn clean install -f $1 -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-#        fi
-#    else
-#        if [ ! -f "pom.xml" ]; then
-#            echored ">>> pom.xml is not found, aborted"
-#        else
-#            mvn clean install -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
-#        fi
-#    fi
 }
 
 function mtest() {
-#    if [ ! -z $1 ]
-#    then
-#        if [ ! -f "$1/pom.xml" ]; then
-#            echored ">>> $1/pom.xml is not found, aborted"
-#        else
-#            mvn test -f $1 
-#        fi
-#    else
-#        if [ ! -f "pom.xml" ]; then
-#            echored ">>> pom.xml is not found, aborted"
-#        else
-#            mvn test  
-#        fi
-#    fi
-
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
