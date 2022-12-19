@@ -41,58 +41,6 @@ function pprint() {
     printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
 }
 
-function stuff() {
-    
-    echo
-    pprint "Command" "Arguments" "Description"
-    echo
-    pprint "codediff" "\$file1 \$file2" "vscode diff"
-    pprint "echobc" "\$line" "echo to bc"
-    pprint "lfind" "\$target" "find from ls -l"
-    pprint "ffind" "\$target" "find file recursively using 'find'"
-    pprint "clfind" "\$target" "find from ls -l & cd"
-    pprint "gdt" "\$file1 \$file2" "git difftool"
-    pprint "trash" "\$file1" "move into \$trash_can"
-    pprint "gcb" "\$new_branch_name" "create new branch"
-    pprint "gstash" "" "git stash"
-    pprint "gstashpop" "" "git stash pop"
-    pprint "gp" "" "git pull"
-    pprint "gf" "" "git fetch"
-    pprint "gl" "" "git log"
-    pprint "gs" "" "git status"
-    pprint "gd" "" "git diff"
-    pprint "gds" "" "git diff --staged"
-    pprint "gfp" "" "git fetch pull"
-    pprint "resetone" "" "git reset --soft HEAD~1"
-    pprint "gpush" "" "git push"
-    pprint "gmerge" "\$branch_name" "git merge"
-    pprint "gshow" "" "git show"
-    pprint "guntrack" "\$file" "git rm --cache"
-    pprint "grestore" "\$file" "git unstage"
-    pprint "rkcmt" "" "git commit with generate message"
-    pprint "mpackage" "/some/pom.xml" "mvn package -f ...pom.xml"
-    pprint "mcp" "/some/pom.xml" "mvn compile -o -f ...pom.xml"
-    pprint "minstall" "/some/pom.xml" "mvn clean install -o -f ...pom.xml" 
-    pprint "mtest" "/some/pom.xml" "mvn clean test -f ...pom.xml"
-    pprint "mclean" "" "mvn clean"
-    pprint "mresolve" "" "mvn dependency:resolve"
-    pprint "gadd" "\$file" "git add" 
-    pprint "gclone" "\$url" "git clone" 
-    pprint "glike" "\$pattern" "grep from git branch" 
-    pprint "gbranch" "" "git branch" 
-    pprint "gamd" "" "git commit --amend" 
-    pprint "gswitch" "\$branch_name" "git switch" 
-    pprint "gswitchback" "" "git switch back to previous branch" 
-    pprint "gcmt" "\$msg" "git commit -m ..." 
-    pprint "gxpatch" "\$path_in_repo \$path_to_patch" "extract git history as a path"
-    pprint "gapplypatch" "\$patch_file" "apply git history (patch)"
-    pprint "ps_grep" "\$pname" "ps -ef | grep ..." 
-    pprint "apiver" "" "read 'project.properties.api.version'" 
-    pprint "projver" "" "read 'project.version'" 
-
-    echo
-}
-
 _gbranch_completion()
 {
     if [ ${#COMP_WORDS[@]} -gt 2 ]; then
@@ -169,11 +117,7 @@ function trash() {
     echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
-function gstashpop() {
-    git stash pop
-}
-
-function gstashshow(){
+function gstashshow() {
     git stash show -p
 }
 
@@ -230,24 +174,8 @@ function gcb() {
     fi
 }
 
-function gp() {
-    git pull
-}
-
-function gshow() {
-    git show "$@"
-}
-
-function gmerge() {
-    git merge "$@"
-}
-
 function guntrack() {
     git rm --cache "$@"
-}
-
-function mclean() {
-    mvn clean
 }
 
 mresolve() {
@@ -282,63 +210,6 @@ mresolve_src() {
     fi
 }
 
-function gadd() {
-
-    if [ ! -z "$1" ]; then
-        git add "$@"
-    else 
-        git add .
-    fi
-}
-    
-function grestore() {
-    git restore --staged "$@"
-}
-
-function gclone() {
-    git clone $1
-}
-
-function gstash() {
-    git add .
-    git stash
-}
-
-function gf() {
-    git fetch
-}
-
-function gpush() {
-    git push "$@"
-    if [ "$?" -eq 0 ]; then 
-        echo ""
-        head=$(git rev-parse HEAD)
-        echo "HEAD: $head"
-    fi
-}
-
-function glike() {
-    git branch -l | grep "$@"
-    git branch -r | grep "$@"
-}
-
-function gbranch() {
-    extra="-l"
-    if [ $# -gt 0 ]; then
-        extra="$@"
-    fi
-
-    git branch $extra
-}
-
-function gtag() {
-    git tag
-}
-
-function gamd() {
-    git commit --amend 
-}
-
 function gswitch() {
     # On branch xxx 
     branch=$(git status)
@@ -363,44 +234,6 @@ function gswitchback() {
     else
         echored "No branch to switch back"
     fi
-}
-
-function gcmt() {
-
-    msg="$1"
-
-    git add .
-    if [ -z "$msg" ]; then
-        git commit 
-    else
-        git commit -m "$msg"
-    fi
-}
-
-function gl() {
-    extra=""
-    if [ $# -gt 0 ]; then
-        extra="$@"
-    fi
-
-    git log $extra
-}
-
-function gs() {
-    git status
-}
-
-function gd() {
-    extra=""
-    if [ $# -gt 0 ]; then
-        extra="$@"
-    fi
-
-    git diff --color-words $extra
-}
-
-function gds() {
-    git diff --staged
 }
 
 function installall(){
@@ -456,21 +289,6 @@ function mcp() {
         echogreen ">>> found $pom"
         mvn compile -T 0.5C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
     fi
-
-#    if [ ! -z $1 ]
-#    then
-#        if [ ! -f "$1/pom.xml" ]; then
-#            echored ">>> $1/pom.xml is not found, aborted"
-#        else
-#            mvn clean compile -o -f $1 
-#        fi
-#    else
-#        if [ ! -f "pom.xml" ]; then
-#            echored ">>> pom.xml is not found, aborted"
-#        else
-#            mvn clean compile -o 
-#        fi  
-#    fi
 }
 
 function mdeploy() {
@@ -914,7 +732,7 @@ function rmtarget() {
 
 }
 
-function fd_count() {
+function fdcount() {
     if [ -z "$1" ]; then
         echored "Please enter PID"
         return 1
