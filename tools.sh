@@ -23,8 +23,8 @@ alias bc="bc -l"
 # set -eE -o functrace
 
 # complete -W "-r" gbranch 
-complete -F _gbranch_completion gbranch 
-complete -F _reset_one_completion reset_one 
+# complete -F _gbranch_completion gbranch 
+# complete -F _reset_one_completion reset_one 
 
 # trap error
 function traperr(){
@@ -216,7 +216,7 @@ function gsw() {
     fi
 }
 
-function gsb() {
+function gswb() {
     if [ ! -z $GSWITCH_BACK ]; then
         gswitch $GSWITCH_BACK
     else
@@ -335,15 +335,8 @@ function rkcmt() {
     fi
 }
 
-function reloadbash() {
-    source ~/.bashrc
-    # echogreen ">>> reloaded bashrc"
-}
-
-function reloadtmux() {
-    tmux source-file ~/.tmux.conf
-    # echogreen ">>> reloaded tmux.conf"
-}
+function rbash() { source ~/.bashrc; }
+function rtmux() { tmux source-file ~/.tmux.conf; }
 
 # check whether $1 is in master branch, return 1-true, 0-false
 function is_master(){
