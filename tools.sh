@@ -210,7 +210,7 @@ mresolve_src() {
     fi
 }
 
-function gswitch() {
+function gsw() {
     # On branch xxx 
     branch=$(git status)
     if [ $? -ne 0 ]; then
@@ -228,7 +228,7 @@ function gswitch() {
     fi
 }
 
-function gswitchback() {
+function gsb() {
     if [ ! -z $GSWITCH_BACK ]; then
         gswitch $GSWITCH_BACK
     else
@@ -1193,3 +1193,8 @@ buondua() {
     python3 $STUFF/buondua.py $@
 }
 export -f buondua 
+
+gpick() {
+    git cherry-pick $@
+}
+export -f gpick
