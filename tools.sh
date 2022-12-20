@@ -59,13 +59,9 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
-function gdt() {
-    git difftool "$@" 
-}
+function gdt() { git difftool "$@"; }
 
-function lfind() {
-    ls -al | grep "$1" -i
-}
+function lfind() { ls -al | grep "$1" -i; }
 
 function dfind() {
     if [ $# -gt 1 ]; then
@@ -117,9 +113,7 @@ function trash() {
     echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
-function gstashshow() {
-    git stash show -p
-}
+function gstashshow() { git stash show -p; }
 
 function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
@@ -174,9 +168,7 @@ function gcb() {
     fi
 }
 
-function guntrack() {
-    git rm --cache "$@"
-}
+function guntrack() { git rm --cache "$@"; }
 
 mresolve() {
     pom=$(python3 $STUFF/findpom.py $@)
@@ -186,10 +178,6 @@ mresolve() {
         echogreen ">>> found $pom"
         mvn dependency:resolve -f "$pom" -U
     fi
-}
-
-tips_mresolve() {
-    echocyan " mvn dependency:resolve -f \"$pom\" -U"
 }
 
 mresolve_src() {
@@ -244,28 +232,18 @@ function installall(){
     done
 }
 
-function diskusage() {
-    du -d 1 -h
-}
+function diskusage() { du -d 1 -h; }
 
-function echored() {
-    echo $red"$1"$colourreset
-}
+function echored() { echo $red"$1"$colourreset; }
 export -f echored
 
-function echogreen() {
-    echo $green"$1"$colourreset
-}
+function echogreen() { echo $green"$1"$colourreset; }
 export -f echogreen
 
-function echoyellow() {
-    echo $yellow"$1"$colourreset
-}
+function echoyellow() { echo $yellow"$1"$colourreset; }
 export -f echoyellow
 
-function echocyan() {
-    echo $cyan"$1"$colourreset
-}
+function echocyan() { echo $cyan"$1"$colourreset; }
 export -f echocyan
 
 # mvn test-compile 
@@ -317,9 +295,7 @@ function mtest() {
     fi
 }
 
-function gencmtmsg() {
-    python3 $STUFF/gencmtmsg.py
-}
+function gencmtmsg() { python3 $STUFF/gencmtmsg.py; }
 export -f gencmtmsg
 
 function rkcmt() {
@@ -795,11 +771,7 @@ function clipboard() {
 export -f clipboard
 
 # readlink -e with 'copied to clipboard'
-function rl() {
-    p=$(readlink -e "$1")
-    echo "$p"
-    echo "$p" | clipboard
-}
+function rl() { p=$(readlink -e "$1"); echo "$p"; echo "$p" | clipboard; }
 
 # Extract git history
 function gxpatch() {
@@ -843,42 +815,14 @@ function docker-compose-rebuild(){
     docker-compose up -d --build $1 
 } 
 
-function docker-compose-up(){
-    docker-compose up -d --build --remove-orphans
-}
-
-function docker-compose-down(){
-    docker-compose down
-}
-
-function docker-compose-re-up(){
-    docker-compose-down
-    docker-compose-up
-}
-
-function encrypt() {
-  	python3 "$STUFF/aes.py" -m encrypt
-}
-
-function decrypt() {
-  	python3 "$STUFF/aes.py" -m decrypt
-}
-
-function split() {
-	res=$(python3 "$STUFF/split.py" $@)
-    echo $res
-    echo $res | clipboard  
-}
-
-function jsonarray() {
-	res=$(python3 "$STUFF/json_array.py" $@) 
-    echo $res
-    echo $res | clipboard  
-}
-
-function strlen() {
-	python3 "$STUFF/strlen.py" "$@"
-}
+function docker-compose-up() { docker-compose up -d --build --remove-orphans; }
+function docker-compose-down() { docker-compose down; }
+function docker-compose-re-up() { docker-compose-down; docker-compose-up; }
+function encrypt() { python3 "$STUFF/aes.py" -m encrypt; }
+function decrypt() { python3 "$STUFF/aes.py" -m decrypt; }
+function split() { res=$(python3 "$STUFF/split.py" $@); echo $res; echo $res | clipboard; }
+function jsonarray() { res=$(python3 "$STUFF/json_array.py" $@); echo $res; echo $res | clipboard; }
+function strlen() { python3 "$STUFF/strlen.py" "$@"; }
 
 function readpom() {
   if [ ! -z "$2" ]; then
@@ -890,78 +834,44 @@ function readpom() {
 }
 export -f readpom 
 
-function monday() {	
-  python3 "$STUFF/monday.py" 
-}
+function monday() {	python3 "$STUFF/monday.py"; }
 export -f monday 
 
-function rands() {
-    # if [ ${#@} -eq 0 ]; then 
-    #     python3 "$STUFF/rands.py" -h
-    #     return 0
-    # fi
-	python3 "$STUFF/rands.py" "$@"
-}
+function rands() { python3 "$STUFF/rands.py" "$@"; }
 export -f rands
 
-function dectobin() {
-  python3 "$STUFF/dec_to_bin.py" "$1" 
-}
+function dectobin() { python3 "$STUFF/dec_to_bin.py" "$1"; }
 export -f dectobin
 
-function bintodec() {
-  python3 "$STUFF/bin_to_dec.py" "$1" 
-}
+function bintodec() { python3 "$STUFF/bin_to_dec.py" "$1"; }
 export -f bintodec
 
-function dectohex() {
-  python3 "$STUFF/dec_to_hex.py" "$1" 
-}
+function dectohex() { python3 "$STUFF/dec_to_hex.py" "$1"; }
 export -f dectohex
 
-function hextodec() {
-  python3 "$STUFF/hex_to_dec.py" "$1" 
-}
+function hextodec() { python3 "$STUFF/hex_to_dec.py" "$1"; }
 export -f hextodec
 
-function hextobin() {
-  python3 "$STUFF/hex_to_bin.py" "$1" 
-}
+function hextobin() { python3 "$STUFF/hex_to_bin.py" "$1"; }
 export -f hextobin
 
-function tzone() {
-  python3 "$STUFF/tzone.py" $@ 
-}
+function tzone() { python3 "$STUFF/tzone.py" $@; }
 export -f tzone 
 
-function lbranch() {
-  python3 $STUFF/lbranch.py 
-}
+function lbranch() { python3 $STUFF/lbranch.py; }
 export -f lbranch
 
-function findpom() {
-  python3 $STUFF/findpom.py $@ 
-}
+function findpom() { python3 $STUFF/findpom.py $@; }
 export -f findpom 
 
-function pyhash() {
-  python3 $STUFF/hash.py $@ 
-}
+function pyhash() { python3 $STUFF/hash.py $@; }
 export -f pyhash 
 
-function insertgen() {
-  python3 $STUFF/insertgenpy/insertgenpd.py $@ 
-}
+function insertgen() { python3 $STUFF/insertgenpy/insertgenpd.py $@; }
 export -f insertgen
 
-function updategen() {
-  python3 $STUFF/updategenpy/updategenpd.py $@ 
-}
+function updategen() { python3 $STUFF/updategenpy/updategenpd.py $@; }
 export -f updategen 
-
-function tips_rmr() {
-  echocyan " time rm -rvf \$1"
-}
 
 function rmr() {
   if [ -z "$1" ]; then
@@ -1041,30 +951,13 @@ function tdump() {
 }
 export -f tdump
 
-function fxname() {
-    python3 $STUFF/fixfname.py "$@"
-}
-export -f fxname 
+function fxname() { python3 $STUFF/fixfname.py "$@"; }
+function conflict() { grepcode "======="; grepcode ">>>>"; grepcode "<<<<"; }
 
-function conflict() {
-    grepcode "======="
-    grepcode ">>>>"
-    grepcode "<<<<"
-}
-export -f conflict
+# alternative to npm install, without writing package.json :D
+function npmci() { npm ci; }
 
-function npmci() {
-    # alternative to npm install, without writing package.json :D
-    npm ci
-}
-export -f npmci
-
-function ghead() {
-    out=$(git rev-parse HEAD)
-    echo "$out"
-    echo "$out" | clipboard
-}
-export -f ghead
+function ghead() { out=$(git rev-parse HEAD); echo "$out"; echo "$out" | clipboard; }
 
 # $1: username, $2: database, $3: table, $4: where
 function dumpinsert() {
@@ -1082,119 +975,50 @@ function dumpinsert() {
 }
 export -f dumpinsert 
 
-function ttables() {
-    python3 $STUFF/ttables.py $@
-}
+function ttables() { python3 $STUFF/ttables.py $@; }
 export -f ttables
 
-function quotejoin() {
-    out=$(python3 $STUFF/quotejoin.py $@)
-    echo "$out"
-    # echo "$out" | clipboard
-}
+function quotejoin() { out=$(python3 $STUFF/quotejoin.py $@); echo "$out"; echo "$out" | clipboard; }
 export -f quotejoin 
 
-function unquote() {
-    out=$(python3 $STUFF/unquote.py $@)
-    echo "$out"
-    # echo "$out" | clipboard
-}
+function unquote() { out=$(python3 $STUFF/unquote.py $@); echo "$out"; echo "$out" | clipboard; }
 export -f unquote 
 
-today() {
-    out=$(date +'%Y-%m-%d') 
-    echo "$out"
-    echo "$out" | clipboard
-}
+function today() { out=$(date +'%Y-%m-%d'); echo "$out"; echo "$out" | clipboard; }
 export -f today
 
-tips_pport() {
-    echocyan "lsof -i \":\$1\""
+function pport() { lsof -i ":$1"; }
+
+function certinfo() { openssl x509 -noout -text -inform pem -in "$1"; }
+
+function certfingerprint() {
+    openssl x509 -noout -fingerprint -sha256 -inform pem -in "$1";
+    openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1";
 }
 
-pport() {
-    lsof -i ":$1"    
-}
-export -f pport
+function fetchcert() { openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null | openssl x509 -text; }
 
-certinfo() {
-    openssl x509 -noout -text -inform pem -in "$1"
-}
-export -f certinfo
-
-certfingerprint() {
-    openssl x509 -noout -fingerprint -sha256 -inform pem -in "$1"
-    openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1"
-}
-export -f certfingerprint
-
-fetchcert() {
-    openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null | openssl x509 -text
-}
-export -f fetchcert
-
-use_vimdiff_for_git() {
+function use_vimdiff_for_git() {
     git config --global diff.tool vimdiff
     git config --global merge.tool vimdiff
 }
 
-tips_decompressall_gzip() {
-    echocyan "find . -name '*.gz' -type f -exec gzip -d {} \; " 
-}
+function decompressall_gzip() { find . -name '*.gz' -type f -exec gzip -d {} \; ; }
 
-decompressall_gzip() {
-    find . -name '*.gz' -type f -exec gzip -d {} \;
-}
+function decompressall_tar() { find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \; ; }
 
-tips_decompressall_tar() {
-    echocyan "find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;"
-}
+function substr() { python3 $STUFF/sub.py "$1" "$2" "$3"; }
 
-decompressall_tar() {
-    find . -name '*.(tar|tar.gz)' -type f -exec tar -xf {} \;
-}
+function unquotejoin() { python3 $STUFF/unquotejoin.py $@; }
 
-tips_substr() {
-    echocyan "python3 \$STUFF/sub.py \"\$1\" \"\$2\" \"\$3\""
-}
+function mac_javahome() { /usr/libexec/java_home -V; }
 
-substr() {
-    python3 $STUFF/sub.py "$1" "$2" "$3"
-}
-export -f substr
+function camelcase() { out=$(python3 $STUFF/camelcase.py $@); echo $out; echo "$out" | clipboard; }
 
-unquotejoin() {
-    python3 $STUFF/unquotejoin.py $@
-}
-export -f unquotejoin
+function hmac() { python3 $STUFF/phmac.py $@; }
 
-mac_javahome() {
-    /usr/libexec/java_home -V
-}
+function gobuildall() { go build ./...;  }
 
-camelcase() {
-    out=$(python3 $STUFF/camelcase.py $@)
-    echo $out
-    echo "$out" | clipboard
-}
-export -f camelcase
+function buondua() { python3 $STUFF/buondua.py $@; }
 
-hmac() {
-    python3 $STUFF/phmac.py $@
-}
-export -f hmac
-
-gobuildall() {
-    go build ./...
-}
-export -f gobuildall
-
-buondua() {
-    python3 $STUFF/buondua.py $@
-}
-export -f buondua 
-
-gpick() {
-    git cherry-pick $@
-}
-export -f gpick
+function gpick() { git cherry-pick $@ ; }
