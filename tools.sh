@@ -215,10 +215,11 @@ function gsw() {
         echocyan "Previous was: $GSWITCH_BACK"
     fi
 }
+export -f gsw
 
 function gswb() {
     if [ ! -z $GSWITCH_BACK ]; then
-        gswitch $GSWITCH_BACK
+        gsw $GSWITCH_BACK
     else
         echored "No branch to switch back"
     fi
