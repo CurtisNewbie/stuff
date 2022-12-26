@@ -72,7 +72,7 @@ function dfind() {
 }
 
 function ffind() {
-    find . -type f -name "*$1*" \
+    find . -type f -iname "*$1*" \
         -not \( -path "**/target/*" -prune \) \
         -not \( -path "**/.git/*" -prune \) \
         -not \( -path "**/.vscode/*" -prune \) \
