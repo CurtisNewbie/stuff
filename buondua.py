@@ -3,8 +3,10 @@ import sys
 import time
 import requests
 import argparse
+import bs4
 from bs4 import BeautifulSoup
 from requests_html import HTMLSession
+import urllib.parse
 
 '''
 pip install beautifulsoup4
@@ -14,13 +16,25 @@ For buondua.com
 
 Yongj.zhuang
 '''
+# proxy_server = 'socks5://127.0.0.1:7891'
+# proxies = {
+#    'http': 'http://localhost:7890',
+#    'https': 'http://localhost:7890',
+# }
 
+
+max_retry = 5 
 render_timeout = 60
 down_timeout = 10
 seg = ['kul.mrcong.com', 'buondua.art']
+base = 'https://buondua.com'
+parsed = 'parse_url.txt'
 
 
 def render_html(url: str) -> str:
+    # session = HTMLSession(browser_args=[f"--proxy-server={proxy_server}"])
+    # r = session.get(url, timeout=render_timeout, proxies=proxies)
+
     session = HTMLSession()
     r = session.get(url, timeout=render_timeout)
     r.html.render(timeout=render_timeout)
@@ -34,29 +48,60 @@ def filter_url(url: str) -> bool:
 
 
 def parse_urls(urls: list[str], output_file: str): 
-    with open(output_file, "w") as f:
-        t = len(urls)
-        for i in range(t):
-            url = urls[i] 
-            print(f"Fetching html for '{url}'")
+    parsed = set()
 
-            retry = 5
+    with open(output_file, "w") as f:
+        i = 0
+        while i < len(urls):
+            url = urls[i] 
+            if url in parsed:
+                i = i + 1
+                continue
+
+            print(f"Fetching html for '{url}'")
+            t = len(urls)
+
+            retry = max_retry
             while True:
                 try:
                     html = render_html(url) 
                     # print(html)
 
-                    parsed = []
+                    extracted = []
                     soup = BeautifulSoup(html, 'html.parser')
                     for img in soup.find_all('img'):
                         src: str = img.get('src')
 
                         if not filter_url(src): continue
-                        parsed.append(src)
+                        extracted.append(src)
+                    
+                    # it may have several pages (div -> span -> a.href) 
+                    '''
+                    <nav class="pagination">
+                        <div class="pagination-list">
+                            <span> <a class="pagination-link is-current" href="..."> 1 </a> </span>
+                            <span> <a class="pagination-link " href="..."> 2 </a> </span>
+                        </div>
+                    </nav>
+                    '''
 
-                    print(f"[{i+1}/{t}] Parsed '{url}', found: {len(parsed)}")
-                    f.write(f"# [{i+1}/{t}] {url}, count: {len(parsed)}\n")
-                    f.write("\n".join(parsed) + "\n\n")
+                    for pdiv in soup.find_all('div', {"class": "pagination-list"}):
+                        for pspan in pdiv.descendants:
+                            if isinstance(pspan, bs4.element.Tag):
+                                for atag in pspan.descendants:
+                                    if isinstance(atag, bs4.element.Tag):
+                                        href = atag.get('href')
+                                        if not href: continue
+                                        if not href.lower().startswith('http'): 
+                                            href = base + "/" + urllib.parse.quote(href[1:], safe="")
+                                        if href not in urls: urls.append(href)
+
+                    print(f"[{i+1}/{t}] Parsed '{url}', found: {len(extracted)}")
+                    f.write(f"# [{i+1}/{t}] {url}, count: {len(extracted)}\n")
+                    f.write("\n".join(extracted) + "\n\n")
+
+                    i = i + 1
+                    parsed.add(url)
                     break 
                 except Exception as e:
                     retry = retry - 1
@@ -132,7 +177,6 @@ def load_sites(file: str) -> list[str]:
 
 
 if __name__ == "__main__":
-    parsed = 'parse_url.txt'
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-d", "--dir", help="Download directory, by default it's current directory", required=False, default="./")
