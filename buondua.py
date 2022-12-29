@@ -180,8 +180,7 @@ def load_sites(file: str) -> list[str]:
 
 def write_sites(file: str, sites: list[str]):
     with open(file, "w") as f:
-        for s in sites:
-            f.write(s + "\n")
+        f.write("\n".join(sites))
 
 
 if __name__ == "__main__":
