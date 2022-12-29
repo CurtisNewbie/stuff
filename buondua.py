@@ -37,7 +37,7 @@ def render_html(url: str) -> str:
 
     session = HTMLSession()
     r = session.get(url, timeout=render_timeout)
-    r.html.render(timeout=render_timeout)
+    r.html.render()
     return r.html.html
 
 
@@ -58,13 +58,15 @@ def parse_urls(urls: list[str], output_file: str):
                 i = i + 1
                 continue
 
-            print(f"Fetching html for '{url}'")
+            print(f"Fetching HTML for '{url}'")
             t = len(urls)
 
             retry = max_retry
             while True:
                 try:
+                    renderstart = time.time()
                     html = render_html(url) 
+                    print(f"Rendered HTML '{url}' (took {(time.time() - renderstart):.3}s)")
                     # print(html)
 
                     extracted = []
