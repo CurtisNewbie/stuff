@@ -59,7 +59,10 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
-function gdt() { git difftool "$@"; }
+gcl() { git clone "$1"; }
+gdt() { git difftool "$@"; }
+glike() { git branch | grep "$1"; }
+gstashshow() { git stash show -p; }
 
 function lfind() { ls -al | grep "$1" -i; }
 
@@ -113,7 +116,6 @@ function trash() {
     echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
-function gstashshow() { git stash show -p; }
 
 function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
@@ -125,7 +127,7 @@ function mpackage() {
     fi
 }
 
-function gpushremote() {
+function gpr() {
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
@@ -487,20 +489,6 @@ function repocheck () {
         fi
     done
 } 
-
-# fetch and pull
-function gfp () {
-    echogreen ">>> fetching..."
-    msg=`git fetch 2>&1`
-
-    if [ $? -ne 0 ]; then 
-        echored "$msg"
-        return 1
-    fi
-
-    echogreen ">>> pulling..."
-    git pull;
-}
 
 function last_weekly_report(){
 
