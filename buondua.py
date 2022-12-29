@@ -47,7 +47,7 @@ def filter_url(url: str) -> bool:
     return False
 
 
-def parse_urls(urls: list[str], output_file: str): 
+def parse_urls(urls: list[str], output_file: str, saveUrlFunc): 
     parsed = set()
 
     with open(output_file, "w") as f:
@@ -102,6 +102,7 @@ def parse_urls(urls: list[str], output_file: str):
                     f.write(f"# [{i+1}/{t}] {url}, count: {len(extracted)}\n")
                     f.write("\n".join(extracted) + "\n\n")
 
+                    if saveUrlFunc: saveUrlFunc(urls)
                     i = i + 1
                     parsed.add(url)
                     break 
@@ -177,6 +178,11 @@ def load_sites(file: str) -> list[str]:
         filtered = filter(lambda x : x and not x.startswith("#"), mapped)
         return list(filtered)
 
+def write_sites(file: str, sites: list[str]):
+    with open(file, "w") as f:
+        for s in sites:
+            f.write(s + "\n")
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
@@ -199,7 +205,7 @@ if __name__ == "__main__":
         if not sites:
             print(f"Found no website urls in {inputf}")
             sys.exit(0)
-        parse_urls(sites, parsed)
+        parse_urls(sites, parsed, lambda sites: write_sites(inputf, sites))
 
     if download(parsed, dir):
         os.remove(inputf)
