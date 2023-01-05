@@ -27,7 +27,8 @@ mock = False
 render_timeout=10
 render_request_timeout = 5 
 download_timeout = 10
-seg = ['kul.mrcong.com', 'buondua.art']
+show_stat = False 
+seg = ['kul.mrcong.com', 'buondua.art', 'i.buondua.com']
 base = 'https://buondua.com'
 
 '''
@@ -101,11 +102,13 @@ class Context:
         return s
 
     def rec_preprocessed(self, site: str):
-        self.pristine.remove(site)
+        if site in self.pristine:
+            self.pristine.remove(site)
         self.preprocessed.add(site)
 
     def rec_parsed(self, site: str):
-        self.preprocessed.remove(site)
+        if site in self.preprocessed:
+            self.preprocessed.remove(site)
         self.parsed.add(site)
         
     def rec_extracted(self, img_urls: list[str]):
@@ -113,7 +116,8 @@ class Context:
             self.extracted.add(u)
 
     def rec_downloaded(self, img_url: str):
-        self.extracted.remove(img_url)
+        if img_url in self.extracted:
+            self.extracted.remove(img_url)
         self.downloaded.add(img_url)
     
     def persist(self): 
@@ -206,11 +210,11 @@ def render_html(url: str) -> str:
     start = time.time()
     r = session.get(url, timeout=render_request_timeout, stream=True)
     html: requests_html.HTML = r.html
-    print(f"Fetched HTML '{url}' (took {(time.time() - start):.3}s)")
+    if show_stat: print(f"Fetched HTML '{url}' (took {(time.time() - start):.3}s)")
 
     start = time.time()
     html.render(retries=1, timeout=render_timeout, wait=2)
-    print(f"Rendered HTML '{url}' (took {(time.time() - start):.3}s)")
+    if show_stat: print(f"Rendered HTML '{url}' (took {(time.time() - start):.3}s)")
 
     return html.html
 
@@ -251,6 +255,7 @@ def parse_pagination(url) -> list[str]:
                     href = base + "/" + urllib.parse.quote(href[1:], safe="")
                 expanded.append(href)
 
+
     return expanded
 
 
@@ -277,11 +282,14 @@ def extract_img_urls(ctx: Context):
                 extracted.append(src)
             print(f"{progress} Parsed '{url}', found {len(extracted)} image urls")
 
+            if not extracted:
+                raise AssertionError(f"Found no image in '{url}'")
+
             ctx.rec_extracted(extracted)
             ctx.rec_parsed(url)
-
+        except ConnectionError: return
         except Exception as e:
-            print(f"{progress} Failed to parse url '{url}': {e}")
+            print(f"{progress} Failed to parse url '{url}'", e)
 
 
 suf = ['.webp', '.jpg', '.jpeg', '.png']
@@ -313,6 +321,7 @@ def download(ctx: Context, target_dir: str):
         progress = f"[{i}/{total}]"
 
         if os.path.exists(filename): 
+            ctx.rec_downloaded(img_url)
             print(f"{progress} File '{filename}' already downloaded")
             continue
 
@@ -326,8 +335,9 @@ def download(ctx: Context, target_dir: str):
                 print(f"{progress} Downloaded '{img_url}' as '{filename}'")
             
             ctx.rec_downloaded(img_url)
+        except ConnectionError: return
         except Exception as e:
-            print(f"{progress} Failed to download '{img_url}': {e}")
+            print(f"{progress} Failed to download '{img_url}'", e)
     
 
 def load_sites(file: str) -> list[str]:
@@ -346,13 +356,19 @@ def preprocess_sites(ctx : Context):
     print(">>> Start pre-processing ....")
 
     remaining = set(ctx.pristine)
+    total = len(remaining)
+    i = 0
     for site in remaining:
+        i += 1
+        progress = f"[{i}/{total}]"
         try:
             expanded = parse_pagination(site)
             for s in expanded:
                 ctx.rec_preprocessed(s)
+            print(f"{progress} Pre-processed '{site}'")
+        except ConnectionError: return
         except Exception as e: 
-            print(f"Failed to parse pagination for '{site}', e: {e}")
+            print(f"{progress} Failed to parse pagination for '{site}'", e)
 
 def buondua():
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
@@ -373,7 +389,6 @@ def buondua():
 
     context = Context(inputf)
     context.load()
-    # print(f"Loaded context: \n{context}")
     
     if context.is_finished():
         print(f"Download is finished, remove '{inputf}' for another fresh download")
