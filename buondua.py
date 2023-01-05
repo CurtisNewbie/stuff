@@ -78,7 +78,7 @@ class Context:
     
     def __init__(self, file: str):
         self.file = file
-
+        # self._reset()
 
     def _reset(self):
         self.pristine = set() # website url
@@ -89,11 +89,11 @@ class Context:
 
     def __str__(self):
         s = "Context:"
-        s += f'\n   pristine: {self.pristine}'
-        s += f'\n   preprocessed: {self.preprocessed}'
-        s += f'\n   parsed: {self.parsed}'
-        s += f'\n   extracted (img): {self.pristine}'
-        s += f'\n   downloaded (img): {self.downloaded}'
+        s += f'\n - pristine (website): {self.pristine if hasattr(self, "pristine") else "nil"}'
+        s += f'\n - preprocessed (website): {self.preprocessed if hasattr(self, "preprocessed") else "nil"}'
+        s += f'\n - parsed (website): {self.parsed if hasattr(self, "parsed") else "nil"}'
+        s += f'\n - extracted (image): {self.extracted if hasattr(self, "extracted") else "nil"}'
+        s += f'\n - downloaded (image): {self.downloaded if hasattr(self, "downloaded") else "nil"}'
         return s
 
     def rec_preprocessed(self, site: str):
@@ -143,7 +143,7 @@ class Context:
         self._reset()
 
         with open(self.file, "r") as f:
-            lines = list(filter(lambda l : l, map(lambda x: x.replace("\n", "").strip(), f.readlines())))
+            lines = list(filter(lambda l: l and not l.startswith("#"), map(lambda x: x.replace("\n", "").strip(), f.readlines())))
 
             reset_curr = False
             curr = set() 
@@ -361,12 +361,14 @@ if __name__ == "__main__":
     inputf = args.file
 
     if not os.path.exists(inputf):
-        open(inputf, "a").close() # touch empty file
+        with open(inputf, "a") as f:
+            f.write("# Please enter website urls below:\n")
         print(f"Please provide website urls in '{inputf}'")
         sys.exit(0)
 
     context = Context(inputf)
     context.load()
+    # print(f"Loaded context: \n{context}")
     
     if context.is_finished():
         print(f"Download is finished, remove '{inputf}' for another fresh download")
