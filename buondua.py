@@ -6,6 +6,7 @@ import argparse
 import bs4
 from bs4 import BeautifulSoup
 from requests_html import HTMLSession
+import requests_html
 import urllib.parse
 
 '''
@@ -17,14 +18,15 @@ For buondua.com
 Yongj.zhuang
 '''
 # proxy_server = 'socks5://127.0.0.1:7891'
-# proxies = {
-#    'http': 'http://localhost:7890',
-#    'https': 'http://localhost:7890',
-# }
+proxies = {
+   'http': 'http://localhost:7890',
+   'https': 'http://localhost:7890',
+}
 
-mock = False
-render_timeout = 60
-down_timeout = 10
+mock = False 
+render_timeout=10
+render_request_timeout = 5 
+download_timeout = 10
 seg = ['kul.mrcong.com', 'buondua.art']
 base = 'https://buondua.com'
 
@@ -62,10 +64,10 @@ Format of the input file:
 --- END ---
 
 '''
-PRE_PROCESSED_LINE = "--- PRE_PROCESSED ---"
-PARSED_LINE = "--- PARSED ---"
-EXTRACTED_LINE = "--- EXTRACTED ---"
-DOWNLOADED_LINE = "--- DOWNLOADED ---"
+PRE_PROCESSED_LINE = "--- PRE_PROCESSED (Website) ---"
+PARSED_LINE = "--- PARSED (Website) ---"
+EXTRACTED_LINE = "--- EXTRACTED (Image) ---"
+DOWNLOADED_LINE = "--- DOWNLOADED (Image) ---"
 END_LINE = "--- END ---"
 
 STAGE_PRISTINE = 0
@@ -73,6 +75,8 @@ STAGE_PREPROCESSED = 1
 STAGE_PARSED = 2
 STAGE_EXTRACTED = 3
 STAGE_DOWNLOAED = 4
+
+session = HTMLSession()
 
 class Context:
     
@@ -116,8 +120,8 @@ class Context:
         content = ""
 
         if self.pristine:
-            content += "\n" + "\n".join(self.pristine)
-        content += "\n" + PRE_PROCESSED_LINE
+            content += "\n".join(self.pristine) + "\n"
+        content += PRE_PROCESSED_LINE
 
         if self.preprocessed:
             content += "\n" + "\n".join(self.preprocessed)
@@ -180,7 +184,7 @@ class Context:
                 if stage == STAGE_PRISTINE:
                     self.pristine = curr
                 elif stage == STAGE_PREPROCESSED:
-                    self.preprocessing = curr
+                    self.preprocessed = curr
                 elif stage == STAGE_PARSED:
                     self.parsed = curr
                 elif stage == STAGE_EXTRACTED:
@@ -199,23 +203,27 @@ def render_html(url: str) -> str:
     # session = HTMLSession(browser_args=[f"--proxy-server={proxy_server}"])
     # r = session.get(url, timeout=render_timeout, proxies=proxies)
 
-    session = HTMLSession()
-    r = session.get(url, timeout=render_timeout)
-    r.html.render()
-    return r.html.html
+    start = time.time()
+    r = session.get(url, timeout=render_request_timeout, stream=True)
+    html: requests_html.HTML = r.html
+    print(f"Fetched HTML '{url}' (took {(time.time() - start):.3}s)")
+
+    start = time.time()
+    html.render(retries=1, timeout=render_timeout, wait=2)
+    print(f"Rendered HTML '{url}' (took {(time.time() - start):.3}s)")
+
+    return html.html
 
 
 def filter_img_url(url: str) -> bool:
+    if not url: return False
     for s in seg:
         if url.find(s) > -1: return True
     return False
 
 
 def parse_pagination(url) -> list[str]:
-    renderstart = time.time()
     html = render_html(url) 
-    print(f"Rendered HTML '{url}' (took {(time.time() - renderstart):.3}s)")
-
     expanded = [url]
     soup = BeautifulSoup(html, 'html.parser')
     
@@ -247,20 +255,18 @@ def parse_pagination(url) -> list[str]:
 
 
 def extract_img_urls(ctx: Context): 
-    print("Start extracting image urls from websites ...")
+    print(">>> Start extracting image urls from websites ...")
 
     preprocessed = set(ctx.preprocessed)
     total = len(preprocessed)
     i = 0
     for url in preprocessed: 
         i += 1
-        progress = f"[{i+1}/{total}]"
+        progress = f"[{i}/{total}]"
 
-        print(f"Fetching HTML for '{url}'")
+        # print(f"Fetching HTML for '{url}'")
         try:
-            renderstart = time.time()
             html = render_html(url) 
-            print(f"Rendered HTML '{url}' (took {(time.time() - renderstart):.3}s)")
 
             extracted = []
             soup = BeautifulSoup(html, 'html.parser')
@@ -272,19 +278,20 @@ def extract_img_urls(ctx: Context):
             print(f"{progress} Parsed '{url}', found {len(extracted)} image urls")
 
             ctx.rec_extracted(extracted)
-            ctx.rec_parsed()
+            ctx.rec_parsed(url)
 
         except Exception as e:
             print(f"{progress} Failed to parse url '{url}': {e}")
 
 
-suf = ['.webp', '.jpg', '.jpeg']
+suf = ['.webp', '.jpg', '.jpeg', '.png']
 def extract_name(url: str) -> str:
     i = url.rfind('?')
     if i > -1: url = url[:i]
 
+    urllower = url.lower()
     for s in suf:
-        j = url.rfind(s)
+        j = urllower.rfind(s)
         if j < 0: continue
 
         i = url.rfind('/', 0, j)
@@ -294,7 +301,7 @@ def extract_name(url: str) -> str:
 
 
 def download(ctx: Context, target_dir: str):
-    print("Start downloading ...")
+    print(">>> Start downloading ...")
 
     extracted: set[str] = set(ctx.extracted)
     total = len(extracted)
@@ -313,7 +320,7 @@ def download(ctx: Context, target_dir: str):
             if mock:
                 print(f"{progress} Downloaded (mocked) '{img_url}' as '{filename}'")
             else:
-                response = requests.get(img_url, timeout=down_timeout)
+                response = requests.get(img_url, timeout=download_timeout)
                 with open(filename, "wb") as df:
                     df.write(response.content)
                 print(f"{progress} Downloaded '{img_url}' as '{filename}'")
@@ -336,8 +343,7 @@ def write_sites(file: str, sites: list[str]):
 
 
 def preprocess_sites(ctx : Context):
-    if not ctx.pristine:
-        return
+    print(">>> Start pre-processing ....")
 
     remaining = set(ctx.pristine)
     for site in remaining:
@@ -348,8 +354,7 @@ def preprocess_sites(ctx : Context):
         except Exception as e: 
             print(f"Failed to parse pagination for '{site}', e: {e}")
 
-
-if __name__ == "__main__":
+def buondua():
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-d", "--dir", help="Download directory, by default it's current directory", required=False, default="./")
@@ -364,7 +369,7 @@ if __name__ == "__main__":
         with open(inputf, "a") as f:
             f.write("# Please enter website urls below:\n")
         print(f"Please provide website urls in '{inputf}'")
-        sys.exit(0)
+        return
 
     context = Context(inputf)
     context.load()
@@ -372,26 +377,29 @@ if __name__ == "__main__":
     
     if context.is_finished():
         print(f"Download is finished, remove '{inputf}' for another fresh download")
-        sys.exit(0)
+        return
 
     preprocess_sites(context)
+    context.persist()
     if len(context.pristine) > 0:
-        context.persist()
         print(f"Failed to preprocess all websites, please try again")
-        sys.exit(0)
+        return
 
     extract_img_urls(context)
+    context.persist()
     if len(context.preprocessed) > 0:
-        context.persist()
         print(f"Failed to parse all websites, please try again")
-        sys.exit(0)
+        return
 
     download(context, dir)
+    context.persist()
     if len(context.extracted) > 0:
-        context.persist()
         print(f"Failed to download all images, please try again")
-        sys.exit(0)
+        return
 
     context.persist()
     print(f"Download is finished, remove '{inputf}' for another fresh download")
 
+
+if __name__ == "__main__":
+    buondua()
