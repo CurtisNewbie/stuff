@@ -193,11 +193,11 @@ class Context:
                     self.downloaded = curr            
 
     def is_finished(self) -> bool:
-        if len(self.pristine) > 0 or len(self.preprocessed) > 0:
-            return False 
-        if len(self.parsed) > 0 or len(self.extracted) > 0:
-            return False
-        return True 
+        return len(self.pristine) < 1 \
+            and len(self.preprocessed) < 1 \
+            and len(self.parsed) < 1 \
+            and len(self.extracted) < 1
+
 
 def render_html(url: str) -> str:
     # session = HTMLSession(browser_args=[f"--proxy-server={proxy_server}"])
