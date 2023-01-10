@@ -28,7 +28,7 @@ render_timeout=10
 render_request_timeout = 5 
 download_timeout = 10
 show_stat = False 
-seg = ['kul.mrcong.com', 'buondua.art', 'i.buondua.com']
+seg = ['mrcong.com', 'buondua.art', 'buondua.com']
 base = 'https://buondua.com'
 
 '''
@@ -121,7 +121,7 @@ class Context:
         self.downloaded.add(img_url)
     
     def persist(self): 
-        content = ""
+        content = "# Please enter website urls below:\n\n"
 
         if self.pristine:
             content += "\n".join(self.pristine) + "\n"
@@ -271,6 +271,7 @@ def extract_img_urls(ctx: Context):
 
         # print(f"Fetching HTML for '{url}'")
         try:
+            decoded_url = urllib.parse.unquote(url)
             html = render_html(url) 
 
             extracted = []
@@ -280,16 +281,16 @@ def extract_img_urls(ctx: Context):
 
                 if not filter_img_url(src): continue
                 extracted.append(src)
-            print(f"{progress} Parsed '{url}', found {len(extracted)} image urls")
+            print(f"{progress} Parsed '{decoded_url}', found {len(extracted)} image urls")
 
             if not extracted:
-                raise AssertionError(f"Found no image in '{url}'")
+                raise AssertionError(f"Found no image in '{decoded_url}'")
 
             ctx.rec_extracted(extracted)
             ctx.rec_parsed(url)
         except ConnectionError: return
         except Exception as e:
-            print(f"{progress} Failed to parse url '{url}'", e)
+            print(f"{progress} Failed to parse url '{decoded_url}'", e)
 
 
 suf = ['.webp', '.jpg', '.jpeg', '.png']
@@ -360,15 +361,16 @@ def preprocess_sites(ctx : Context):
     i = 0
     for site in remaining:
         i += 1
+        decoded_site = urllib.parse.unquote(site)
         progress = f"[{i}/{total}]"
         try:
             expanded = parse_pagination(site)
             for s in expanded:
                 ctx.rec_preprocessed(s)
-            print(f"{progress} Pre-processed '{site}'")
+            print(f"{progress} Pre-processed '{decoded_site}'")
         except ConnectionError: return
         except Exception as e: 
-            print(f"{progress} Failed to parse pagination for '{site}'", e)
+            print(f"{progress} Failed to parse pagination for '{decoded_site}'", e)
 
 def buondua():
     ap = argparse.ArgumentParser(epilog="python3 buondua.py  -d '/my/folder' -m 'all' -f 'download_url.txt'",
