@@ -5,6 +5,8 @@ base = "https://ososedki.com"
 def_res = "604"  # default resolution
 target_res = "1280"  # target resolution
 
+session = requests.Session()
+
 if __name__ == "__main__":
     argv = sys.argv[1:]
     print(f"argv: {argv}")
@@ -45,7 +47,7 @@ if __name__ == "__main__":
             print(f"Downloading '{url}'")
             try:
                 with open(filename, "wb") as df:
-                    response = requests.get(url, timeout=20)
+                    response = session.get(url, timeout=20)
                     df.write(response.content)
                     print(f"Downloaded '{url}' as '{filename}'")
             except Exception as e:

@@ -126,7 +126,7 @@ class Context:
                 self._put(ar, '')
                 i += 1
             else:
-                if i + 1 > al:
+                if i + 1 >= al:
                     print(f"Error - {ar}'s argument is missing")
                     sys.exit(1)
                 self._put(ar, argv[i + 1])

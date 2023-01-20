@@ -551,6 +551,7 @@ yongj.zhuang
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    # print(args)
 
     # no arg provided
     if len(args) == 0:
