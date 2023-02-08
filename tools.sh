@@ -108,8 +108,8 @@ function trash() {
     # echo "Using trash: $trash_can_p"
 
     if [ -d "$1" ]; then
-        cp -r "$1" "$trash_can_p"
-        rm -r "$1"
+        cp -rf "$1" "$trash_can_p"
+        rm -rf "$1"
     else
         mv "$1" "$trash_can_p"
     fi
