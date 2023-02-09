@@ -880,7 +880,7 @@ function grepcode() {
     return 0
   fi
 
-  grep -R "$1" . \
+  grep -i -R "$1" . \
   -C 1 \
   --color \
   --exclude-dir "target" \
