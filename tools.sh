@@ -19,6 +19,11 @@ export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
 
 alias bc="bc -l"
+alias gs="git status"
+alias gf="git fetch"
+alias gfp="git fetch pull"
+alias gp="git pull"
+alias gl="git log"
 
 # for debugging
 # set -eE -o functrace
