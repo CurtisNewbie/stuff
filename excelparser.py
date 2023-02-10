@@ -21,6 +21,16 @@ class ExcelParser():
         self.cols: list[str] = None
         self.rows: list[list[any]] = None
 
+    def append_row(self, row: list[any]):
+        diff = len(self.cols) - len(row)
+        if diff > 0:
+            for i in range(diff):
+                row.append("")
+        self.rows.append(row)
+
+    def append_empty_row(self):
+        self.append_row([])
+
     def lookup_col(self, col_name: int) -> int:
         '''
         Find column index by name
