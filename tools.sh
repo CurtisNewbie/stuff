@@ -94,7 +94,7 @@ function rfind() {
     fi
 }
 
-function trash() {
+function dmp() {
     if [ -z $1 ]; then
         return 0 
     fi
