@@ -94,7 +94,18 @@ function rfind() {
     fi
 }
 
-function trash() {
+function trashsize() {
+    if [ ! -d "$trash_can" ]; then
+        echocyan "Trash can is not found"
+        return 0
+    fi
+
+    size=$(cd $trash_can; du -h -d 1 . | tail -n 1)
+    echocyan "$size"
+}
+
+# dump file to trash can
+function trh() {
     if [ -z $1 ]; then
         return 0 
     fi
