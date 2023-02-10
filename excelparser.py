@@ -16,31 +16,77 @@ def debug(callback: Callable[[], str]):
 
 class ExcelParser():
 
-    def __init__(self, inputf) -> None:
+    def __init__(self, inputf=None) -> None:
         self.inputf = inputf
         self.cols: list[str] = None
         self.rows: list[list[any]] = None
-        self.nrow = 0
-        self.ncol = 0
 
-    def cvt_col_named(self, col_name: int, converter):
+    def lookup_col(self, col_name: int) -> int:
+        '''
+        Find column index by name
+        '''
         colidx = -1
-        for i in range(self.ncol):
+        for i in range(len(self.cols)):
             if self.cols[i] == col_name:
                 colidx = i
                 break
+        return colidx
 
+    def cvt_col_name(self, col_name: int, converter):
+        '''
+        Convert column value 
+        '''
+        colidx = self.lookup_col(col_name)
         if colidx == -1:
             raise ValueError(
                 f"Unable to find '{col_name}', available columns are: {self.cols}")
-
         self.cvt_col_at(colidx, converter)
 
     def cvt_col_at(self, col_idx: int, converter):
-        for i in range(self.nrow):
+        '''
+        Convert column value
+        '''
+        for i in range(len(self.rows)):
             self.rows[i][col_idx] = converter(self.rows[i][col_idx])
 
+    def copy_col_name(self, copied_names: list[int]) -> "ExcelParser":
+        '''
+        Copy columns 
+        '''
+        colnames = []
+        idxls: list[int] = []
+
+        for i in range(len(copied_names)):
+            idx = self.lookup_col(copied_names[i])
+            if idx > -1:
+                colnames.append(copied_names[i])
+                idxls.append(idx)
+
+        ep = ExcelParser()
+        if len(idxls) > 0:
+            ep.rows = []
+            ep.cols = colnames
+
+            for i in range(len(self.rows)):
+                r: list = self.rows[i]
+                cprow = []
+                for i in range(len(idxls)):
+                    cprow.append(r[idxls[i]])
+                ep.rows.append(cprow)
+
+        return ep
+
+    def export(self, outf):
+        '''
+        Export to file
+        '''
+        df = pandas.DataFrame(self.rows, columns=self.cols)
+        df.to_excel(outf, index=False)
+
     def parse(self):
+        '''
+        Parse excel
+        '''
         ip = self.inputf
         if ip == None:
             raise ValueError("Please specify input file")
@@ -88,8 +134,6 @@ class ExcelParser():
 
         self.cols = cols
         self.rows = rows
-        self.nrow = len(cols)
-        self.ncol = len(rows)
 
 
 '''
@@ -97,30 +141,16 @@ python3 -m pip install pandas openpyxl
 
 (openpyxl is optional, it's used for *.xlsx files)
 
-[0] - input path
-
-'--debug' for debug mode
-
 Yongj.Zhuang
 '''
+
 if __name__ == '__main__':
 
-    la = len(sys.argv)
-    if la < 2:
-        print("\n excelparser.py (pandas) by Yongj.Zhuang")
-        print("\n Please provide following arguments:\n")
-        print(" [0] - input path")
-        print("\n e.g., python3 excelparser.py myexcel.xls")
-        print("\n '--debug' for debug mode")
-        sys.exit(1)
-
-    ip = None
-    for i in range(1, la):
-        v = sys.argv[i]
-        if v == "--debug":
-            isdebug = True
-        else:
-            ip = v
-
-    ep = ExcelParser(ip)
+    # example
+    import excelparser
+    ep = excelparser.ExcelParser(
+        '/Users/photon/Downloads/report_account_210823092432.xlsx')
     ep.parse()
+    ep.cvt_col_name('金额', lambda x: 0 if x == "" else float(x) * 1000)
+    ep = ep.copy_col_name(['金额'])
+    ep.export('/Users/photon/Downloads/report_account_210823092432_converted.xlsx')

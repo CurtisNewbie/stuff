@@ -15,6 +15,7 @@ trash_can="$HOME/trash"
 export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
 export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
 
 alias bc="bc -l"
