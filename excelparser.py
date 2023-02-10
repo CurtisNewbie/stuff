@@ -19,7 +19,26 @@ class ExcelParser():
     def __init__(self, inputf) -> None:
         self.inputf = inputf
         self.cols: list[str] = None
-        self.rows: list[list[str]] = None
+        self.rows: list[list[any]] = None
+        self.nrow = 0
+        self.ncol = 0
+
+    def cvt_col_named(self, col_name: int, converter):
+        colidx = -1
+        for i in range(self.ncol):
+            if self.cols[i] == col_name:
+                colidx = i
+                break
+
+        if colidx == -1:
+            raise ValueError(
+                f"Unable to find '{col_name}', available columns are: {self.cols}")
+
+        self.cvt_col_at(colidx, converter)
+
+    def cvt_col_at(self, col_idx: int, converter):
+        for i in range(self.nrow):
+            self.rows[i][col_idx] = converter(self.rows[i][col_idx])
 
     def parse(self):
         ip = self.inputf
@@ -69,6 +88,8 @@ class ExcelParser():
 
         self.cols = cols
         self.rows = rows
+        self.nrow = len(cols)
+        self.ncol = len(rows)
 
 
 '''
