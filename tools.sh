@@ -25,6 +25,7 @@ alias gfp="git fetch pull"
 alias gp="git pull"
 alias gl="git log"
 alias gds="git diff --staged"
+alias gd="git diff"
 
 # for debugging
 # set -eE -o functrace
