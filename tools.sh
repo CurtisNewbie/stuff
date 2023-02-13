@@ -26,6 +26,8 @@ alias gp="git pull"
 alias gl="git log"
 alias gds="git diff --staged"
 alias gd="git diff"
+alias gshow="git show"
+alias gpush="git push"
 
 # for debugging
 # set -eE -o functrace
