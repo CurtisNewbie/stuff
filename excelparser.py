@@ -20,6 +20,7 @@ class ExcelParser():
         self.inputf = inputf
         self.cols: list[str] = None
         self.rows: list[list[any]] = None
+        self.cols_idx: dict[str][int] = None
 
     def append_row(self, row: list[any]):
         diff = len(self.cols) - len(row)
@@ -31,16 +32,23 @@ class ExcelParser():
     def append_empty_row(self):
         self.append_row([])
 
+    def row_count(self) -> int:
+        return len(self.rows)
+
+    def get_col(self, col_name: str, row_idx: int) -> str:
+        colidx = self.lookup_col(col_name)
+        if colidx == -1:
+            return ""
+        return self.rows[row_idx][colidx]
+
     def lookup_col(self, col_name: int) -> int:
         '''
         Find column index by name
         '''
-        colidx = -1
-        for i in range(len(self.cols)):
-            if self.cols[i] == col_name:
-                colidx = i
-                break
-        return colidx
+        if col_name not in self.cols_idx:
+            return -1
+
+        return self.cols_idx[col_name]
 
     def cvt_col_name(self, col_name: int, converter):
         '''
@@ -115,11 +123,18 @@ class ExcelParser():
 
         # columns
         cols = []
+        cols_i = 0
+        self.cols_idx: dict[str][int] = {}
+
         for i in range(ncol):
             h = df.columns[i]
             if not h:
                 break
-            cols.append(str(h))
+
+            sh = str(h)
+            cols.append(sh)
+            self.cols_idx[sh] = cols_i
+            cols_i += 1
 
         if isdebug:
             s = "Columns: "
@@ -162,5 +177,9 @@ if __name__ == '__main__':
         '/Users/photon/Downloads/report_account_210823092432.xlsx')
     ep.parse()
     ep.cvt_col_name('金额', lambda x: 0 if x == "" else float(x) * 1000)
+    for i in range(ep.row_count()):
+        amt = ep.get_col('金额', i)
+        print(f"row: {i}, amt: {amt}")
+
     ep = ep.copy_col_name(['金额'])
     ep.export('/Users/photon/Downloads/report_account_210823092432_converted.xlsx')
