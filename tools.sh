@@ -116,7 +116,7 @@ function trashsize() {
 }
 
 # dump file to trash can
-function trh() {
+function trsh() {
     if [ -z $1 ]; then
         return 0 
     fi
