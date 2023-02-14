@@ -28,6 +28,7 @@ alias gds="git diff --staged"
 alias gd="git diff"
 alias gshow="git show"
 alias gpush="git push"
+alias gadd="git add"
 
 # for debugging
 # set -eE -o functrace
