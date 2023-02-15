@@ -45,5 +45,5 @@ func main() {
 		log.Printf("%sRequirement not found%s", red, reset)
 		return
 	}
-	log.Print(string(cmdout))
+	log.Print("\n" + string(cmdout) + "\n")
 }
