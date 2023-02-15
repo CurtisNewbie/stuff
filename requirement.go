@@ -7,12 +7,21 @@ import (
 	"strings"
 )
 
+var (
+	red   = "\033[31m"
+	reset = "\033[0m"
+	green = "\033[31m"
+	cyan  = "\033[36m"
+)
+
 func main() {
+	log.SetFlags(0) // remove timestamp in log
+
 	cmd := exec.Command("git", "status")
 	var cmdout []byte
 	var err error
 	if cmdout, err = cmd.CombinedOutput(); err != nil {
-		log.Printf("Not a git repository, %v", err)
+		log.Printf("%sNot a git repository, %v%s", red, err, reset)
 		return
 	}
 	outstr := string(cmdout)
@@ -20,7 +29,7 @@ func main() {
 
 	lines := strings.Split(outstr, "\n")
 	if len(lines) < 1 {
-		log.Print("Not a git repository")
+		log.Printf("%sNot a git repository%s", red, reset)
 		return
 	}
 
@@ -33,8 +42,8 @@ func main() {
 	reqfile := os.Getenv("REQUIREMENTS_FILE")
 	cmd = exec.Command("grep", "--color", "-h", "-i", branch, reqfile)
 	if cmdout, err = cmd.CombinedOutput(); err != nil {
-		log.Print("Requirement not found")
+		log.Printf("%sRequirement not found%s", red, reset)
 		return
 	}
-	log.Printf("\n%s", string(cmdout))
+	log.Print(string(cmdout))
 }
