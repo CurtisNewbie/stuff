@@ -33,7 +33,7 @@ func main() {
 	reqfile := os.Getenv("REQUIREMENTS_FILE")
 	cmd = exec.Command("grep", "--color", "-h", "-i", branch, reqfile)
 	if cmdout, err = cmd.CombinedOutput(); err != nil {
-		log.Printf("Requirement not found, err: %v", err)
+		log.Print("Requirement not found")
 		return
 	}
 	log.Printf("\n%s", string(cmdout))
