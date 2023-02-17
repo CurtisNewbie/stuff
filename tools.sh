@@ -29,6 +29,7 @@ alias gd="git diff"
 alias gshow="git show"
 alias gpush="git push"
 alias gadd="git add ."
+alias mclean="mvn clean"
 
 # for debugging
 # set -eE -o functrace
