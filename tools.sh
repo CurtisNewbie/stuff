@@ -30,6 +30,7 @@ alias gshow="git show"
 alias gpush="git push"
 alias gadd="git add"
 alias mclean="mvn clean"
+alias grest="git restore --staged"
 
 # for debugging
 # set -eE -o functrace
