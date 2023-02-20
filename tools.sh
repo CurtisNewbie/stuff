@@ -32,6 +32,7 @@ alias gadd="git add"
 alias mclean="mvn clean"
 alias grest="git restore --staged"
 alias grep="grep --color"
+alias gcmt="git commit"
 
 # for debugging
 # set -eE -o functrace
