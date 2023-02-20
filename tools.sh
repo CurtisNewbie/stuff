@@ -31,6 +31,7 @@ alias gpush="git push"
 alias gadd="git add"
 alias mclean="mvn clean"
 alias grest="git restore --staged"
+alias grep="grep --color"
 
 # for debugging
 # set -eE -o functrace
@@ -906,7 +907,6 @@ function grepcode() {
 
   grep -i -R "$1" . \
   -C 1 \
-  --color \
   --exclude-dir "target" \
   --exclude-dir ".git" \
   --exclude-dir ".vscode" \
