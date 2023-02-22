@@ -35,13 +35,13 @@ class ExcelParser():
     def row_count(self) -> int:
         return len(self.rows)
 
-    def get_col(self, col_name: str, row_idx: int) -> str:
-        colidx = self.lookup_col(col_name)
+    def getcol(self, col_name: str, row_idx: int) -> str:
+        colidx = self.lookupcol(col_name)
         if colidx == -1:
             return ""
         return self.rows[row_idx][colidx]
 
-    def lookup_col(self, col_name: int) -> int:
+    def lookupcol(self, col_name: int) -> int:
         '''
         Find column index by name
         '''
@@ -54,7 +54,7 @@ class ExcelParser():
         '''
         Convert column value 
         '''
-        colidx = self.lookup_col(col_name)
+        colidx = self.lookupcol(col_name)
         if colidx == -1:
             raise ValueError(
                 f"Unable to find '{col_name}', available columns are: {self.cols}")
@@ -75,7 +75,7 @@ class ExcelParser():
         idxls: list[int] = []
 
         for i in range(len(copied_names)):
-            idx = self.lookup_col(copied_names[i])
+            idx = self.lookupcol(copied_names[i])
             if idx > -1:
                 colnames.append(copied_names[i])
                 idxls.append(idx)
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     ep.parse()
     ep.cvt_col_name('金额', lambda x: 0 if x == "" else float(x) * 1000)
     for i in range(ep.row_count()):
-        amt = ep.get_col('金额', i)
+        amt = ep.getcol('金额', i)
         print(f"row: {i}, amt: {amt}")
 
     ep = ep.copy_col_name(['金额'])
