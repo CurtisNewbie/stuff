@@ -63,7 +63,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to open file, %v", err)
 	}
-	content := fmt.Sprintf("- %s", appended)
+	content := fmt.Sprintf("- %s\n", appended)
 	log.Printf("Writing content: '%s'", content)
 	_, err = f.WriteString(content)
 	if err != nil {
