@@ -131,7 +131,7 @@ class ExcelParser():
             if not h:
                 break
 
-            sh = str(h)
+            sh = str(h).strip()
             cols.append(sh)
             self.cols_idx[sh] = cols_i
             cols_i += 1
@@ -152,7 +152,7 @@ class ExcelParser():
                 v = df.iat[i, j]
                 if pandas.isnull(v):
                     v = ""
-                r.append(v)
+                r.append(v.strip())
 
             rows.append(r)
             debug(lambda: f"row[{i}]: {r}")
