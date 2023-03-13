@@ -173,6 +173,10 @@ function gpr() {
     git push -u origin "$branch"
 }
 
+function prevbranch() {
+    echocyan "Previous branch was: $GSWITCH_BACK"
+}
+
 function gcb() {
     if [ -z $1 ]; then
         echored "please enter branch name" 
