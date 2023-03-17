@@ -6,12 +6,19 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
 const (
 	RED   = "\033[31m"
 	RESET = "\033[0m"
 )
+
+type ListBranchRes struct {
+	Repo     string
+	Branches []string
+	Err      error
+}
 
 func main() {
 	log.SetFlags(0) // remove timestamp in log
@@ -29,37 +36,55 @@ func main() {
 		log.Fatalf("Failed to list entries under root directory, %v", err)
 	}
 
-	var results string
+	aggChan := make(chan ListBranchRes, len(entries))
+	var wg sync.WaitGroup
+
+	// list branches of each repositories in parallel
 	for _, e := range entries {
-		dir := root 
+		dir := root
 		if !strings.HasSuffix(dir, "/") {
 			dir += "/"
 		}
 		dir += e.Name()
-		listedBranches, err := listBranch(dir)
-		if err != nil {
-			// log.Printf("Failed to listBranch, dir: %v, %v", dir, err)
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			listBranch(dir, aggChan)
+		}()
+	}
+	wg.Wait()
+	close(aggChan)
+
+	// aggregate results
+	var results string
+	for r := range aggChan {
+		if r.Err != nil {
 			continue
 		}
-		
-		for _, v := range listedBranches {
+
+		for _, v := range r.Branches {
 			if strings.Contains(v, target) {
-				results += fmt.Sprintf("%-70v %v%v%v\n", dir, RED, v, RESET)
+				results += fmt.Sprintf("%-70v %v%v%v\n", r.Repo, RED, v, RESET)
 				break
 			}
 		}
 	}
-
 	log.Print(results)
 }
 
 // list branches of repository
-func listBranch(repo string) ([]string, error) {
+func listBranch(repo string, receiver chan ListBranchRes) {
 	var cmdout []byte
 	var err error
 	cmd := exec.Command("git", "-C", repo, "branch")
 	if cmdout, err = cmd.CombinedOutput(); err != nil {
-		return nil, fmt.Errorf(RED+"Not a git repository, %v"+RESET, err)
+		receiver <- ListBranchRes{
+			Repo:     repo,
+			Branches: nil,
+			Err:      fmt.Errorf(RED+"Not a git repository, %v"+RESET, err),
+		}
+		return
 	}
 
 	outstr := string(cmdout)
@@ -67,5 +92,10 @@ func listBranch(repo string) ([]string, error) {
 	for i, v := range branches {
 		branches[i] = strings.TrimSpace(strings.Replace(v, "*", "", 1))
 	}
-	return branches, nil
+
+	receiver <- ListBranchRes{
+		Repo:     repo,
+		Branches: branches,
+		Err:      nil,
+	}
 }
