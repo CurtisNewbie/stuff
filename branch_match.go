@@ -64,7 +64,7 @@ func main() {
 		}
 
 		for _, v := range r.Branches {
-			if strings.Contains(v, target) {
+			if v == target {
 				results += fmt.Sprintf("%-70v %v%v%v\n", r.Repo, RED, v, RESET)
 				break
 			}
