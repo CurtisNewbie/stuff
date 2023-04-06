@@ -1,6 +1,7 @@
 :set paste 
 :set hlsearch
 :set incsearch
+:set ignorecase
 :set smartcase
 :set expandtab
 :set number
@@ -9,11 +10,14 @@
 :set tabstop=2
 :set shiftwidth=2
 
-filetype plugin indent on
+"filetype plugin indent on
 nnoremap <C-n> :NERDTreeToggle<CR>
 
 :command W w
 :command Wq wq
+
+set visualbell 
+set t_vb=
 
 set splitright
 
@@ -35,4 +39,6 @@ Plug 'sheerun/vim-polyglot'
 
 " Initialize plugin system
 call plug#end()
+
+
 
