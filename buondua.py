@@ -10,6 +10,20 @@ import requests_html
 import urllib.parse
 
 '''
+# https://github.com/psf/requests-html/issues/341
+# headless mode affect the use of proxy :D
+# .local/lib/python3.9/site-packages/requests_html.py
+
+@property
+async def browser(self):
+    if not hasattr(self, "_browser"):
+        self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=False, args=self.__browser_args)
+
+    return self._browser
+'''
+
+
+'''
 pip install beautifulsoup4
 pip install requests_html
 
@@ -213,7 +227,7 @@ def render_html(url: str) -> str:
     if show_stat: print(f"Fetched HTML '{url}' (took {(time.time() - start):.3}s)")
 
     start = time.time()
-    html.render(retries=1, timeout=render_timeout, wait=2)
+    html.render(retries=10, timeout=render_timeout, wait=2)
     if show_stat: print(f"Rendered HTML '{url}' (took {(time.time() - start):.3}s)")
 
     return html.html
