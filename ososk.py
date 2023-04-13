@@ -1,61 +1,80 @@
+import os
+import time 
 import sys
-import requests
+import bs4
+from requests_html import HTMLSession
 
-base = "https://ososedki.com"
-def_res = "604"  # default resolution
-target_res = "1280"  # target resolution
+'''
+# https://github.com/psf/requests-html/issues/341
+# headless mode affect the use of proxy :D
+# .local/lib/python3.9/site-packages/requests_html.py
 
-session = requests.Session()
+@property
+async def browser(self):
+    if not hasattr(self, "_browser"):
+        self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=False, args=self.__browser_args)
 
+    return self._browser
+'''
+
+session = HTMLSession()
+
+def render(url: str, timeout = 20, retries = 2, wait = 3, sleep = 0) -> str:
+    start = time.monotonic_ns()
+    r = session.get(url, timeout=timeout)
+    print(f"Rquested '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
+
+    start = time.monotonic_ns()
+    r.html.render(retries=retries, timeout=timeout, wait=wait, sleep=sleep)
+    print(f"Rendered '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
+    return r.html.html
+
+
+'''
+pip install beautifulsoup4
+pip install requests_html
+'''
 if __name__ == "__main__":
     argv = sys.argv[1:]
-    print(f"argv: {argv}")
-
     if len(argv) < 1:
         raise ValueError("please specify path to the input file")
 
     file = argv[0]
-    failed = []
-
-    print(f"opening file: {file}\n")
-
     with open(file) as f:
         all = f.read()
-        all = all.replace("\t", "\n")
         lines = all.splitlines()
+        for url in lines:
+            html = render(url)
+            start = time.monotonic_ns()
+            soup = bs4.BeautifulSoup(html, 'html.parser')
+            print(f"BS4 parsed '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
 
-        # lines = f
-        for line in lines:
-            if not line:
-                continue
+            hrefs = []
+            for a in soup.find_all('a', attrs={"data-fancybox" : "gallery"}):
+                h = a.get('href')
+                print(h)
+                hrefs.append(h)
 
-            # line = line.replace("\n", "")
 
-            # when copied from chrome, the links may start with 'Image'
-            if line.startswith("Image"):
-                line = line[5:]
+            for h in hrefs:
+                if not h: continue
 
-            if not line.startswith("/images/a/"):
-                continue
+                r = h.rfind("-")
+                if r > -1:
+                    filename: str = h[r+1:]
+                    filename = filename.replace("/", "-")
+                else:
+                    r = h.rfind("/")
+                    filename = h[r+1:]
 
-            r = line.rfind("/")
-            filename = line[r+1:]
+                if os.path.exists(filename): 
+                    print(f"'{h}' already downloaded as '{filename}'")
 
-            url = (base + line).replace(f"/a/{def_res}/", f"/a/{target_res}/")
-            # print(url)
-
-            print(f"Downloading '{url}'")
-            try:
-                with open(filename, "wb") as df:
-                    response = session.get(url, timeout=20)
-                    df.write(response.content)
-                    print(f"Downloaded '{url}' as '{filename}'")
-            except Exception as e:
-                failed.append(line)
-                print(f"Failed to download '{url}', error: {e}")
-    
-    if failed:
-        failed_lines = "\n".join(failed)
-        print(f"\nSome failed, please try again: \n{failed_lines}")
-        with open(file, "w") as f:
-            f.write(failed_lines)
+                try:
+                    with open(filename, "wb") as df:
+                        start = time.monotonic_ns()
+                        response = session.get(h, timeout=20)
+                        df.write(response.content)
+                        print(f"Downloaded '{h}' as '{filename}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
+                except Exception as e:
+                    print(f"Failed to download '{h}', error: {e}")
