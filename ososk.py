@@ -29,7 +29,6 @@ def render(url: str, timeout = 20, retries = 2, wait = 3, sleep = 0) -> str:
     r.html.render(retries=retries, timeout=timeout, wait=wait, sleep=sleep)
     print(f"Rendered '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
 
-    r.close()
     return r.html.html
 
 
