@@ -33,6 +33,7 @@ alias mclean="mvn clean"
 alias grest="git restore --staged"
 alias grep="grep --color"
 alias gcmt="git commit"
+alias ag="ag -i -A 2 -B 2"
 
 # for debugging
 # set -eE -o functrace
