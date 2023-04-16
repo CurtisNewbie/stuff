@@ -5,9 +5,9 @@ import sys
 import bs4
 from requests_html import HTMLSession, HTML
 
-def render(session, url: str, request_timeout, render_timeout, retries, wait, sleep) -> str:
+def render(session: HTMLSession, url: str, request_timeout, render_timeout, retries, wait, sleep) -> str:
     start = time.monotonic_ns()
-    r = session.get(url, timeout=request_timeout)
+    r = session.get(url, timeout=request_timeout, stream=False)
     print(f"Rquested '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
 
     start = time.monotonic_ns()
@@ -28,6 +28,19 @@ pip install requests_html
 '''
 if __name__ == "__main__":
 
+    # attempt to keep the connection open 
+    # https://github.com/psf/requests/issues/4937
+    import socket
+    from urllib3.connection import HTTPConnection
+    HTTPConnection.default_socket_options = (
+        HTTPConnection.default_socket_options + [
+            (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1),
+            (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
+            (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
+            (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
+        ]
+    )
+
     ap = argparse.ArgumentParser(description="ososk.py by yongjie.zhuang", formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument('-f', '--file', type=str, help=f"input file with site urls", required=False)
     ap.add_argument('-u', '--url', action='append', type=str, help=f"site url", required=False)
@@ -38,11 +51,11 @@ if __name__ == "__main__":
     ap.add_argument('--sleep', type=float, help=f"time sleep after initial render in seconds, default 0s", required=False, default=0)
     ap.add_argument('--overwrite', action="store_true", help=f"whether to overwrite the existing files, default False", required=False, default=False)
     ap.add_argument('--headless', type=bool, help=f"whether to use headless mode for the browser (headless mode affects proxy, default False)", required=False, default=False)
-    ap.add_argument('--verifyssl', type=bool, help=f"whether to verify SSL, default False", required=False, default=False)
+    ap.add_argument('--verifytsl', type=bool, help=f"whether to verify TSL certification, default True", required=False, default=True)
     args = ap.parse_args()
 
     # https://github.com/CurtisNewbie/requests-html is used for headless configuration
-    session = HTMLSession(headless = args.headless, verify = args.verifyssl)
+    session = HTMLSession(headless = args.headless, verify = args.verifytsl)
 
     sites = []
 
