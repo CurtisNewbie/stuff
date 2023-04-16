@@ -5,27 +5,16 @@ import requests
 import argparse
 import bs4
 from bs4 import BeautifulSoup
+import urllib.parse
 from requests_html import HTMLSession
 import requests_html
-import urllib.parse
 
 '''
-# https://github.com/psf/requests-html/issues/341
-# headless mode affect the use of proxy :D
-# .local/lib/python3.9/site-packages/requests_html.py
+# a modified version of requests-html
+# https://github.com/CurtisNewbie/requests-html
 
-@property
-async def browser(self):
-    if not hasattr(self, "_browser"):
-        self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=False, args=self.__browser_args)
-
-    return self._browser
-'''
-
-
-'''
 pip install beautifulsoup4
-pip install requests_html
+pip install requests_html 
 
 For buondua.com
 
@@ -91,7 +80,8 @@ STAGE_PARSED = 2
 STAGE_EXTRACTED = 3
 STAGE_DOWNLOAED = 4
 
-session = HTMLSession()
+# https://github.com/CurtisNewbie/requests-html is used for headless configuration
+session = HTMLSession(headless=True)
 
 class Context:
     

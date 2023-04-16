@@ -5,28 +5,14 @@ import sys
 import bs4
 from requests_html import HTMLSession, HTML
 
-'''
-# https://github.com/psf/requests-html/issues/341
-# headless mode affect the use of proxy :D
-# .local/lib/python3.9/site-packages/requests_html.py
-
-@property
-async def browser(self):
-    if not hasattr(self, "_browser"):
-        self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=False, args=self.__browser_args)
-
-    return self._browser
-'''
-
-session = HTMLSession()
-
-def render(url: str, request_timeout, render_timeout, retries, wait, sleep) -> str:
+def render(session, url: str, request_timeout, render_timeout, retries, wait, sleep) -> str:
     start = time.monotonic_ns()
     r = session.get(url, timeout=request_timeout)
     print(f"Rquested '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
 
     start = time.monotonic_ns()
     rh: HTML = r.html
+    print(f"Rendering '{url}' ... (retries: {retries}, timeout: {render_timeout}s, wait: {wait}s, sleep: {sleep}s)")
     rh.render(retries=retries, timeout=render_timeout, wait=wait, sleep=sleep)
     print(f"Rendered '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
 
@@ -34,6 +20,9 @@ def render(url: str, request_timeout, render_timeout, retries, wait, sleep) -> s
 
 
 '''
+# a modified version of requests-html
+# https://github.com/CurtisNewbie/requests-html
+
 pip install beautifulsoup4
 pip install requests_html
 '''
@@ -47,7 +36,13 @@ if __name__ == "__main__":
     ap.add_argument('--rendertimeout', type=float, help=f"render timeout in seconds, default 60s", required=False, default=60)
     ap.add_argument('--wait', type=float, help=f"time wait before rendering web page in seconds, default 3s", required=False, default=3)
     ap.add_argument('--sleep', type=float, help=f"time sleep after initial render in seconds, default 0s", required=False, default=0)
+    ap.add_argument('--overwrite', action="store_true", help=f"whether to overwrite the existing files, default False", required=False, default=False)
+    ap.add_argument('--headless', type=bool, help=f"whether to use headless mode for the browser (headless mode affects proxy, default False)", required=False, default=False)
+    ap.add_argument('--verifyssl', type=bool, help=f"whether to verify SSL, default False", required=False, default=False)
     args = ap.parse_args()
+
+    # https://github.com/CurtisNewbie/requests-html is used for headless configuration
+    session = HTMLSession(headless = args.headless, verify = args.verifyssl)
 
     sites = []
 
@@ -60,7 +55,7 @@ if __name__ == "__main__":
         for au in args.url: sites.append(au)
 
     for url in sites:
-        html = render(url, args.requesttimeout, args.rendertimeout, args.retries, args.wait, args.sleep)
+        html = render(session, url, args.requesttimeout, args.rendertimeout, args.retries, args.wait, args.sleep)
         start = time.monotonic_ns()
         soup = bs4.BeautifulSoup(html, 'html.parser')
         print(f"BS4 parsed '{url}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
@@ -92,8 +87,9 @@ if __name__ == "__main__":
         for h, n in hrefs:
             if not h: continue
 
-            if os.path.exists(n):
+            if not args.overwrite and os.path.exists(n):
                 print(f"'{h}' already downloaded as '{n}'")
+                continue
 
             try:
                 with open(n, "wb") as df:
