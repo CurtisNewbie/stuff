@@ -80,7 +80,7 @@ gdt() { git difftool "$@"; }
 glike() { git branch | grep "$1"; }
 gstashshow() { git stash show -p; }
 
-function lfind() { ls -al | grep "$1" -i; }
+function lfind() { ls -alh | grep "$1" -i; }
 
 function dfind() {
     if [ $# -gt 1 ]; then
