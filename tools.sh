@@ -756,8 +756,8 @@ function projver() {
     readpom -t 'project.version' 
 }
 
-function echobc() {
-    echo "$1" | bc -l
+function cc() {
+    echo "$@" | bc -l
 }
 
 function codediff() {
