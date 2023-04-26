@@ -34,6 +34,9 @@ alias grest="git restore --staged"
 alias grep="grep --color"
 alias gcmt="git commit"
 alias ag="ag -i -A 1 -B 1"
+alias idea.="idea ."
+alias code.="code ."
+
 
 # for debugging
 # set -eE -o functrace
@@ -80,7 +83,7 @@ gdt() { git difftool "$@"; }
 glike() { git branch | grep "$1"; }
 gstashshow() { git stash show -p; }
 
-function lfind() { ls -al | grep "$1" -i; }
+function lfind() { ls -alh | grep "$1" -i; }
 
 function dfind() {
     if [ $# -gt 1 ]; then
@@ -885,6 +888,27 @@ export -f insertgen
 
 function updategen() { python3 $STUFF/updategenpy/updategenpd.py $@; }
 export -f updategen 
+
+function cleandir() {
+  if [ -z "$1" ]; then
+    return 0
+  fi
+
+  if [ -f "$1" ]; then
+    read -p "Sure you want to remove '$1'? To cancel: [n/N] "
+  else 
+    read -p "Sure you want to remove all in '$1'? To cancel: [n/N] "
+  fi 
+  ans=$REPLY
+
+  if [[ $ans =~ [Nn] ]]; then
+    return 0
+  fi
+
+  echogreen "Removing (rm -rvf) $1"
+  time rm -rvf "$1"  
+  mkdir "$1"
+}
 
 function rmr() {
   if [ -z "$1" ]; then
