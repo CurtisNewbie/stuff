@@ -988,7 +988,7 @@ function tdump() {
 export -f tdump
 
 function fxname() { python3 $STUFF/fixfname.py "$@"; }
-function conflict() { grepcode "======="; grepcode ">>>>"; grepcode "<<<<"; }
+function conflict() { time ag "=======|>>>>|<<<<"; }
 
 # alternative to npm install, without writing package.json :D
 function npmci() { npm ci; }
