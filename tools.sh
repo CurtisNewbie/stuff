@@ -12,12 +12,11 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
 
+alias mk="minikube"
+alias kb="kubectl"
 alias bc="bc -l"
 alias gs="git status"
 alias gf="git fetch"
@@ -1058,3 +1057,16 @@ function gobuildall() { go build ./...;  }
 function buondua() { python3 $STUFF/buondua.py $@; }
 
 function gpick() { git cherry-pick $@ ; }
+
+settermproxy() {
+	# for shadowsocks
+  export HTTP_PROXY="http://127.0.0.1:1087"
+  export HTTPS_PROXY="http://127.0.0.1:1087"
+  export ALL_PROXY="http://127.0.0.1:1086"
+}
+
+unsettermproxy() {
+  unset HTTP_PROXY
+  unset HTTPS_PROXY
+  unset ALL_PROXY
+}
