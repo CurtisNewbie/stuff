@@ -1070,3 +1070,8 @@ unsettermproxy() {
   unset HTTPS_PROXY
   unset ALL_PROXY
 }
+
+test_github_ssh() {
+  ssh -Tv git@github.com
+  # ssh -Tv git@github.com -vvv
+}
