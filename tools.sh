@@ -40,9 +40,9 @@ alias code.="code ."
 # for debugging
 # set -eE -o functrace
 
-# complete -W "-r" gbranch 
-# complete -F _gbranch_completion gbranch 
-# complete -F _reset_one_completion reset_one 
+# complete -W "-r" gbranch
+# complete -F _gbranch_completion gbranch
+# complete -F _reset_one_completion reset_one
 
 # trap error
 function traperr(){
@@ -77,7 +77,14 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
-gcl() { git clone "$1"; }
+gcl() {
+    repo="$1"
+    git clone "$repo"
+    if [ $? -eq 0 ]; then
+        cd "${repo##*/}"
+    fi
+}
+
 gdt() { git difftool "$@"; }
 glike() { git branch | grep "$1"; }
 gstashshow() { git stash show -p; }
@@ -87,7 +94,7 @@ function lfind() { ls -alh | grep "$1" -i; }
 function dfind() {
     if [ $# -gt 1 ]; then
         find "$1" -type d -name "*$2*"
-    else 
+    else
         find . -type d -name "*$1*"
     fi
 }
@@ -106,7 +113,7 @@ function ffind() {
 function rfind() {
     if [ $(uname) == 'Darwin' ]; then
         find -E . -type f -regex "$1"
-    else 
+    else
         find -regextype posix-extended . -type f -regex "$1"
     fi
 }
@@ -124,14 +131,14 @@ function trashsize() {
 # dump file to trash can
 function trsh() {
     if [ -z $1 ]; then
-        return 0 
+        return 0
     fi
 
     # trash_can_p=$(readlink -e "$trash_can")
     trash_can_p="$trash_can"
 
     if [ ! -d $trash_can_p ]; then
-        mkdir $trash_can_p 
+        mkdir $trash_can_p
     fi
     # echo "Using trash: $trash_can_p"
 
@@ -149,7 +156,7 @@ function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
         mvn clean package -f $pom -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
@@ -181,7 +188,7 @@ function prevbranch() {
 
 function gcb() {
     if [ -z $1 ]; then
-        echored "please enter branch name" 
+        echored "please enter branch name"
         return 1;
     fi
 
@@ -208,7 +215,7 @@ mresolve() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
         mvn dependency:resolve -f "$pom" -U
     fi
@@ -218,22 +225,22 @@ mresolve_src() {
     pom=$(python3 $STUFF/findpom.py)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
         if [ $# -gt 0 ]; then
             echogreen ">>> resolving sources for '$1'"
             mvn dependency:sources -f "$pom" -DincludeArtifactIds="$1"
             mvn dependency:resolve -f "$pom" -Dclassifier=javadoc -DincludeArtifactIds="$1"
-        else 
+        else
             echogreen ">>> resolving sources for all dependencies"
-            mvn dependency:sources -f "pom" 
-            mvn dependency:resolve -f "$pom" -Dclassifier=javadoc 
-        fi 
+            mvn dependency:sources -f "pom"
+            mvn dependency:resolve -f "$pom" -Dclassifier=javadoc
+        fi
     fi
 }
 
 function gsw() {
-    # On branch xxx 
+    # On branch xxx
     branch=$(git status)
     if [ $? -ne 0 ]; then
         return 1
@@ -260,9 +267,9 @@ function gswb() {
 }
 
 function installall(){
-    find . -maxdepth 2 -type d | while read dir; do 
-    if [ -f "$dir/pom.xml" ]; then 
-        mvn clean install -f "$dir/pom.xml" 
+    find . -maxdepth 2 -type d | while read dir; do
+    if [ -f "$dir/pom.xml" ]; then
+        mvn clean install -f "$dir/pom.xml"
     fi
     done
 }
@@ -281,12 +288,12 @@ export -f echoyellow
 function echocyan() { echo $cyan"$1"$colourreset; }
 export -f echocyan
 
-# mvn test-compile 
+# mvn test-compile
 function mcpt() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
         mvn -f "$pom" -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
     fi
@@ -298,7 +305,7 @@ function mcp() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
         mvn compile -T 0.5C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
     fi
@@ -324,9 +331,9 @@ function mtest() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
-    else 
+    else
         echogreen ">>> found $pom"
-        mvn test -T 0.5C -f $pom 
+        mvn test -T 0.5C -f $pom
     fi
 }
 
@@ -348,12 +355,12 @@ function rkcmt() {
     #     t_name=""
 
     #     if [ $t == 'M' ]; then
-    #         t_name="Modified" 
+    #         t_name="Modified"
     #     elif [ $t == 'A' ]; then
     #         t_name="Added"
     #     elif [ $t == 'D' ]; then
     #         t_name="Deleted"
-    #     else 
+    #     else
     #         t="${line:31:4}"
     #         if [ $t == "R092" ]; then
     #             t_name="Renamed"
@@ -376,24 +383,24 @@ function rtmux() { tmux source-file ~/.tmux.conf; }
 # check whether $1 is in master branch, return 1-true, 0-false
 function is_master(){
 
-    if [ -z "$1" ]; then 
-        echo 0 
+    if [ -z "$1" ]; then
+        echo 0
         return 0
     fi
 
     status=`git status | grep "On branch master"`
     if [ ! -z "$status" ] && [ "$status" != "" ]; then
-        echo 1 
-    else 
+        echo 1
+    else
         status=`git status | grep "On branch main"`
         if [ ! -z "$status" ] && [ "$status" != "" ]; then
-            echo 1 
-        else 
+            echo 1
+        else
             echo 0
         fi
     fi
 }
-export -f is_master 
+export -f is_master
 
 function gcheck() {
     # set -eE -o functrace
@@ -421,7 +428,7 @@ function gcheck() {
 
             #echocyan "debug: $1, 1"
 
-            if [ "$debug" -eq 1 ]; then 
+            if [ "$debug" -eq 1 ]; then
                 echogreen "debug: cd $1"
             fi
 
@@ -440,13 +447,13 @@ function gcheck() {
 
             if [ $fetch -eq 1 ]; then
                 # always fetch first, but we don't print the result
-                git fetch &> /dev/null            
+                git fetch &> /dev/null
                 if [ ! $? -eq 0 ]; then
                     echored "failed to fetch from remote"
                     return 0
                 fi
 
-                if [ $debug -eq 1 ]; then 
+                if [ $debug -eq 1 ]; then
                     echogreen ">>> debug: git fetch in $1"
                 fi
 
@@ -454,7 +461,7 @@ function gcheck() {
 
             status=`git status`
 
-            if [ $debug -eq 1 ]; then 
+            if [ $debug -eq 1 ]; then
                 echogreen ">>> called git status in $1"
             fi
 
@@ -468,22 +475,22 @@ function gcheck() {
                     echogreen ">>> pulling changes from upstream"
                     git pull
                 fi
-            fi        
-            
+            fi
+
             # find uncommited changes
             tbc=`echo "$status" | grep 'Changes to be committed'`
             if [ $? -eq 0 ] && [ ! -z "$tbc" ] && [ "$tbc" != "" ]; then
                 echored "found uncommited changes in $1"
                 return 0
-            fi  
-            
-            # find untracked files 
+            fi
+
+            # find untracked files
             utf=`echo "$status" | grep 'Untracked files'`
             if [ $? -eq 0 ] && [ ! -z "$utf" ] && [ "$utf" != "" ]; then
                 echored "found untracked files in $1"
                 return 0
             fi
- 
+
             # find changes not staged
             changes=`echo "$status" | grep 'Changes not staged'`
             if [ $? -eq 0 ] && [ ! -z "$changes" ] && [ "$changes" != "" ]; then
@@ -493,12 +500,12 @@ function gcheck() {
 
             # find commits not pushed
             commits=`echo "$status" | grep 'Your branch is ahead of'`
-            if [ $? -eq 0 ] && [ ! -z "$commits" ] && [ "$commits" != "" ]; then            
+            if [ $? -eq 0 ] && [ ! -z "$commits" ] && [ "$commits" != "" ]; then
                 echored "found commits not yet pushed in $1"
                 return 0
             fi
 
-            # if [ "$debug" -eq 1 ]; then 
+            # if [ "$debug" -eq 1 ]; then
             # fi
             # echogreen "finished checking $1"
         )
@@ -520,7 +527,7 @@ function repocheck () {
             fi
         fi
     done
-} 
+}
 
 function last_weekly_report(){
 
@@ -588,11 +595,11 @@ function gen_weekly_report(){
     echo >> $target
     echo "暂无" >> $target
     echo >> $target
-            
-    echogreen ">>> '$target' content initialized, finished" 
+
+    echogreen ">>> '$target' content initialized, finished"
 
     # open file using vscode
-    code $target  
+    code $target
 }
 
 # reset one git commit, '--stage' to keep files in stage area, '--y' or '--Y' to reset without confirmation
@@ -605,12 +612,12 @@ function resetone() {
     need_confirm=0
 
     for arg in "$@"; do
-        if [ $arg == '--stage' ]; then  
+        if [ $arg == '--stage' ]; then
             unstage=0
-        # elif [[ $arg =~ --[yY] ]]; then  
+        # elif [[ $arg =~ --[yY] ]]; then
         #     need_confirm=0
-        fi 
-    done 
+        fi
+    done
 
     if [ $need_confirm -eq 1 ]; then
         read -p "Sure you want to reset one commit? [y/Y] "
@@ -624,12 +631,12 @@ function resetone() {
 
     git reset --soft HEAD~1
 
-    if [ $unstage -eq 1 ]; then 
+    if [ $unstage -eq 1 ]; then
         git restore --staged .
     fi
 
     echogreen ">>>> resetted one git commit"
-    git status 
+    git status
 }
 
 function psgrep() {
@@ -643,10 +650,10 @@ function psgrep() {
 function pom_ver() {
     if [ -z $1 ] || [ $1 == "." ] ; then
         root=`pwd`
-    else 
+    else
         root="$1"
     fi
- 
+
     name="$root/pom.xml"
     if [ ! -f $name ]; then
         echored "Unable to find $name"
@@ -669,11 +676,11 @@ function set_git_user() {
     exit 0;
   fi
 
-  git config user.name "$1" 
-  git config user.email "$2" 
+  git config user.name "$1"
+  git config user.email "$2"
   if [ $? -eq 0 ]; then
     echo "Configured git.user in $(pwd)"
-  fi 
+  fi
 }
 
 function all_set_git_user() {
@@ -691,30 +698,30 @@ function set_append_target(){
 }
 
 function append() {
-    if [ -z "$1" ]; then 
+    if [ -z "$1" ]; then
         cnt=""
-    else 
+    else
         cnt="$1"
     fi
-    echo "$cnt" >> "$APPEND_TARGET" 
+    echo "$cnt" >> "$APPEND_TARGET"
 }
 
 function rmlogs() {
-    find . -name "*.log" | while read f; do 
+    find . -name "*.log" | while read f; do
         echo "removed $f"
         rm $f
     done
 }
 
 function rmtarget() {
-    find . -type d -name "target" | while read f; do 
+    find . -type d -name "target" | while read f; do
         echo "found $f"
     done
 
     read -p "confirm ? [Y/y] "
     ans=$REPLY
     if [ $ans = "Y" ] || [ $ans = 'y' ]; then
-        find . -type d -name "target" | while read f; do 
+        find . -type d -name "target" | while read f; do
             echo "removed $f"
             rm -r $f
         done
@@ -735,7 +742,7 @@ function threadcount() {
         echored "Please enter PID"
         return 1
     fi
-    sudo ls /proc/$1/task | wc -l 
+    sudo ls /proc/$1/task | wc -l
 }
 
 function mem() {
@@ -747,11 +754,11 @@ function lcount() {
 }
 
 function apiver() {
-    readpom -t 'project.properties.api.version' 
+    readpom -t 'project.properties.api.version'
 }
 
 function projver() {
-    readpom -t 'project.version' 
+    readpom -t 'project.version'
 }
 
 function cc() {
@@ -772,12 +779,12 @@ function ismac() {
 }
 
 function clipboard() {
-    read c 
+    read c
     # echo "clipboard: $c"
     if [ "$(ismac)" == "1" ]; then
-        echo "$c" | tr -d '\n' | pbcopy 
-    else 
-        # apt install xclip 
+        echo "$c" | tr -d '\n' | pbcopy
+    else
+        # apt install xclip
         echo "$c" | tr -d '\n' | xclip -selection clipboard
     fi
     echogreen ">>> copied to clipboard..."
@@ -826,8 +833,8 @@ function docker-compose-rebuild(){
         return 1;
     fi
     # docker-compose up -d --no-deps --build $1
-    docker-compose up -d --build $1 
-} 
+    docker-compose up -d --build $1
+}
 
 function docker-compose-up() { docker-compose up -d --build --remove-orphans; }
 function docker-compose-down() { docker-compose down; }
@@ -846,10 +853,10 @@ function readpom() {
   fi
   python3 "$STUFF/readpom.py" "$1" "$pom_p"
 }
-export -f readpom 
+export -f readpom
 
 function monday() {	python3 "$STUFF/monday.py"; }
-export -f monday 
+export -f monday
 
 function rands() { python3 "$STUFF/rands.py" "$@"; }
 export -f rands
@@ -870,22 +877,22 @@ function hextobin() { python3 "$STUFF/hex_to_bin.py" "$1"; }
 export -f hextobin
 
 function tzone() { python3 "$STUFF/tzone.py" $@; }
-export -f tzone 
+export -f tzone
 
 function lbranch() { python3 $STUFF/lbranch.py; }
 export -f lbranch
 
 function findpom() { python3 $STUFF/findpom.py $@; }
-export -f findpom 
+export -f findpom
 
 function pyhash() { python3 $STUFF/hash.py $@; }
-export -f pyhash 
+export -f pyhash
 
 function insertgen() { python3 $STUFF/insertgenpy/insertgenpd.py $@; }
 export -f insertgen
 
 function updategen() { python3 $STUFF/updategenpy/updategenpd.py $@; }
-export -f updategen 
+export -f updategen
 
 function cleandir() {
   if [ -z "$1" ]; then
@@ -894,9 +901,9 @@ function cleandir() {
 
   if [ -f "$1" ]; then
     read -p "Sure you want to remove '$1'? To cancel: [n/N] "
-  else 
+  else
     read -p "Sure you want to remove all in '$1'? To cancel: [n/N] "
-  fi 
+  fi
   ans=$REPLY
 
   if [[ $ans =~ [Nn] ]]; then
@@ -904,7 +911,7 @@ function cleandir() {
   fi
 
   echogreen "Removing (rm -rvf) $1"
-  time rm -rvf "$1"  
+  time rm -rvf "$1"
   mkdir "$1"
 }
 
@@ -915,9 +922,9 @@ function rmr() {
 
   if [ -f "$1" ]; then
     read -p "Sure you want to remove '$1'? To cancel: [n/N] "
-  else 
+  else
     read -p "Sure you want to remove all in '$1'? To cancel: [n/N] "
-  fi 
+  fi
   ans=$REPLY
 
   if [[ $ans =~ [Nn] ]]; then
@@ -925,7 +932,7 @@ function rmr() {
   fi
 
   echogreen "Removing (rm -rvf) $1"
-  time rm -rvf "$1"  
+  time rm -rvf "$1"
 }
 
 function grepcode() {
@@ -976,9 +983,9 @@ function tdump() {
     # -X similar to -A, prints out all header, content
     # -S absolute seq num
     # -s size, 0 means all
-    # -w $somefile.pcap 
-    # src $host 
-    # dst $host 
+    # -w $somefile.pcap
+    # src $host
+    # dst $host
     # port $port
     # i interface, tcpdump -D
     sudo tcpdump -nnAS -s 0 -i any $@
@@ -1007,16 +1014,16 @@ function dumpinsert() {
         mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables
     fi
 }
-export -f dumpinsert 
+export -f dumpinsert
 
 function ttables() { python3 $STUFF/ttables.py $@; }
 export -f ttables
 
 function quotejoin() { out=$(python3 $STUFF/quotejoin.py $@); echo "$out"; echo "$out" | clipboard; }
-export -f quotejoin 
+export -f quotejoin
 
 function unquote() { out=$(python3 $STUFF/unquote.py $@); echo "$out"; echo "$out" | clipboard; }
-export -f unquote 
+export -f unquote
 
 function today() { out=$(date +'%Y-%m-%d'); echo "$out"; echo "$out" | clipboard; }
 export -f today
