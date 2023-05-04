@@ -95,13 +95,12 @@ function dfind() {
 function ffind() {
     find . -type f -iname "*$1*" \
         -not \( -path "**/target/*" -prune \) \
-        -not \( -path "**/.git/*" -prune \) \
-        -not \( -path "**/.vscode/*" -prune \) \
+        -not \( -path "**/.*/*" -prune \) \
         -not \( -path "**/node_modules/*" -prune \) \
         -not \( -path "**/dist/*" -prune \) \
         -not \( -path "**/logs/*" -prune \) \
         -not \( -path "**/log/*" -prune \) \
-        -not \( -path "**/.idea/*" -prune \) 
+        -not \( -path "**/__MACOSX/*" -prune \)
 }
 
 function rfind() {
