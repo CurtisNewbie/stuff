@@ -16,8 +16,14 @@ nnoremap <C-n> :NERDTreeToggle<CR>
 " quote word with double quotes
 nnoremap qw veS"b
 
+" quote [curr:line_end] with double quotes
+nnoremap ql v$S"0
+
 " qoute word with **
-nnoremap qs veS*bveS*b
+nnoremap qs i**<ESC>ea**<ESC>
+
+" qoute word with `
+nnoremap qd veS`b
 
 :command W w
 :command Wq wq
