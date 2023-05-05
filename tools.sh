@@ -81,7 +81,8 @@ gcl() {
     repo="$1"
     git clone "$repo"
     if [ $? -eq 0 ]; then
-        cd "${repo##*/}"
+        e="${repo##*/}"
+        cd "${repo%%.git}"
     fi
 }
 
