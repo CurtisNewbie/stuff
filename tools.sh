@@ -86,6 +86,7 @@ gcl() {
     fi
 }
 
+gamd() { git commit --amend; }
 gdt() { git difftool "$@"; }
 glike() { git branch | grep "$1"; }
 gstashshow() { git stash show -p; }
