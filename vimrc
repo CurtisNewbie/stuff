@@ -14,10 +14,10 @@
 nnoremap <C-n> :NERDTreeToggle<CR>
 
 " quote word with double quotes
-nnoremap qw veS"
+nnoremap qw veS"b
 
 " qoute word with **
-noremap qs veS*bveS*
+nnoremap qs veS*bveS*b
 
 :command W w
 :command Wq wq
