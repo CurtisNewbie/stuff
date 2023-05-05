@@ -13,6 +13,12 @@
 "filetype plugin indent on
 nnoremap <C-n> :NERDTreeToggle<CR>
 
+" quote word with double quotes
+nnoremap qw veS"
+
+" qoute word with **
+noremap qs veS*bveS*
+
 :command W w
 :command Wq wq
 
@@ -39,6 +45,5 @@ Plug 'sheerun/vim-polyglot'
 
 " Initialize plugin system
 call plug#end()
-
 
 
