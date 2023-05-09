@@ -77,6 +77,15 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
+gcld1() {
+    repo="$1"
+    git clone --depth 1 "$repo"
+    if [ $? -eq 0 ]; then
+        e="${repo##*/}"
+        cd "${e%%.git}"
+    fi
+}
+
 gcl() {
     repo="$1"
     git clone "$repo"
