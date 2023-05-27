@@ -13,7 +13,7 @@ OUTPUT_ARG: str = "--output"
 EXTENDS_ARG: str = "--extends"
 
 #
-# Flags that indicate a feature or a switch is turned on when they present 
+# Flags that indicate a feature or a switch is turned on when they present
 #
 MYBATIS_PLUS_FLAG: str = "--mybatis-plus"
 LAMBOK_FLAG: str = "--lambok"
@@ -30,7 +30,7 @@ TABLE: str = "table"
 # some keywords (lowercase) that we care, may not contain all of them
 sql_keywords = {'unsigned'}
 # sql data types
-sql_types = {"varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint", "char", "json"}
+sql_types = {"varchar", "int", "tinyint", "short", "decimal", "datetime", "timestamp", "bigint", "char", "json", "smallint", "text"}
 
 # sql type -> java type mapping (dict)
 sql_java_type_mapping = {
@@ -38,11 +38,13 @@ sql_java_type_mapping = {
     'datetime': 'LocalDateTime',
     'timestamp': 'LocalDateTime',
     'int': 'Integer',
+    'smallint': 'Integer',
     'tinyint': 'Integer',
     'short': 'Integer',
     'bigint': 'Long',
     'decimal': 'BigDecimal',
     'char': 'String',
+    'text': 'String',
     'json': 'String'
 }
 
@@ -245,7 +247,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
         s += f"package {package};\n"
 
     '''
-        For Imports 
+        For Imports
     '''
     if table.is_type_used('LocalDateTime'):
         s += "import java.time.*;\n"
@@ -303,7 +305,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
                 s += f"{T}@TableField(\"{f.sql_field_name}\")\n"
         s += f"{T}private {f.java_type} {f.java_field_name};\n\n"
 
-    ''' 
+    '''
         Getter, setters only appended when lambok is not used
     '''
     if not lambok_ft:
@@ -543,8 +545,8 @@ def get_clipboard_text():
     return clipboard_get()
 
 
-""" 
-SQL to Java Entity Generator  
+"""
+SQL to Java Entity Generator
 
 yongj.zhuang
 """
@@ -565,7 +567,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # read file
-    if ctx.is_present(PATH_ARG): 
+    if ctx.is_present(PATH_ARG):
         path = ctx.get_first(PATH_ARG)
         all_lines = read_file(path)
     else:
@@ -583,7 +585,7 @@ if __name__ == '__main__':
 
     # print(f"lines_per_table: {lines_per_table}")
 
-    for i in range(len(lines_per_table)): 
+    for i in range(len(lines_per_table)):
         lines = lines_per_table[i]
         # parse ddl
         table: SQLTable = parse_ddl(lines, ctx)
@@ -613,7 +615,7 @@ if __name__ == '__main__':
             java_class_name = table.supply_java_class_name()
             fn = fn + java_class_name + ".java"
 
-        # generate java class                                       
+        # generate java class
         generated = generate_java_class(table, ctx, java_class_name, guess_package(fn))
 
         # write to file

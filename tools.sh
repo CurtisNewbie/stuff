@@ -32,10 +32,9 @@ alias mclean="mvn clean"
 alias grest="git restore --staged"
 alias grep="grep --color"
 alias gcmt="git commit"
-alias ag="ag -i -A 1 -B 1"
+alias ag="ag -i -A 3 -B 3"
 alias idea.="idea ."
 alias code.="code ."
-
 
 # for debugging
 # set -eE -o functrace
@@ -310,9 +309,7 @@ function mcpt() {
     fi
 }
 
-# mvn compile -o -f [0], or, mvn compile -o
 function mcp() {
-
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
