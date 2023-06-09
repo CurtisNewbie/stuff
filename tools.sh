@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
 colourreset=$'\e[0m'
