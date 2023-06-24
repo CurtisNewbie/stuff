@@ -29,7 +29,7 @@ alias gds="git diff --staged"
 alias gd="git diff"
 alias gshow="git show"
 alias gpush="git push"
-alias gadd="git add"
+alias gad="git add"
 alias mclean="mvn clean"
 alias grest="git restore --staged"
 alias grep="grep --color"
@@ -1073,6 +1073,10 @@ function gobuildall() { go build ./...;  }
 function buondua() { python3 $STUFF/buondua.py $@; }
 
 function gpick() { git cherry-pick $@ ; }
+
+function peek_journal() {
+    journalctl -xe -u '$1'
+}
 
 settermproxy() {
 	# for shadowsocks
