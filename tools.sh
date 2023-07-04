@@ -1102,3 +1102,7 @@ compress_mp4() {
     # the higher the crf is, the worst the quality will be, 0 is lossless
     ffmpeg -i "$1"  -vcodec libx264 -crf 32 -preset faster "$2"
 }
+
+go_build_analyse() {
+    go build -gcflags '-m' ./... 2>&1 | analyze.log
+}
