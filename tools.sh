@@ -1104,5 +1104,5 @@ compress_mp4() {
 }
 
 go_build_analyse() {
-    go build -gcflags '-m' ./... 2>&1 | analyze.log
+    go build -gcflags '-m' ./... 2>&1 > "analyze.log"
 }
