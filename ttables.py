@@ -3,15 +3,17 @@ import re
 import mysql.connector
 import mysql.connector.cursor
 import sys
+import shlex
+import pystuff
 
 isdebug = False
 
 
 def show_create_table(cursor, table, database):
     """
-    print SHOW CREATE TABLE DDL 
+    print SHOW CREATE TABLE DDL
 
-    database name is excluded if it's absent, else if it's present, it will be concatenated to 
+    database name is excluded if it's absent, else if it's present, it will be concatenated to
     the table name, e.g., 'some_db.some_table'
     """
 
@@ -34,7 +36,60 @@ def show_create_table(cursor, table, database):
     ddl = re.sub(
         "COLLATE=[0-9a-zA-Z_]+ ?", "", ddl)
     ddl = ddl.strip() + ";"
+
+    do_reshape = False
+    if do_reshape:
+        ddl = reshape(ddl)
+
     print(f"{ddl}\n")
+
+# TODO: refactor this later
+def reshape(ddl: str) -> str:
+    indent = [27, 20, 15, 7, 10, 20, 10, 10, 20, 10, 10, 1]
+    # tokenize
+    lines = ddl.split('\n')
+    reshaped = []
+    for i in range(len(lines)):
+        l = lines[i].strip()
+        if i == 0 or i == len(lines) - 1:
+            reshaped.append(l)
+            continue
+        if l.startswith("PRIMARY") or l.startswith("KEY") or l.startswith("UNIQUE"):
+            reshaped.append(f"{pystuff.spaces(2)}{l}")
+            continue
+        if l.startswith("PARTITION") or l.startswith("/*") or l.startswith("(") or l.startswith(")"):
+            reshaped.append(l)
+            continue
+
+        tokens = shlex.split(l, posix=False)
+        filtered = []
+        j = 0
+        while j < len(tokens):
+            if tokens[j] == 'NOT' or tokens[j] == 'DEFAULT':
+                filtered.append(tokens[j] + " " + tokens[j + 1])
+                j += 2
+            elif tokens[j] == ',':
+                filtered[len(filtered) - 1] += ","
+                j += 1
+            elif tokens[j].lower() == 'unsigned':
+                filtered[len(filtered) - 1] += " UNSIGNED"
+                j += 1
+            else:
+                filtered.append(tokens[j])
+                j += 1
+
+        tokens = filtered
+        for k in range(len(tokens)):
+            if k < len(tokens) - 1:
+                indented = f"{tokens[k]}{pystuff.spaces(indent[k] - pystuff.str_width(tokens[k]))}"
+                # print(f"'{tokens[k]}' -> '{indented}'")
+                tokens[k] = indented
+                if k == 1:
+                    tokens[k] = tokens[k].upper()
+
+        reshaped.append("  " + " ".join(tokens))
+
+    return "\n".join(reshaped)
 
 
 def parsearg():
