@@ -22,7 +22,7 @@ def desc_table(cursor, table, comments) -> str:
         field = r[col_idx['Field']]
         r.append(comments[table + '.' + field])
         ctrs.append(r)
-    return f"\n-- {table}\n{pystuff.print_table(col, ctrs, False)}"
+    return f"\n-- {table}\n{pystuff.print_table(col, ctrs, False, set(['Null', 'Key', 'Default', 'Extra']))}"
 
 def parsearg():
     ap = argparse.ArgumentParser("desc_table.py by Yongj.Zhuang")
