@@ -1013,17 +1013,12 @@ function ghead() { out=$(git rev-parse HEAD); echo "$out"; echo "$out" | clipboa
 
 # $1: username, $2: database, $3: table, $4: where
 function dumpinsert() {
-    if [ "${#@}" -lt 3 ]; then
-        echored "Please provide arguments: \$1: username, \$2: database, \$3: table, \$4: where (optional)"
+    if [ "${#@}" -lt 5 ]; then
+        echored "Please provide arguments: \$1:host \$2:username, \$3:password, \$4:database, \$5:table, \$6:where"
         return 1
     fi
 
-    # --where=" = ''"
-    if [ ! -z "$4" ]; then
-        mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables --where="$4"
-    else
-        mysqldump -t -u "$1" -p "$2" "$3" --complete-insert --skip-add-locks --skip-lock-tables
-    fi
+    mysqldump -c -t -h "$1" -u "$2" --password="$3" "$4" "$5" --complete-insert --skip-add-locks --skip-lock-tables --where="$6"
 }
 export -f dumpinsert
 
