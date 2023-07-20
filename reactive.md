@@ -12,3 +12,5 @@
     - https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
 
 - https://projectreactor.io/learn
+
+- https://stackoverflow.com/questions/42062199/reactive-programming-advantages-disadvantages
