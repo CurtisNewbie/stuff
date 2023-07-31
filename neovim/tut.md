@@ -5,14 +5,15 @@
 ```
 ~/.config/nvim/
 
-.
 ├── init.lua
 ├── lua
 │   ├── code-completion.lua
 │   ├── file-explorer.lua
-│   ├── gopls.lua
+│   ├── file-finder.lua
+│   ├── lsp.lua
 │   ├── mason-config.lua
-│   └── plugins.lua
+│   ├── plugins.lua
+│   └── styling.lua
 └── plugin
     └── ... 
 ```
