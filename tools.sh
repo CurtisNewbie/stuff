@@ -267,7 +267,9 @@ function gsw() {
 
         GSWITCH_BACK="$branch"
         echocyan "Previous was: $GSWITCH_BACK"
+        return 0
     fi
+    return 1
 }
 export -f gsw
 
@@ -1100,4 +1102,20 @@ compress_mp4() {
 
 go_build_analyse() {
     go build -gcflags '-m' ./... 2>  "analyze.log"
+}
+
+function git_merge_to() { 
+    echo "Merging current branch to $1"
+
+    gsw "$1"
+    if [ $? -ne 0 ]; then 
+        return 1
+    fi
+
+    git merge "$GSWITCH_BACK" 
+    if [ $? -ne 0 ]; then 
+        git merge --abort
+        gswb
+        return 1
+    fi
 }
