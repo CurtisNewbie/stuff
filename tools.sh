@@ -1104,7 +1104,7 @@ go_build_analyse() {
     go build -gcflags '-m' ./... 2>  "analyze.log"
 }
 
-function git_merge_to() { 
+function merge_to() { 
     echo "Merging current branch to $1"
 
     gsw "$1"
