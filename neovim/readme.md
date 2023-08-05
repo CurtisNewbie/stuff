@@ -6,6 +6,7 @@
 - https://javadev.org/devtools/ide/neovim/lsp/
 - https://github.com/neovim/nvim-lspconfig
 - https://github.com/eruizc-dev/jdtls-launcher
+- https://github.com/mfussenegger/nvim-jdtls
 
 ```
 ~/.config/nvim/
