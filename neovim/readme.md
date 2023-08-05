@@ -4,6 +4,8 @@
 - https://github.com/neovim/nvim-lspconfig#keybindings-and-completion
 - https://docs.rockylinux.org/books/nvchad/nvchad_ui/nvimtree/
 - https://javadev.org/devtools/ide/neovim/lsp/
+- https://github.com/neovim/nvim-lspconfig
+- https://github.com/eruizc-dev/jdtls-launcher
 
 ```
 ~/.config/nvim/
