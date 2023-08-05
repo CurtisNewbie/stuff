@@ -20,6 +20,10 @@ cmp.setup({
     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
     -- Tab to go to the next suggestion
     ['<Tab>'] = cmp.mapping.select_next_item(),
+    ['<CR>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true,
+    }),
   },
 
   -- sources are the installed sources that can be used for code suggestions
@@ -41,7 +45,7 @@ cmp.setup({
       fields = {'menu', 'abbr', 'kind'},
       format = function(entry, item)
           local menu_icon ={
-              nvim_lsp = 'λ',
+              nvim_lsp = '>>',
               vsnip = '⋗',
               buffer = 'b',
               path = 'p'

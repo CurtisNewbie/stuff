@@ -19,4 +19,5 @@
   }
 
   lspconfig.jdtls.setup {}
+  lspconfig.pyright.setup {}
 
