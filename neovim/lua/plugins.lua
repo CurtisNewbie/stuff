@@ -20,6 +20,7 @@ return require('packer').startup(function(use)
   requires = { {'nvim-lua/plenary.nvim'} }
  }
  use 'nvim-tree/nvim-web-devicons' 
+ use 'mfussenegger/nvim-jdtls'
  use {
   -- recommended packer way of installing it is to run this function, copied from documentation
          'nvim-treesitter/nvim-treesitter',

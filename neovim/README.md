@@ -7,6 +7,7 @@
 - https://github.com/neovim/nvim-lspconfig
 - https://github.com/eruizc-dev/jdtls-launcher
 - https://github.com/mfussenegger/nvim-jdtls
+- https://download.eclipse.org/jdtls/milestones/?d
 
 ```
 ~/.config/nvim/

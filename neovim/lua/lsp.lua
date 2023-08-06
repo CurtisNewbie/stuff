@@ -18,6 +18,6 @@
     },
   }
 
-  lspconfig.jdtls.setup {}
+  -- lspconfig.jdtls.setup {}
   lspconfig.pyright.setup {}
 
