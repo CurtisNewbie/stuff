@@ -1119,3 +1119,7 @@ function mergeto() {
         return 1
     fi
 }
+
+function springbootrun() {
+    mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
+}
