@@ -27,6 +27,7 @@ alias gp="git pull"
 alias gl="git log"
 alias gds="git diff --staged"
 alias gd="git diff"
+alias gadd="git add"
 alias gshow="git show"
 alias gpush="git push"
 alias gad="git add"
@@ -332,7 +333,7 @@ function mdeploy() {
     fi
 }
 
-function minstall() {
+function minst() {
     if [ $# -gt 0 ]; then
         mvn clean install -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
     else
