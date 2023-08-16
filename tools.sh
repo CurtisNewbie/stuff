@@ -104,6 +104,10 @@ gstashshow() { git stash show -p; }
 
 function lfind() { ls -alh | grep "$1" -i; }
 
+function brief_lfind() { ls -a | grep "$1" -i; }
+
+function cdlfind() { cd $(brief_lfind "$1"); }
+
 function dfind() {
     if [ $# -gt 1 ]; then
         find "$1" -type d -name "*$2*"
