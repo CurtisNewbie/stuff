@@ -1099,7 +1099,7 @@ test_github_ssh() {
 }
 
 compress_mp4() {
-    # https://unix.stackexchange.com/questions/28803/how-can-i-reduce-a-videos-size-with-ffmpeg 
+    # https://unix.stackexchange.com/questions/28803/how-can-i-reduce-a-videos-size-with-ffmpeg
     # the higher the crf is, the worst the quality will be, 0 is lossless
     ffmpeg -i "$1"  -vcodec libx264 -crf 32 -preset faster "$2"
 }
@@ -1108,16 +1108,16 @@ go_build_analyse() {
     go build -gcflags '-m' ./... 2>  "analyze.log"
 }
 
-function mergeto() { 
+function mergeto() {
     echo "Merging current branch to $1"
 
     gsw "$1"
-    if [ $? -ne 0 ]; then 
+    if [ $? -ne 0 ]; then
         return 1
     fi
 
-    git merge "$GSWITCH_BACK" 
-    if [ $? -ne 0 ]; then 
+    git merge "$GSWITCH_BACK"
+    if [ $? -ne 0 ]; then
         git merge --abort
         gswb
         return 1
@@ -1125,5 +1125,14 @@ function mergeto() {
 }
 
 function springbootrun() {
-    mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
+    app="$1"
+    if [ -z "$app" ]; then
+        mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
+    fi
+
+    mvn install -T 0.5C -Dmaven.test.skip=true \
+        && ( \
+            cd "$app" && echo "cd into $app" \
+                && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
+        )
 }
