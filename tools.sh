@@ -256,6 +256,20 @@ mresolve_src() {
     fi
 }
 
+function curr_branch() {
+    # On branch xxx
+    branch=$(git status)
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    branch=$(echo "$branch" | cut -d $'\n' -f 1)
+    branch=${branch:10}
+    branch=${branch%%$'\n'*}
+    echo "$branch"
+}
+export -f curr_branch
+
 function gsw() {
     # On branch xxx
     branch=$(git status)
