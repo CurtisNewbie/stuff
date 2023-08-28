@@ -6,6 +6,7 @@ if vim.g.vscode then
         end,
     }
     vim.keymap.set({'n'}, '==', file.formatDocument)
+    vim.opt.clipboard='unnamedplus'
 else
     require('plugins')
     require('mason-config')
