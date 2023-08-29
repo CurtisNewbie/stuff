@@ -1142,6 +1142,7 @@ function springbootrun() {
     app="$1"
     if [ -z "$app" ]; then
         mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
+        return 0
     fi
 
     mvn install -T 0.5C -Dmaven.test.skip=true \
