@@ -1165,6 +1165,5 @@ function archivels() {
     if [ ! -z "$1" ]; then
         d="$1"
     fi
-    echo "Finding files modified before $d days ago"
     find . -maxdepth 1 -mtime +$d
 }
