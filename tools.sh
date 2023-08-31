@@ -1150,3 +1150,12 @@ function springbootrun() {
                 && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
         )
 }
+
+function archivels() {
+    d=365
+    if [ ! -z "$1" ]; then
+        d="$1"
+    fi
+    echo "Finding files modified before $d days ago"
+    find . -maxdepth 1 -mtime +$d -ls
+}
