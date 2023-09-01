@@ -1167,3 +1167,13 @@ function archivels() {
     fi
     find . -maxdepth 1 -mtime +$d
 }
+
+function prefix_file() {
+    if [ -z "$1" ]; then
+        echo "Enter prefix"
+        return 0
+    fi
+
+    ls | xargs -I {} mv "{}" "$1{}"
+}
+
