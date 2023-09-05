@@ -1145,10 +1145,12 @@ function springbootrun() {
         return 0
     fi
 
-    mvn install -T 0.5C -Dmaven.test.skip=true \
+    echo "Running $app"
+    mvn install -N -q \
+	&& mvn install -T 0.5C -Dmaven.test.skip=true -q \
         && ( \
             cd "$app" && echo "cd into $app" \
-                && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
+                && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" -q \
         )
 }
 
