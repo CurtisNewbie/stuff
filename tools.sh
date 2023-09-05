@@ -37,6 +37,7 @@ alias gcmt="git commit"
 alias ag="ag -i -A 3 -B 3"
 alias idea.="idea ."
 alias code.="code ."
+alias gck="git checkout"
 
 # for debugging
 # set -eE -o functrace
