@@ -1151,3 +1151,50 @@ function springbootrun() {
                 && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
         )
 }
+
+function archivell() {
+    d=365
+    if [ ! -z "$1" ]; then
+        d="$1"
+    fi
+    echo "Finding files modified before $d days ago"
+    find . -maxdepth 1 -mtime +$d -ls
+}
+
+function archivels() {
+    d=365
+    if [ ! -z "$1" ]; then
+        d="$1"
+    fi
+    find . -maxdepth 1 -mtime +$d
+}
+
+function prefix_file() {
+    if [ -z "$1" ]; then
+        echo "Enter prefix"
+        return 0
+    fi
+
+    ls | xargs -I {} mv "{}" "$1{}"
+}
+
+
+function myddl() {
+    echo "CREATE TABLE IF NOT EXISTS _ ("
+    echo "    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT 'primary key',"
+    echo ""
+    echo "    ctime TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',"
+    echo "    cby VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
+    echo "    utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
+    echo "    uby VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
+    echo "    del CHAR(1) NOT NULL DEFAULT 'N' comment 'is record deleted: Y/N'"
+    echo ") ENGINE=INNODB COMMENT '';"
+}
+
+function copymyddl() {
+    if [ "$(ismac)" == "1" ]; then
+        myddl | tr -d '' | pbcopy
+    else
+        myddl | tr -d '' | xclip -selection clipboard
+    fi
+}
