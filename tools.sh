@@ -1210,3 +1210,7 @@ function copymyddl() {
         myddl | tr -d '' | xclip -selection clipboard
     fi
 }
+
+function fmt() {
+    go fmt ./...
+}
