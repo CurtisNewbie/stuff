@@ -1171,9 +1171,19 @@ function archivels() {
     find . -maxdepth 1 -mtime +$d
 }
 
+function move_archive_to() {
+    to="$1"
+    if [ -z $to ]; then
+        echored "Where these files are moved to?"
+        return 0
+    fi
+
+    archivels | xargs -I {} mv "{}" "$to/{}"
+}
+
 function prefix_file() {
     if [ -z "$1" ]; then
-        echo "Enter prefix"
+        echored "Enter prefix"
         return 0
     fi
 

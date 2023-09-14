@@ -283,7 +283,7 @@ def generate_java_class(table: "SQLTable", ctx: "Context", spec_class_name: None
         s += '@Data\n'
 
     if mbp_ft:
-        s += f"@TableName(value = \"{table.table_name}\")\n"
+        s += f"@TableName(value = \"{table.table_name}\", autoResultMap = true)\n"
 
     s += f"public class {class_name}"
     if ctx.is_present(EXTENDS_ARG):
