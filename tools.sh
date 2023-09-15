@@ -1220,3 +1220,7 @@ function basic_auth() {
     echo ""
     echo "Authorization:Basic $encoded"
 }
+
+function fmt() {
+    go fmt ./...
+}
