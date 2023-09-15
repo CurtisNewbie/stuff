@@ -1139,6 +1139,7 @@ function mergeto() {
 }
 
 function springbootrun() {
+
     app="$1"
     if [ -z "$app" ]; then
         mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
@@ -1209,4 +1210,13 @@ function copymyddl() {
     else
         myddl | tr -d '' | xclip -selection clipboard
     fi
+}
+
+function basic_auth() {
+    username="$1"
+    password="$2"
+    auth="$1:$2"
+    encoded="$(echo -n $auth | base64)"
+    echo ""
+    echo "Authorization:Basic $encoded"
 }
