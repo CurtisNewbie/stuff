@@ -1,0 +1,11 @@
+{
+
+	"Json Tag": {
+		"prefix": "jt",
+		"body": [
+			"`json:\"$1\"`",
+		],
+		"description": "Generate json tag"
+	}
+}
+
