@@ -7,6 +7,8 @@ if vim.g.vscode then
     }
     vim.keymap.set({'n'}, '==', file.formatDocument)
     vim.opt.clipboard='unnamedplus'
+    vim.opt.ignorecase=true
+    vim.opt.incsearch=true
 else
     require('plugins')
     require('mason-config')
