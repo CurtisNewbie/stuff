@@ -1224,3 +1224,7 @@ function basic_auth() {
 function fmt() {
     go fmt ./...
 }
+
+function build() {
+    go build ./...
+}
