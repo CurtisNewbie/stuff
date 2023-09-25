@@ -1231,8 +1231,12 @@ function build() {
 
 function initwork() {
     go work init
+    if [ $? -ne 0 ]; then
+        return 1
+    fi 
     echo "" >> go.work
     echo "use ." >> go.work
+    ls -l
 }
 
 function cleanwork(){
