@@ -1228,3 +1228,8 @@ function fmt() {
 function build() {
     go build ./...
 }
+
+function cleanwork(){
+    rm go.work
+    rm go.work.sum
+}
