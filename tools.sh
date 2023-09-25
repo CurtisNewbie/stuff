@@ -1230,6 +1230,12 @@ function build() {
 }
 
 function cleanwork(){
-    rm go.work
-    rm go.work.sum
+    if [ -f go.work ]; then
+        echogreen 'removed go.work'
+        rm go.work
+    fi
+    if [ -f go.work.sum ]; then
+        echogreen 'removed go.work.sum'
+        rm go.work.sum
+    fi
 }
