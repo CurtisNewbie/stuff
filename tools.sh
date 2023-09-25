@@ -1229,6 +1229,12 @@ function build() {
     go build ./...
 }
 
+function initwork() {
+    go work init
+    echo "" >> go.work
+    echo "use ." >> go.work
+}
+
 function cleanwork(){
     if [ -f go.work ]; then
         echogreen 'removed go.work'
