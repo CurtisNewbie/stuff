@@ -1118,7 +1118,7 @@ compress_mp4() {
     ffmpeg -i "$1"  -vcodec libx264 -crf 32 -preset faster "$2"
 }
 
-go_build_analyse() {
+function analyze() {
     go build -gcflags '-m' ./... 2>&1  | grep -n "moved to heap" > "analyze.log"
 }
 
