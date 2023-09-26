@@ -168,7 +168,6 @@ function trsh() {
     echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
-
 function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
@@ -1233,7 +1232,7 @@ function initwork() {
     go work init
     if [ $? -ne 0 ]; then
         return 1
-    fi 
+    fi
     echo "" >> go.work
     echo "use ." >> go.work
     ls -l
@@ -1248,4 +1247,8 @@ function cleanwork(){
         echogreen 'removed go.work.sum'
         rm go.work.sum
     fi
+}
+
+function persudo_ver() {
+    python3 $STUFF/go_persudo_ver/persudover.py
 }
