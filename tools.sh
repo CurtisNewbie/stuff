@@ -1252,3 +1252,9 @@ function cleanwork(){
 function persudo_ver() {
     python3 $STUFF/go_persudo_ver/persudover.py
 }
+export -f persudo_ver
+
+function dirname() {
+    printf '%q\n' "${PWD##*/}"
+}
+export -f dirname
