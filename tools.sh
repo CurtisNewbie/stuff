@@ -1237,6 +1237,7 @@ function initwork() {
     echo "use ." >> go.work
     ls -l
 }
+export -f initwork
 
 function cleanwork(){
     if [ -f go.work ]; then
@@ -1258,8 +1259,3 @@ function curr_dirname() {
     printf '%q\n' "${PWD##*/}"
 }
 export -f curr_dirname
-
-function get_latest() {
-    echo "go get github.com/curtisnewbie/$(curr_dirname)@$(persudo_ver)"
-}
-
