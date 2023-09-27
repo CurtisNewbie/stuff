@@ -1254,7 +1254,12 @@ function persudo_ver() {
 }
 export -f persudo_ver
 
-function dirname() {
+function curr_dirname() {
     printf '%q\n' "${PWD##*/}"
 }
-export -f dirname
+export -f curr_dirname
+
+function get_latest() {
+    echo "go get github.com/curtisnewbie/$(curr_dirname)@$(persudo_ver)"
+}
+

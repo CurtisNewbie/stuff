@@ -15,6 +15,7 @@ Date:   Tue Sep 26 16:30:30 2023 +0800
 
 '''
 
+pipe = True
 tag = None
 
 with subprocess.Popen(f"git tag --sort=-creatordate", shell=True, stdout=subprocess.PIPE) as p:
@@ -28,7 +29,7 @@ with subprocess.Popen(f"git tag --sort=-creatordate", shell=True, stdout=subproc
         tag = l.strip()
         break
 
-    print(f"Tag: {tag}")
+    #print(f"Tag: {tag}")
 
 if not tag:
     tag = "v0.0.0"
@@ -57,14 +58,20 @@ with subprocess.Popen(f"git log head -1", shell=True, stdout=subprocess.PIPE) as
             date = m[1]
             continue
 
-    print(f"Commit: {commit}")
-    print(f"Date: {date}")
+    if not pipe:
+        print(f"Commit: {commit}")
+        print(f"Date: {date}")
 
     parsed = datetime.datetime.strptime(date, '%a %b %d %H:%M:%S %Y %z')
     ts = parsed.astimezone(datetime.timezone.utc).strftime('%Y%m%d%H%M%S')
-    print(f"TS: {ts}")
+    if not pipe:
+        print(f"TS: {ts}")
 
     pver = tag + '.' + ts + '-' + commit[0:12]
-    print(f"Persudo Version: {pver}")
-    print(f"\n\t{pver}")
-    print()
+    if not pipe:
+        print(f"Persudo Version: {pver}")
+        print(f"\n\t{pver}")
+        print()
+
+    if pipe:
+        print(pver)
