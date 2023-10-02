@@ -38,6 +38,7 @@ alias ag="ag -i -A 3 -B 3"
 alias idea.="idea ."
 alias code.="code ."
 alias gck="git checkout"
+alias ex='exit'
 
 # for debugging
 # set -eE -o functrace
