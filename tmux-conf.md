@@ -14,6 +14,6 @@ bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
 
 bind P paste-buffer
 
-set -s escape-time 0
+set -sg escape-time 0
 ```
 
