@@ -13,5 +13,7 @@ bind-key -T copy-mode-vi V send -X select-line
 bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
 
 bind P paste-buffer
+
+set -s escape-time 0
 ```
 
