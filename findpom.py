@@ -10,7 +10,7 @@ if __name__ == '__main__':
     # *.pom.xml specified
     if root.endswith("pom.xml"):
         if not exists(root):
-            os.exit(1)
+            sys.exit(1)
 
         print(root)
         sys.exit(0)
