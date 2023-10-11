@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec /usr/bin/arch -arch arm64 dlv "$@"
+
