@@ -1266,6 +1266,6 @@ function gcmt() {
         git commit -am "$msg"
     else
         git add . && git commit
-    fi 
+    fi
 }
 export -f gcmt
