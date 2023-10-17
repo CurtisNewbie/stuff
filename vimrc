@@ -1,14 +1,17 @@
-:set paste 
+:set paste
 :set hlsearch
 :set incsearch
 :set ignorecase
 :set smartcase
 :set expandtab
 :set number
-:syntax enable 
+:syntax enable
 
 :set tabstop=2
 :set shiftwidth=2
+
+:highlight ExtraWhitespace ctermbg=red guibg=red
+:match ExtraWhitespace /\s\+$/
 
 "filetype plugin indent on
 nnoremap <C-n> :NERDTreeToggle<CR>
@@ -28,7 +31,7 @@ nnoremap qd veS`b
 :command W w
 :command Wq wq
 
-set visualbell 
+set visualbell
 set t_vb=
 
 set splitright
