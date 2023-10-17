@@ -33,7 +33,6 @@ alias gad="git add"
 alias mclean="mvn clean"
 alias grest="git restore --staged"
 alias grep="grep --color"
-alias gcmt="git commit"
 alias ag="ag -i -A 3 -B 3"
 alias idea.="idea ."
 alias code.="code ."
@@ -1260,3 +1259,13 @@ function curr_dirname() {
     printf '%q\n' "${PWD##*/}"
 }
 export -f curr_dirname
+
+function gcmt() {
+    msg="$1"
+    if [ ! -z "$msg" ]; then
+        git commit -am "$msg"
+    else
+        git add . && git commit
+    fi 
+}
+export -f gcmt
