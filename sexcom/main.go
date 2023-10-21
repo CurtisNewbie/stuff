@@ -64,20 +64,24 @@ func main() {
 
 	// rail.SetLogLevel("debug")
 
-	for i := *Start; i < *End; i++ {
+	for i := *Start; i <= *End; i++ {
+		rail.Infof("Start Page: %v", i)
+
 		likes, err := FetchLikes(rail, i, *Username)
 		if err != nil {
 			panic(err)
 		}
 
-		for i := range likes.Images {
-			img := likes.Images[i]
+		for j := range likes.Images {
+			img := likes.Images[j]
 			realHref, err := FetchRealImageSrc(rail, img.WrapperHref)
 			if err != nil {
 				panic(err)
 			}
 			img.RealHref = realHref
-			rail.Infof("Alt: %v, Name: %v, Src: %v, WrapperHref: %v, realHref: %v", img.Alt, img.Name, img.DataSrc, img.WrapperHref, realHref)
+
+			rail.Debugf("Alt: %v, Name: %v, Src: %v, WrapperHref: %v, realHref: %v", img.Alt, img.Name, img.DataSrc, img.WrapperHref, realHref)
+			rail.Infof("Page %v - [%v/%v] Name: %v, href: %v", i, j, len(likes.Images), img.Name, realHref)
 
 			fetched, err := DownloadImage(rail, img, *Dir)
 			if err != nil {
@@ -89,6 +93,7 @@ func main() {
 				time.Sleep(200 * time.Millisecond)
 			}
 		}
+		rail.Infof("End Page: %v", i)
 	}
 }
 
