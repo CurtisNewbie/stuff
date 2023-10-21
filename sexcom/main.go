@@ -78,7 +78,6 @@ func main() {
 			}
 			img.RealHref = realHref
 			rail.Infof("Alt: %v, Name: %v, Src: %v, WrapperHref: %v, realHref: %v", img.Alt, img.Name, img.DataSrc, img.WrapperHref, realHref)
-			time.Sleep(1 * time.Second)
 
 			fetched, err := DownloadImage(rail, img, *Dir)
 			if err != nil {
@@ -86,6 +85,8 @@ func main() {
 			}
 			if fetched {
 				time.Sleep(1 * time.Second)
+			} else {
+				time.Sleep(200 * time.Millisecond)
 			}
 		}
 	}
