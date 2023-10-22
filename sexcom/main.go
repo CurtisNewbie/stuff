@@ -74,6 +74,17 @@ func main() {
 
 		for j := range likes.Images {
 			img := likes.Images[j]
+
+			file := img.OutputPath(*Dir)
+			ok, err := miso.FileExists(file)
+			if err != nil {
+				panic(err)
+			}
+			if ok {
+				rail.Infof("Already downloaded %v", file)
+				continue
+			}
+
 			realHref, err := FetchRealImageSrc(rail, img.WrapperHref)
 			if err != nil {
 				panic(err)
@@ -83,15 +94,11 @@ func main() {
 			rail.Debugf("Alt: %v, Name: %v, Src: %v, WrapperHref: %v, realHref: %v", img.Alt, img.Name, img.DataSrc, img.WrapperHref, realHref)
 			rail.Infof("Page %v - [%v/%v] Name: %v, href: %v", i, j, len(likes.Images), img.Name, realHref)
 
-			fetched, err := DownloadImage(rail, img, *Dir)
+			err = DownloadImage(rail, img, *Dir)
 			if err != nil {
 				panic(err)
 			}
-			if fetched {
-				time.Sleep(1 * time.Second)
-			} else {
-				time.Sleep(200 * time.Millisecond)
-			}
+			time.Sleep(500 * time.Millisecond)
 		}
 		rail.Infof("End Page: %v", i)
 	}
@@ -103,6 +110,10 @@ type Image struct {
 	Alt         string
 	WrapperHref string
 	RealHref    string
+}
+
+func (i Image) OutputPath(dir string) string {
+	return dir + "/" + i.Name
 }
 
 type FetchLikesRes struct {
@@ -298,17 +309,8 @@ func FetchRealImageSrc(rail miso.Rail, url string) (string, error) {
 
 }
 
-func DownloadImage(rail miso.Rail, image Image, dir string) (bool, error) {
-	file := dir + "/" + image.Name
-	ok, err := miso.FileExists(file)
-	if ok {
-		rail.Infof("Already downloaded %v", file)
-		return false, nil
-	}
-	if err != nil {
-		return false, err
-	}
-
+func DownloadImage(rail miso.Rail, image Image, dir string) error {
+	file := image.OutputPath(dir)
 	r := miso.NewTClient(rail, image.RealHref, client).
 		AddHeader("Authority", "cdn.sex.com").
 		AddHeader("Referer", "https://www.sex.com/").
@@ -316,15 +318,15 @@ func DownloadImage(rail miso.Rail, image Image, dir string) (bool, error) {
 		Get()
 
 	if r.Err != nil {
-		return false, r.Err
+		return r.Err
 	}
 
 	f, err := os.Create(file)
 	if err != nil {
 		os.Remove(file)
-		return false, err
+		return err
 	}
 
 	_, err = io.Copy(f, r.Resp.Body)
-	return true, err
+	return err
 }
