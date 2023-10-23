@@ -1289,3 +1289,28 @@ function jmapdump() {
     echo
 }
 
+function jcmdprofile() {
+    pid="$1"
+    out="$2"
+
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    if [ -z "$out" ]; then
+        echored "\$2 - Output JFR file"
+        return -1
+    fi
+
+    jcmd $pid VM.unlock_commercial_features
+    jcmd $pid JFR.start name=sampling settings=profile  delay=20s duration=10m filename="$out"
+}
+
+function jcmdcheck() {
+    pid="$1"
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    jcmd $pid JFR.check
+}
