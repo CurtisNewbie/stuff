@@ -1269,3 +1269,23 @@ function gcmt() {
     fi
 }
 export -f gcmt
+
+function jmapdump() {
+    pid="$1"
+    dir="$2"
+
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    if [ -z "$dir" ]; then
+        dir="$(pwd)"
+    fi
+
+    out="$dir/dump_$(date +"%y%m%d_%H%M%S").hprof"
+    jmap -dump:format=b,file=$out $pid
+    echo
+    echogreen "Dump $pid heap to $out"
+    echo
+}
+
