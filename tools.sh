@@ -146,7 +146,7 @@ function trashsize() {
 }
 
 # dump file to trash can
-function trsh() {
+function trash() {
     if [ -z $1 ]; then
         return 0
     fi
@@ -802,16 +802,17 @@ function codediff() {
 # check if current OS is MAC, return 1 is true, else 0
 function ismac() {
     if [ $(uname) == 'Darwin' ]; then
-        echo "1"
+        return 0
     else
-        echo "0"
+        return 1
     fi
 }
+export -f ismac
 
 function clipboard() {
     read c
     # echo "clipboard: $c"
-    if [ "$(ismac)" == "1" ]; then
+    if [ ismac ]; then
         echo "$c" | tr -d '\n' | pbcopy
     else
         # apt install xclip
@@ -1093,22 +1094,27 @@ function peek_journal() {
     journalctl -xe -u '$1'
 }
 
-settermproxy() {
-	# for shadowsocks
-  export HTTP_PROXY="http://127.0.0.1:1087"
-  export HTTPS_PROXY="http://127.0.0.1:1087"
-  export ALL_PROXY="http://127.0.0.1:1086"
+function settermproxy() {
+    port="7890"
+    ismac && port="1087"
+
+    # for shadowsocks
+    export HTTP_PROXY="http://127.0.0.1:$port"
+    export HTTPS_PROXY="http://127.0.0.1:$port"
+    export ALL_PROXY="http://127.0.0.1:$port"
+    printf "set to proxy: %s\n" $HTTP_PROXY
 }
 
-unsettermproxy() {
-  unset HTTP_PROXY
-  unset HTTPS_PROXY
-  unset ALL_PROXY
+function unsettermproxy() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    unset ALL_PROXY
+    printf "unset proxy\n"
 }
 
 test_github_ssh() {
-  ssh -Tv git@github.com
-  # ssh -Tv git@github.com -vvv
+    ssh -Tv git@github.com
+    # ssh -Tv git@github.com -vvv
 }
 
 compress_mp4() {
@@ -1147,7 +1153,7 @@ function springbootrun() {
 
     echo "Running $app"
     mvn install -N -q \
-	&& mvn install -T 0.5C -Dmaven.test.skip=true -q \
+    && mvn install -T 0.5C -Dmaven.test.skip=true -q \
         && ( \
             cd "$app" && echo "cd into $app" \
                 && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" -q \
@@ -1204,7 +1210,7 @@ function myddl() {
 }
 
 function copymyddl() {
-    if [ "$(ismac)" == "1" ]; then
+    if [ ismac ]; then
         myddl | tr -d '' | pbcopy
     else
         myddl | tr -d '' | xclip -selection clipboard
@@ -1269,3 +1275,48 @@ function gcmt() {
     fi
 }
 export -f gcmt
+
+function jmapdump() {
+    pid="$1"
+    dir="$2"
+
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    if [ -z "$dir" ]; then
+        dir="$(pwd)"
+    fi
+
+    out="$dir/dump_$(date +"%y%m%d_%H%M%S").hprof"
+    jmap -dump:format=b,file=$out $pid
+    echo
+    echogreen "Dump $pid heap to $out"
+    echo
+}
+
+function jcmdprofile() {
+    pid="$1"
+    out="$2"
+
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    if [ -z "$out" ]; then
+        echored "\$2 - Output JFR file"
+        return -1
+    fi
+
+    jcmd $pid VM.unlock_commercial_features
+    jcmd $pid JFR.start name=sampling settings=profile  delay=20s duration=10m filename="$out"
+}
+
+function jcmdcheck() {
+    pid="$1"
+    if [ -z "$pid" ]; then
+        echored "\$1 - Pid"
+        return -1
+    fi
+    jcmd $pid JFR.check
+}
