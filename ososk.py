@@ -28,7 +28,7 @@ pip install requests_html
 '''
 if __name__ == "__main__":
 
-    # attempt to keep the connection open 
+    # attempt to keep the connection open
     # https://github.com/psf/requests/issues/4937
     import socket
     from urllib3.connection import HTTPConnection
@@ -50,12 +50,13 @@ if __name__ == "__main__":
     ap.add_argument('--wait', type=float, help=f"time wait before rendering web page in seconds, default 3s", required=False, default=3)
     ap.add_argument('--sleep', type=float, help=f"time sleep after initial render in seconds, default 0s", required=False, default=0)
     ap.add_argument('--overwrite', action="store_true", help=f"whether to overwrite the existing files, default False", required=False, default=False)
-    ap.add_argument('--headless', type=bool, help=f"whether to use headless mode for the browser (headless mode affects proxy, default False)", required=False, default=False)
+    ap.add_argument('--disable-headless', action="store_true", help=f"disable headless mode (default False)", required=False, default=True)
     ap.add_argument('--verifytsl', type=bool, help=f"whether to verify TSL certification, default True", required=False, default=True)
     args = ap.parse_args()
 
     # https://github.com/CurtisNewbie/requests-html is used for headless configuration
-    session = HTMLSession(headless = args.headless, verify = args.verifytsl)
+    headless = not args.disable_headless
+    session = HTMLSession(headless = headless, verify = args.verifytsl)
 
     sites = []
 
@@ -88,8 +89,8 @@ if __name__ == "__main__":
 
                 hrefs.append([h, n])
             else:
-                imgs = a.findAll("img", recursive=False) 
-                for im in imgs: 
+                imgs = a.findAll("img", recursive=False)
+                for im in imgs:
                     h: str = im.get('src')
                     nh = h
                     q = nh.find("?")
