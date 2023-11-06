@@ -1147,16 +1147,16 @@ function springbootrun() {
 
     app="$1"
     if [ -z "$app" ]; then
+        echo "Running mvn spring-boot:run at ./"
         mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m"
         return 0
     fi
 
-    echo "Running $app"
-    mvn install -N -q \
-    && mvn install -T 0.5C -Dmaven.test.skip=true -q \
+    mvn install -N -q && echo "Installed root pom" \
+    && mvn install -T 0.5C -Dmaven.test.skip=true -q && echo "Installed modules" \
         && ( \
-            cd "$app" && echo "cd into $app" \
-                && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" -q \
+            cd "$app" && echo "Running mvn spring-boot:run at $app" \
+                && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
         )
 }
 
