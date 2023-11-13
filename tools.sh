@@ -1210,7 +1210,7 @@ function myddl() {
 }
 
 function copymyddl() {
-    if [ ismac ]; then
+    if [ $(ismac) ]; then
         myddl | tr -d '' | pbcopy
     else
         myddl | tr -d '' | xclip -selection clipboard
