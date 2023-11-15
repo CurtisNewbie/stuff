@@ -1124,7 +1124,7 @@ compress_mp4() {
 }
 
 function analyze() {
-    go build -gcflags='-m=3' ./... 2>&1 | grep escape > "analyze.log"
+    go build -gcflags='-m -l' ./... 2>&1 | grep -v 'does not escape' | grep escape > "analyze.log"
 }
 
 function mergeto() {
