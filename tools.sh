@@ -1124,7 +1124,7 @@ compress_mp4() {
 }
 
 function analyze() {
-    go build -gcflags '-m' ./... 2>&1  | grep "moved to heap" > "analyze.log"
+    go build -gcflags='-m=3' ./... 2>&1 | grep escape > "analyze.log"
 }
 
 function mergeto() {
