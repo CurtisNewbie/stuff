@@ -812,7 +812,7 @@ export -f ismac
 function clipboard() {
     read c
     # echo "clipboard: $c"
-    if [ ismac ]; then
+    if [ $(ismac) ]; then
         echo "$c" | tr -d '\n' | pbcopy
     else
         # apt install xclip
@@ -1210,7 +1210,7 @@ function myddl() {
 }
 
 function copymyddl() {
-    if [ ismac ]; then
+    if [ $(ismac) ]; then
         myddl | tr -d '' | pbcopy
     else
         myddl | tr -d '' | xclip -selection clipboard
