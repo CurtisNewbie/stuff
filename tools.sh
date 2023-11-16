@@ -1320,3 +1320,7 @@ function jcmdcheck() {
     fi
     jcmd $pid JFR.check
 }
+
+function resetbtm() {
+    sfltool resetbtm
+}
