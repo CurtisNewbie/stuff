@@ -1324,3 +1324,13 @@ function jcmdcheck() {
 function resetbtm() {
     sfltool resetbtm
 }
+
+function tcpecho() {
+    port="$1"
+    if [ -z "$port" ]; then
+        port="8080"
+    fi
+
+    echo "Echo tcp on port: $port"
+    nc -kl $port
+}
