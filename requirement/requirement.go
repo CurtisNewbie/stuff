@@ -182,7 +182,7 @@ func main() {
 	for _, req := range requirements {
 		matched := false
 		for _, v := range req.Branches {
-			if strings.Contains(v, branch) {
+			if branch != "master" && strings.Contains(v, branch) {
 				mr = append(mr, req)
 				matched = true
 				break
