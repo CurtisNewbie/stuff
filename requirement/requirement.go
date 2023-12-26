@@ -55,6 +55,15 @@ func (r Requirement) String() string {
 	return s
 }
 
+var (
+	titleRegex  = regexp.MustCompile(`^- \[[\* Xx]*\] *(.*)`)
+	docRegex    = regexp.MustCompile(`^ {2}- (文档|需求):\s*`)
+	reposRegex  = regexp.MustCompile(`^ {2}- (服务|代码仓库|服务列表|服务):\s*`)
+	branchRegex = regexp.MustCompile(`^ {2}- 分支:\s*`)
+	todoRegex   = regexp.MustCompile(`^ {2}- 待办:\s*`)
+	bulletRegex = regexp.MustCompile(`^ {4}- *(.*)`)
+)
+
 func main() {
 
 	cmd := exec.Command("git", "status")
@@ -111,13 +120,6 @@ func main() {
 	}
 
 	requirements := []Requirement{}
-
-	titleRegex := regexp.MustCompile(`^- \[[\* Xx]*\] *(.*)`)
-	docRegex := regexp.MustCompile(`^ {2}- (文档|需求):\s*`)
-	reposRegex := regexp.MustCompile(`^ {2}- (服务|代码仓库|服务列表|服务):\s*`)
-	branchRegex := regexp.MustCompile(`^ {2}- 分支:\s*`)
-	todoRegex := regexp.MustCompile(`^ {2}- 待办:\s*`)
-	bulletRegex := regexp.MustCompile(`^ {4}- *(.*)`)
 
 	start := 0
 	for i, l := range splited {
