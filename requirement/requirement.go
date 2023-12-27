@@ -27,6 +27,9 @@ type Requirement struct {
 	InRepos    bool
 	InTodos    bool
 	InBranches bool
+
+	BranchMatched int
+	RepoMatched   int
 }
 
 func (r *Requirement) ResetFlags() {
@@ -43,10 +46,36 @@ func (r Requirement) String() string {
 		s += fmt.Sprintf(" Docs: \n    %+v\n", strings.Join(r.Docs, "\n    "))
 	}
 	if len(r.Repos) > 0 {
-		s += fmt.Sprintf(" Repos: \n    %v%+v%v\n", cyan, strings.Join(r.Repos, "\n    "), reset)
+		joined := ""
+		for i, b := range r.Repos {
+			if i == r.RepoMatched {
+				joined += red
+				joined += b
+				joined += reset
+			} else {
+				joined += b
+			}
+			if i < len(r.Repos)-1 {
+				joined += "\n    "
+			}
+		}
+		s += fmt.Sprintf(" Repos: \n    %v\n", joined)
 	}
 	if len(r.Branches) > 0 {
-		s += fmt.Sprintf(" Branches: \n    %v%+v%v\n", cyan, strings.Join(r.Branches, "\n    "), reset)
+		joined := ""
+		for i, b := range r.Branches {
+			if i == r.BranchMatched {
+				joined += red
+				joined += b
+				joined += reset
+			} else {
+				joined += b
+			}
+			if i < len(r.Branches)-1 {
+				joined += "\n    "
+			}
+		}
+		s += fmt.Sprintf(" Branches: \n    %v\n", joined)
 	}
 	if len(r.Todos) > 0 {
 		s += fmt.Sprintf(" Todos: \n    %+v\n", strings.Join(r.Todos, "\n    "))
@@ -99,7 +128,7 @@ func main() {
 			break
 		}
 	}
-	fmt.Printf("Current Repo: %v%s%v\n\n", red, cwd, reset)
+	fmt.Printf("Current Repo: %v%s%v\n", red, cwd, reset)
 
 	reqFileName := os.Getenv("REQUIREMENTS_FILE")
 	reqFile, err := os.Open(reqFileName)
@@ -137,12 +166,7 @@ func main() {
 		}
 
 		if matched := titleRegex.FindStringSubmatch(l); len(matched) > 0 {
-			curr := Requirement{}
-			curr.Docs = []string{}
-			curr.Repos = []string{}
-			curr.Branches = []string{}
-			curr.Todos = []string{}
-			curr.Name = matched[1]
+			curr := NewRequirement(matched[1])
 			requirements = append(requirements, curr)
 		} else {
 			if len(requirements) < 1 {
@@ -176,23 +200,25 @@ func main() {
 			requirements[len(requirements)-1] = curr
 		}
 	}
+	// fmt.Println(requirements)
 
 	mr := []Requirement{}
-
 	for _, req := range requirements {
 		matched := false
-		for _, v := range req.Branches {
+		for i, v := range req.Branches {
 			if branch != "master" && strings.Contains(v, branch) {
+				req.BranchMatched = i
 				mr = append(mr, req)
 				matched = true
 				break
 			}
 		}
 		if matched {
-			break
+			continue
 		}
-		for _, v := range req.Repos {
+		for i, v := range req.Repos {
 			if strings.Contains(v, cwd) {
+				req.RepoMatched = i
 				mr = append(mr, req)
 				matched = true
 				break
@@ -200,7 +226,21 @@ func main() {
 		}
 	}
 
+	fmt.Printf("Found %v%v%v Requirements, Matched %v%v%v Requirements\n\n", red, len(requirements), reset, red, len(mr), reset)
+
 	for _, req := range mr {
 		fmt.Printf("%v\n", req)
 	}
+}
+
+func NewRequirement(name string) Requirement {
+	r := Requirement{}
+	r.Docs = []string{}
+	r.Repos = []string{}
+	r.Branches = []string{}
+	r.Todos = []string{}
+	r.Name = name
+	r.BranchMatched = -1
+	r.RepoMatched = -1
+	return r
 }
