@@ -1245,7 +1245,7 @@ function initwork() {
 }
 export -f initwork
 
-function cleanwork(){
+function clean_local_work(){
     if [ -f go.work ]; then
         echogreen 'removed go.work'
         rm go.work
