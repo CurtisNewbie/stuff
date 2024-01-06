@@ -1341,7 +1341,7 @@ function upgrade() {
 
 	if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
 	if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
-    miso_ver="v0.0.13"
+    miso_ver="v0.0.14-beta.2"
     go get "github.com/curtisnewbie/miso@$miso_ver" \
         && go mod tidy \
 		&& go fmt ./... \
