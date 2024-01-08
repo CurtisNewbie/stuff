@@ -17,6 +17,7 @@ trash_can="$HOME/trash"
 export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
 
+alias reset_alarm="sfltool resetbtm"
 alias mk="minikube"
 alias kb="kubectl"
 alias bc="bc -l"
@@ -38,6 +39,11 @@ alias idea.="idea ."
 alias code.="code ."
 alias gck="git checkout"
 alias ex='exit'
+alias l="ll"
+alias ll="ls -lth"
+alias tmux="tmux -2"
+alias less="less -n"
+alias bc="bc -l"
 
 # for debugging
 # set -eE -o functrace
