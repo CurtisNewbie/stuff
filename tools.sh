@@ -1345,7 +1345,7 @@ function upgrade() {
     # gc_ver="v1.1.4"
     # [ $? -eq 0 ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
 
-    miso_ver="v0.0.14-beta.3"
+    miso_ver="v0.0.14-beta.4"
 
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
