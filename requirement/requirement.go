@@ -27,7 +27,7 @@ var (
 	branchRegex = regexp.MustCompile(`^ {2}- 分支:\s*`)
 	todoRegex   = regexp.MustCompile(`^ {2}- 待办:\s*`)
 	bulletRegex = regexp.MustCompile(`^ {4}- *(.*)`)
-	tildeRegex  = regexp.MustCompile(`~~(.*)~~`)
+	tildeRegex  = regexp.MustCompile(`(~~.*~~)`)
 )
 
 type Requirement struct {
@@ -65,7 +65,7 @@ func (r Requirement) String() string {
 			if i == r.RepoMatched {
 				joined += redBlink + b + reset
 			} else {
-				joined += b
+				joined += ParseTilde(b)
 			}
 			if i < len(r.Repos)-1 {
 				joined += "\n    "
@@ -92,12 +92,8 @@ func (r Requirement) String() string {
 		for i, v := range r.Todos {
 			if strings.HasPrefix(v, "[x]") {
 				copied[i] = dim + v + reset
-			} else if strings.Contains(v, "~~") {
-				copied[i] = tildeRegex.ReplaceAllStringFunc(v, func(s string) string {
-					return dim + s + reset
-				})
 			} else {
-				copied[i] = v
+				copied[i] = ParseTilde(v)
 			}
 		}
 		s += fmt.Sprintf(" Todos: \n    %+v\n", strings.Join(copied, "\n    "))
@@ -262,4 +258,13 @@ func NewRequirement(name string) Requirement {
 	r.BranchMatched = -1
 	r.RepoMatched = -1
 	return r
+}
+
+func ParseTilde(v string) string {
+	return tildeRegex.ReplaceAllStringFunc(v, func(s string) string {
+		if len(s) < 1 {
+			return s
+		}
+		return dim + s[2:len(s)-2] + reset
+	})
 }
