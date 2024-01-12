@@ -10,10 +10,24 @@ import (
 )
 
 const (
-	red   = "\033[1;31m"
-	reset = "\033[1;0m"
-	green = "\033[1;32m"
-	cyan  = "\033[1;36m"
+	// https://stackoverflow.com/questions/8357203/is-it-possible-to-display-text-in-a-console-with-a-strike-through-effect
+	dim           = "\033[2m"
+	strikethrough = "\033[9m"
+	red           = "\033[1;31m"
+	reset         = "\033[0m"
+	green         = "\033[1;32m"
+	cyan          = "\033[1;36m"
+	redBlink      = "\033[1;5;31m"
+)
+
+var (
+	titleRegex  = regexp.MustCompile(`^- \[[\* Xx]*\] *(.*)`)
+	docRegex    = regexp.MustCompile(`^ {2}- (文档|需求):\s*`)
+	reposRegex  = regexp.MustCompile(`^ {2}- (服务|代码仓库|服务列表|服务):\s*`)
+	branchRegex = regexp.MustCompile(`^ {2}- 分支:\s*`)
+	todoRegex   = regexp.MustCompile(`^ {2}- 待办:\s*`)
+	bulletRegex = regexp.MustCompile(`^ {4}- *(.*)`)
+	tildeRegex  = regexp.MustCompile(`~~(.*)~~`)
 )
 
 type Requirement struct {
@@ -49,9 +63,7 @@ func (r Requirement) String() string {
 		joined := ""
 		for i, b := range r.Repos {
 			if i == r.RepoMatched {
-				joined += red
-				joined += b
-				joined += reset
+				joined += redBlink + b + reset
 			} else {
 				joined += b
 			}
@@ -65,9 +77,7 @@ func (r Requirement) String() string {
 		joined := ""
 		for i, b := range r.Branches {
 			if i == r.BranchMatched {
-				joined += red
-				joined += b
-				joined += reset
+				joined += redBlink + b + reset
 			} else {
 				joined += b
 			}
@@ -78,20 +88,23 @@ func (r Requirement) String() string {
 		s += fmt.Sprintf(" Branches: \n    %v\n", joined)
 	}
 	if len(r.Todos) > 0 {
-		s += fmt.Sprintf(" Todos: \n    %+v\n", strings.Join(r.Todos, "\n    "))
+		copied := make([]string, len(r.Todos))
+		for i, v := range r.Todos {
+			if strings.HasPrefix(v, "[x]") {
+				copied[i] = dim + v + reset
+			} else if strings.Contains(v, "~~") {
+				copied[i] = tildeRegex.ReplaceAllStringFunc(v, func(s string) string {
+					return dim + s + reset
+				})
+			} else {
+				copied[i] = v
+			}
+		}
+		s += fmt.Sprintf(" Todos: \n    %+v\n", strings.Join(copied, "\n    "))
 	}
 	// s += fmt.Sprintf(" Flags: InDoc:%v, InRepos: %v, InTodos: %v, InBranches: %v\n", r.InDoc, r.InRepos, r.InTodos, r.InBranches)
 	return s
 }
-
-var (
-	titleRegex  = regexp.MustCompile(`^- \[[\* Xx]*\] *(.*)`)
-	docRegex    = regexp.MustCompile(`^ {2}- (文档|需求):\s*`)
-	reposRegex  = regexp.MustCompile(`^ {2}- (服务|代码仓库|服务列表|服务):\s*`)
-	branchRegex = regexp.MustCompile(`^ {2}- 分支:\s*`)
-	todoRegex   = regexp.MustCompile(`^ {2}- 待办:\s*`)
-	bulletRegex = regexp.MustCompile(`^ {4}- *(.*)`)
-)
 
 func main() {
 
@@ -187,14 +200,20 @@ func main() {
 				curr.ResetFlags()
 				curr.InBranches = true
 			} else if matched := bulletRegex.FindStringSubmatch(l); len(matched) > 0 {
-				if curr.InDoc {
-					curr.Docs = append(curr.Docs, matched[1])
-				} else if curr.InRepos {
-					curr.Repos = append(curr.Repos, matched[1])
-				} else if curr.InTodos {
-					curr.Todos = append(curr.Todos, matched[1])
-				} else if curr.InBranches {
-					curr.Branches = append(curr.Branches, matched[1])
+				line := matched[1]
+				if strings.TrimSpace(line) != "" {
+					if curr.InDoc {
+						tokens := strings.Split(line, ":")
+						if len(tokens) > 1 && strings.TrimSpace(strings.Join(tokens[1:], "")) != "" {
+							curr.Docs = append(curr.Docs, line)
+						}
+					} else if curr.InRepos {
+						curr.Repos = append(curr.Repos, line)
+					} else if curr.InTodos {
+						curr.Todos = append(curr.Todos, line)
+					} else if curr.InBranches {
+						curr.Branches = append(curr.Branches, line)
+					}
 				}
 			}
 			requirements[len(requirements)-1] = curr

@@ -14,6 +14,8 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
+[ -z "$STUFF" ] && STUFF="$HOME/stuff"
+
 export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
 
