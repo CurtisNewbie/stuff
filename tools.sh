@@ -1357,3 +1357,6 @@ function upgrade() {
         && git commit -am "Upgrade miso to $miso_ver"
 }
 
+function pushtag() {
+  git tag $1 && git push && git push origin $1
+}
