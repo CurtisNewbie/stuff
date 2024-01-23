@@ -35,7 +35,7 @@ if __name__ == "__main__":
     HTTPConnection.default_socket_options = (
         HTTPConnection.default_socket_options + [
             (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1),
-            (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
+            # (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
             (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
             (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
         ]
