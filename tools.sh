@@ -1370,3 +1370,13 @@ startcluster() {
   (cd $GIT_PATH/gatekeeper; go run main.go &)
   (cd $GIT_PATH/hammer; go run cmd/main.go &)
 }
+
+stopcluster() {
+  pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
+  echo $pids
+  for p in $pids
+  do
+    kill -15 "$p"
+  done
+}
+
