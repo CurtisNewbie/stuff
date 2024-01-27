@@ -1360,3 +1360,13 @@ function upgrade() {
 function pushtag() {
   git tag $1 && git push && git push origin $1
 }
+
+startcluster() {
+  (cd $GIT_PATH/goauth/goauth; go run cmd/main.go &)
+  (cd $GIT_PATH/user-vault; go run cmd/main.go &)
+  (cd $GIT_PATH/vfm; go run cmd/main.go &)
+  (cd $GIT_PATH/event-pump; go run main.go &)
+  (cd $GIT_PATH/mini-fstore;go run cmd/main.go &)
+  (cd $GIT_PATH/gatekeeper; go run main.go &)
+  (cd $GIT_PATH/hammer; go run cmd/main.go &)
+}
