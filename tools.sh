@@ -1371,6 +1371,8 @@ startcluster() {
   (cd $GIT_PATH/mini-fstore;go run cmd/main.go &)
   (cd $GIT_PATH/gatekeeper; go run main.go &)
   (cd $GIT_PATH/hammer; go run cmd/main.go &)
+  (cd $GIT_PATH/doc-indexer ; go run main.go &)
+  # (cd $GIT_PATH/logbot; go run main.go &)
 }
 
 stopcluster() {
