@@ -13,7 +13,7 @@ purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
-miso_ver="v0.0.18-beta.3"
+miso_ver="v0.0.18-beta.4"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
@@ -1362,7 +1362,7 @@ function pushtag() {
 }
 
 startcluster() {
-  (cd $GIT_PATH/goauth/goauth; go run cmd/main.go > /dev/null 2>&1 &) 
+  (cd $GIT_PATH/goauth/goauth; go run cmd/main.go > /dev/null 2>&1 &)
   sleep 1
 
   (cd $GIT_PATH/user-vault; go run cmd/main.go > /dev/null 2>&1 &)
