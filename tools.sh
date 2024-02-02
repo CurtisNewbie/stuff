@@ -43,7 +43,7 @@ alias code.="code ."
 alias gck="git checkout"
 alias ex='exit'
 alias l="ll"
-alias ll="ls -lth"
+alias ll="ls -lth --color=always"
 alias tmux="tmux -2"
 alias less="less -n"
 alias bc="bc -l"
