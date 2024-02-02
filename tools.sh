@@ -1345,8 +1345,9 @@ function tcpecho() {
 }
 
 function upgrade() {
-    # gc_ver="v1.1.4"
+    # gc_ver="v1.1.8"
     # [ $? -eq 0 ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
+
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
 
