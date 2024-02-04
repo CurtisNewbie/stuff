@@ -1363,7 +1363,7 @@ function pushtag() {
 }
 
 startcluster() {
-  (cd $GIT_PATH/goauth/goauth; go run cmd/main.go > /dev/null 2>&1 &)
+  (cd $GIT_PATH/goauth; go run cmd/main.go > /dev/null 2>&1 &)
   sleep 1
 
   (cd $GIT_PATH/vfm; go run cmd/main.go > /dev/null 2>&1 &)
