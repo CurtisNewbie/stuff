@@ -1363,15 +1363,15 @@ function pushtag() {
 }
 
 startcluster() {
-  (cd $GIT_PATH/goauth; go run cmd/main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/vfm; go run cmd/main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/mini-fstore;go run cmd/main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/user-vault; go run cmd/main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/event-pump; go run main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/gatekeeper; go run main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/hammer; go run cmd/main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/doc-indexer ; go run main.go > /dev/null 2>&1 &)
-  (cd $GIT_PATH/postbox ; go run cmd/main.go > /dev/null 2>&1 &)
+  (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   # (cd $GIT_PATH/logbot; go run main.go &)
 }
 
