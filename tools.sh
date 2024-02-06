@@ -1372,7 +1372,7 @@ startcluster() {
   (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  # (cd $GIT_PATH/logbot; go run main.go &)
+  (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
 }
 
 stopcluster() {
