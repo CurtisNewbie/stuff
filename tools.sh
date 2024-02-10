@@ -177,6 +177,10 @@ function trash() {
     echogreen ">>> Trashed '$1' to '$trash_can_p'"
 }
 
+function release() {
+  python3 $STUFF/release.py $@
+}
+
 function mpackage() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
