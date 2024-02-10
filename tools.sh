@@ -13,7 +13,8 @@ purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
-miso_ver="v0.0.22"
+# miso_ver="v0.0.23-beta.1"
+miso_ver="70979036aa1e45b9f14c5ae612354fe369125d84"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
@@ -1367,7 +1368,7 @@ function pushtag() {
 }
 
 startcluster() {
-  (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
   (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
