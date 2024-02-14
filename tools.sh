@@ -15,8 +15,8 @@ white=$'\e[1;37m'
 trash_can="$HOME/trash"
 # miso_ver="v0.0.23-beta.1"
 
-miso_ver="75c518706b82ba0ba305662cd3846377f2bd12e6"
-gc_ver="7d77b914b0937e87c0bf84ee255e73a12d193762"
+miso_ver="d42952ab9fb7c8e8d3f33be9346e59da1a2c799e"
+gc_ver="9404b539092c878226f9675e932f39081a5dda6b"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
