@@ -1391,3 +1391,6 @@ stopcluster() {
   done
 }
 
+conn_pprof() {
+  go tool pprof -http=: http://$1/debug/pprof/heap
+}
