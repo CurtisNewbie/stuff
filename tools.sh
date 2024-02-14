@@ -14,7 +14,9 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 # miso_ver="v0.0.23-beta.1"
-miso_ver="70979036aa1e45b9f14c5ae612354fe369125d84"
+
+miso_ver="75c518706b82ba0ba305662cd3846377f2bd12e6"
+gc_ver="7d77b914b0937e87c0bf84ee255e73a12d193762"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
@@ -1350,11 +1352,11 @@ function tcpecho() {
 }
 
 function upgrade() {
-    # gc_ver="v1.1.8"
-    # [ $? -eq 0 ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
 
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
+
+    [ ! -z $gc_ver ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
 
     go get "github.com/curtisnewbie/miso@$miso_ver" \
         && go mod tidy \
