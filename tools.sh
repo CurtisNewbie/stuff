@@ -13,10 +13,10 @@ purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
-# miso_ver="v0.0.23-beta.1"
 
-miso_ver="d42952ab9fb7c8e8d3f33be9346e59da1a2c799e"
-gc_ver="9404b539092c878226f9675e932f39081a5dda6b"
+miso_ver="v0.0.25-beta.1"
+# miso_ver="02f41540c50f6fc78eed7c23ac7e15aa8f796083"
+gc_ver="v1.1.11"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
