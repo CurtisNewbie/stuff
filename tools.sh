@@ -1394,3 +1394,7 @@ stopcluster() {
 conn_pprof() {
   go tool pprof -http=: http://$1/debug/pprof/heap
 }
+
+benchmark_pprof() {
+  go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out
+}
