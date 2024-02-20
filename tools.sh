@@ -1396,5 +1396,5 @@ conn_pprof() {
 }
 
 benchmark_pprof() {
-  go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out
+  go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out && go tool pprof -http=: profile.out
 }
