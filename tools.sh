@@ -1012,7 +1012,7 @@ function grepcode() {
 
 function tips_tdump() {
     echo
-    echocyan " sudo tcpdump -nnAS -s 0 -i any $@"
+    echocyan " sudo tcpdump -nAS -s 0 -i any $@"
     echo
     pprint "-n" "not dns resolution stuff"
     pprint "-X" "similar to -A, prints out all header, content"
