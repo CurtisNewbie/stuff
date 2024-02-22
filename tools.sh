@@ -14,8 +14,8 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-miso_ver="v0.0.25"
-# miso_ver="02f41540c50f6fc78eed7c23ac7e15aa8f796083"
+# miso_ver="v0.0.25"
+miso_ver="v0.0.26-beta.1"
 gc_ver="v1.1.11"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
