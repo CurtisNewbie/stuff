@@ -3,7 +3,7 @@ import sys
 import re
 import subprocess
 from os import walk
-from os.path import join 
+from os.path import join
 
 def cli_run(cmd: str):
     with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE) as p:
@@ -25,7 +25,7 @@ def all_tags():
 
 def current_tag():
     out = cli_run("git describe --tags --abbrev=0")
-    return out
+    return out.strip()
 
 def parse_beta(tag):
     pat = re.compile('(v.+).beta.*')
@@ -34,9 +34,37 @@ def parse_beta(tag):
         return m[1]
     return tag
 
+def guess_next(last):
+    if is_beta(last): return incr_beta(last)
+    return incr_release(last)
+
+def incr_release(v):
+    pat = re.compile('(v?\d+\.\d+\.)(\d+)\.?.*')
+    m = pat.match(v)
+    return m[1] + str(int(m[2]) + 1)
+
+def incr_beta(v):
+    pat = re.compile('^v?\d+\.\d+\.\d+$')
+    m = pat.match(v)
+    if m: return v + "-beta.1"
+
+    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    m = pat.match(v)
+    return m[1] + str(int(m[2]) + 1)
+
+def is_beta(v):
+    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    return pat.match(v)
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Please specify version")
+        last = current_tag()
+        guessed = guess_next(last)
+        print()
+        print(f"Last release is {last}. Are you planning to release {guessed}?")
+        print()
+        print(f"release {guessed}")
+        print()
         exit(1)
 
     branch = current_branch()
@@ -63,14 +91,14 @@ if __name__ == '__main__':
     if version_file:
         pkg = "main"
 
-        with open(version_file, "r") as f:     
+        with open(version_file, "r") as f:
             lines = f.readlines()
             for l in lines:
                 pat = re.compile('package (.*)')
                 m = pat.match(l)
                 if m: pkg = m[1]
 
-        with open(version_file, "w") as f:     
+        with open(version_file, "w") as f:
             f.writelines([
                 f"package {pkg}\n",
                 "\n",

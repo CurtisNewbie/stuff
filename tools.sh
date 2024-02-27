@@ -14,9 +14,8 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-miso_ver="v0.0.26-beta.3"
-# miso_ver="d572ba3f5048620c45f42942f2bdd542253631cc"
-gc_ver="v1.1.11"
+miso_ver="v0.0.26"
+gc_ver=" v1.1.12"
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
 
@@ -1370,16 +1369,17 @@ function pushtag() {
 }
 
 startcluster() {
-  # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
+  # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &) 
+
+  (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/mini-fstore.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/user-vault.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/hammer.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/doc-indexer.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/postbox.log' > /dev/null 2>&1 &)
+  (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
 }
 
 stopcluster() {
@@ -1389,6 +1389,28 @@ stopcluster() {
   do
     kill -15 "$p"
   done
+}
+
+findapp() {
+  app="$1"
+  ps -ef | grep $app | grep -v grep
+}
+
+stopapp() {
+  app="$1"
+  pids=`ps -ef | grep $app | grep -v grep | awk '{ print $2 }'`
+  if [ -z "$pids" ]; then
+    return 0
+  fi
+  echo "killing $pids"
+  kill -15 $pids
+}
+export -f stopapp
+
+restartapp() {
+  app="$1"
+  stopapp $app
+  startcluster
 }
 
 conn_pprof() {
