@@ -1425,5 +1425,5 @@ gen_graph() {
   out="out.svg"
   dot -Tsvg $1 > "$out"
   echo "graph generated"
-  readlink -e $out
+  # readlink -e $out
 }
