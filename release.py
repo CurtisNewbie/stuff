@@ -59,9 +59,11 @@ def is_beta(v):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         last = current_tag()
+        if not last or last == 'main' or last == 'master':
+            exit(0)
         guessed = guess_next(last)
         print()
-        print(f"Last release is {last}. Are you planning to release {guessed}?")
+        print(f"Last release is {last}. Are you planning to release {guessed} ?")
         print()
         print(f"release {guessed}")
         print()
