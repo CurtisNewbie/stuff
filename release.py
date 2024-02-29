@@ -35,6 +35,7 @@ def parse_beta(tag):
     return tag
 
 def guess_next(last):
+    if not last: return "v0.0.1"
     if is_beta(last): return incr_beta(last)
     return incr_release(last)
 
@@ -59,11 +60,9 @@ def is_beta(v):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         last = current_tag()
-        if not last or last == 'main' or last == 'master':
-            exit(0)
         guessed = guess_next(last)
         print()
-        print(f"Last release is {last}. Are you planning to release {guessed} ?")
+        print(f"Last release is '{last}'. Are you planning to release '{guessed}' ?")
         print()
         print(f"release {guessed}")
         print()
@@ -92,6 +91,7 @@ if __name__ == '__main__':
 
     if version_file:
         pkg = "main"
+        matched = False
 
         with open(version_file, "r") as f:
             lines = f.readlines()
@@ -99,16 +99,18 @@ if __name__ == '__main__':
                 pat = re.compile('package (.*)')
                 m = pat.match(l)
                 if m: pkg = m[1]
+                if re.match("Version *= *\".*\"\s*"): matched = True
 
-        with open(version_file, "w") as f:
-            f.writelines([
-                f"package {pkg}\n",
-                "\n",
-                "const (\n",
-                f"\tVersion = \"{target}\"\n"
-                ")\n"
-                ""
-            ])
+        if matched:
+            with open(version_file, "w") as f:
+                f.writelines([
+                    f"package {pkg}\n",
+                    "\n",
+                    "const (\n",
+                    f"\tVersion = \"{target}\"\n"
+                    ")\n"
+                    ""
+                ])
 
     print(cli_run("go fmt ./..."))
     print(cli_run(f"git commit -am \"Release {target}\""))
