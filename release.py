@@ -99,7 +99,7 @@ if __name__ == '__main__':
                 pat = re.compile('package (.*)')
                 m = pat.match(l)
                 if m: pkg = m[1]
-                if re.match("Version *= *\".*\"\s*"): matched = True
+                if re.match("Version *= *\".*\"\s*", l): matched = True
 
         if matched:
             with open(version_file, "w") as f:
