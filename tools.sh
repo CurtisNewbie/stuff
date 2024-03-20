@@ -1432,6 +1432,6 @@ gen_graph() {
     # readlink -e $out
 }
 
-install_bin() {
+installbin() {
     mv $1 $LOC_BIN && echo "Moved $1 to $LOC_BIN/$1"
 }
