@@ -23,6 +23,7 @@ gc_ver=""
 
 export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LANG=en_US.UTF-8
+export LOC_BIN="/usr/local/bin"
 
 alias reset_alarm="sfltool resetbtm"
 alias mk="minikube"
@@ -1368,65 +1369,69 @@ function upgrade() {
 }
 
 function pushtag() {
-  git tag $1 && git push && git push origin $1
+    git tag $1 && git push && git push origin $1
 }
 
 startcluster() {
-  # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &) 
+    # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
 
-  (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/mini-fstore.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/user-vault.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/hammer.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/doc-indexer.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/postbox.log' > /dev/null 2>&1 &)
-  (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/mini-fstore.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/user-vault.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/hammer.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/doc-indexer.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/postbox.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
 }
 
 stopcluster() {
-  pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
-  echo $pids
-  for p in $pids
-  do
-    kill -15 "$p"
-  done
+    pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
+    echo $pids
+    for p in $pids
+    do
+        kill -15 "$p"
+    done
 }
 
 findapp() {
-  app="$1"
-  ps -ef | grep $app | grep -v grep
+    app="$1"
+    ps -ef | grep $app | grep -v grep
 }
 
 stopapp() {
-  app="$1"
-  pids=`ps -ef | grep $app | grep -v grep | awk '{ print $2 }'`
-  if [ -z "$pids" ]; then
-    return 0
-  fi
-  echo "killing $pids"
-  kill -15 $pids
+    app="$1"
+    pids=`ps -ef | grep $app | grep -v grep | awk '{ print $2 }'`
+    if [ -z "$pids" ]; then
+        return 0
+    fi
+    echo "killing $pids"
+    kill -15 $pids
 }
 export -f stopapp
 
 restartapp() {
-  app="$1"
-  stopapp $app
-  startcluster
+    app="$1"
+    stopapp $app
+    startcluster
 }
 
 conn_pprof() {
-  go tool pprof -http=: http://$1/debug/pprof/heap
+    go tool pprof -http=: http://$1/debug/pprof/heap
 }
 
 benchmark_pprof() {
-  go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out && go tool pprof -http=: profile.out
+    go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out && go tool pprof -http=: profile.out
 }
 
 gen_graph() {
-  out="out.svg"
-  dot -Tsvg $1 > "$out"
-  echo "graph generated"
-  # readlink -e $out
+    out="out.svg"
+    dot -Tsvg $1 > "$out"
+    echo "graph generated"
+    # readlink -e $out
+}
+
+install_bin() {
+    mv $1 $LOC_BIN && echo "Moved $1 to $LOC_BIN/$1"
 }
