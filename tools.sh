@@ -14,8 +14,7 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-miso_ver="v0.0.28-beta.1"
-# gc_ver=" v1.1.12"
+miso_ver="v0.0.28"
 gc_ver=""
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
@@ -1365,6 +1364,55 @@ function upgrade() {
         && go fmt ./... \
         && go build ./... \
         && git commit -am "Upgrade miso to $miso_ver"
+    return 0
+}
+
+export -f upgrade
+
+function upgrade_all() {
+    gitpath="${GIT_PATH}"
+    if [ -z $gitpath ]; then
+        echo "GIT_PATH is empty"
+        return 1
+    fi
+
+    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    for r in $l;
+    do
+        printf ">>> $r\n"
+        (cd $GIT_PATH/$r; git switch dev && upgrade && git push)
+    done
+}
+
+function sync_all() {
+    gitpath="${GIT_PATH}"
+    if [ -z $gitpath ]; then
+        echo "GIT_PATH is empty"
+        return 1
+    fi
+
+    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    for r in $l;
+    do
+        printf ">>> $r\n"
+        (cd $GIT_PATH/$r; git switch main && git fetch && git merge && git switch dev && git merge && git merge main)
+    done
+}
+
+function status_all() {
+    gitpath="${GIT_PATH}"
+    if [ -z $gitpath ]; then
+        echo "GIT_PATH is empty"
+        return 1
+    fi
+
+    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    for r in $l;
+    do
+        printf ">>> $r\n"
+        (cd $GIT_PATH/$r; git status)
+        printf "\n"
+    done
 }
 
 function pushtag() {
