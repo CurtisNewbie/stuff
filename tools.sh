@@ -1482,3 +1482,19 @@ gen_graph() {
 installbin() {
     mv $1 $LOC_BIN && echo "Moved $1 to $LOC_BIN/$1"
 }
+
+function par() {
+    for i in $(seq 1 1 $1); do
+        eval "$2" &
+        pids[${i}]=$!
+    done
+
+    for pid in ${pids[*]}; do
+        wait $pid &> /dev/null
+    done
+
+    echo ""
+    echo "par finished, parallel: $1"
+    echo ""
+}
+
