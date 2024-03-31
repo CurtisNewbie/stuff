@@ -1498,3 +1498,11 @@ function par() {
     echo ""
 }
 
+function restore_tmux() {
+    prev=`tmux ls | awk '{ print $1 }' | cut -b 1-1`
+    if [ -z "$prev" ]; then
+        tmux
+        return 0
+    fi
+    tmux attach-session -t "$prev"
+}
