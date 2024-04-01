@@ -1477,8 +1477,10 @@ installbin() {
 }
 
 function par() {
+    cmd="${@:2}"
+    # echo "command: '$cmd'"
     for i in $(seq 1 1 $1); do
-        eval "$2" &
+        (eval "$cmd" &)
         pids[${i}]=$!
     done
 
