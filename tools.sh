@@ -52,44 +52,8 @@ alias tmux="tmux -2"
 alias less="less -n"
 alias bc="bc -l"
 
-# for debugging
-# set -eE -o functrace
-
-# complete -W "-r" gbranch
-# complete -F _gbranch_completion gbranch
-# complete -F _reset_one_completion reset_one
-
-# trap error
-function traperr(){
-    trap 'print_failure ${LINENO} "$BASH_COMMAND" "$@"' ERR
-}
-
-function print_failure() {
-  local lineno=$1
-  local msg=$2
-  echo "Failed at $lineno: $msg, extra: $3"
-}
-
 function pprint() {
     printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
-}
-
-_gbranch_completion()
-{
-    if [ ${#COMP_WORDS[@]} -gt 2 ]; then
-        return
-    fi
-
-    COMPREPLY=("-r")
-}
-
-_reset_one_completion()
-{
-    if [ ${#COMP_WORDS[@]} -gt 2 ]; then
-        return
-    fi
-
-    COMPREPLY=("--y")
 }
 
 function gcl() {
@@ -103,16 +67,33 @@ function gcl() {
     fi
 }
 
-function gamd() { git commit --amend; }
-function gdt() { git difftool "$@"; }
-function glike() { git branch | grep "$1"; }
-function gstashshow() { git stash show -p; }
+function gamd() {
+    git commit --amend;
+}
 
-function lfind() { ls -alh | grep "$1" -i; }
+function gdt() {
+    git difftool "$@";
+}
 
-function brief_lfind() { ls -a | grep "$1" -i; }
+function glike() {
+    git branch | grep "$1";
+}
 
-function cdlfind() { cd $(brief_lfind "$1"); }
+function gstashshow() {
+    git stash show -p;
+}
+
+function lfind() {
+    ls -alh | grep "$1" -i;
+}
+
+function brief_lfind() {
+    ls -a | grep "$1" -i;
+}
+
+function cdlfind() {
+    cd $(brief_lfind "$1");
+}
 
 function dfind() {
     if [ $# -gt 1 ]; then
@@ -382,34 +363,6 @@ export -f gencmtmsg
 
 function rkcmt() {
     git add .
-
-    # #Set the field separator to new line
-    # IFS=$'\n'
-
-    # msg=`git diff --staged --raw`
-    # lines=""
-
-    # for line in $msg; do
-    #     t="${line:31:1}"
-    #     s_line="${line:33}"$'\n'
-    #     t_name=""
-
-    #     if [ $t == 'M' ]; then
-    #         t_name="Modified"
-    #     elif [ $t == 'A' ]; then
-    #         t_name="Added"
-    #     elif [ $t == 'D' ]; then
-    #         t_name="Deleted"
-    #     else
-    #         t="${line:31:4}"
-    #         if [ $t == "R092" ]; then
-    #             t_name="Renamed"
-    #             s_line="${line:36}"$'\n'
-    #         fi
-    #     fi
-
-    #     lines+="$t_name: $s_line"
-    # done
     lines=`gencmtmsg`
     git commit -m "$lines"
     if [ $? -eq 0 ]; then
@@ -1372,8 +1325,9 @@ function upgrade_all() {
     l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
     for r in $l;
     do
-        printf ">>> $r\n"
+        echogreen ">>> $r"
         (cd $GIT_PATH/$r; git switch dev && upgrade && git push)
+        printf "\n"
     done
 }
 
@@ -1387,8 +1341,9 @@ function sync_all() {
     l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
     for r in $l;
     do
-        printf ">>> $r\n"
+        echogreen ">>> $r"
         (cd $GIT_PATH/$r; git switch main && git fetch && git merge && git switch dev && git merge && git merge main)
+        printf "\n"
     done
 }
 
@@ -1402,7 +1357,7 @@ function status_all() {
     l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
     for r in $l;
     do
-        printf ">>> $r\n"
+        echogreen ">>> $r"
         (cd $GIT_PATH/$r; git status)
         printf "\n"
     done
@@ -1412,7 +1367,7 @@ function pushtag() {
     git tag $1 && git push && git push origin $1
 }
 
-startcluster() {
+function startcluster() {
     # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
 
     (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
@@ -1426,7 +1381,7 @@ startcluster() {
     (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
 }
 
-stopcluster() {
+function stopcluster() {
     pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
     echo $pids
     for p in $pids
@@ -1435,12 +1390,12 @@ stopcluster() {
     done
 }
 
-findapp() {
+function findapp() {
     app="$1"
     ps -ef | grep $app | grep -v grep
 }
 
-stopapp() {
+function stopapp() {
     app="$1"
     pids=`ps -ef | grep $app | grep -v grep | awk '{ print $2 }'`
     if [ -z "$pids" ]; then
@@ -1451,28 +1406,28 @@ stopapp() {
 }
 export -f stopapp
 
-restartapp() {
+function restartapp() {
     app="$1"
     stopapp $app
     startcluster
 }
 
-conn_pprof() {
+function conn_pprof() {
     go tool pprof -http=: http://$1/debug/pprof/heap
 }
 
-benchmark_pprof() {
+function benchmark_pprof() {
     go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out && go tool pprof -http=: profile.out
 }
 
-gen_graph() {
+function gen_graph() {
     out="out.svg"
     dot -Tsvg $1 > "$out"
     echo "graph generated"
     # readlink -e $out
 }
 
-installbin() {
+function installbin() {
     mv $1 $LOC_BIN && echo "Moved $1 to $LOC_BIN/$1"
 }
 
