@@ -94,7 +94,7 @@ _reset_one_completion()
 
 function gcl() {
     repo="$1"
-    rest="${@:1}" # e.g., --depth=1 -b 2.4 git@....
+    rest="${@:2}" # e.g., --depth=1 -b 2.4 git@....
     # echo "$rest"
     git clone $rest "$repo"
     if [ $? -eq 0 ]; then
