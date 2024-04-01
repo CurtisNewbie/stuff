@@ -92,28 +92,21 @@ _reset_one_completion()
     COMPREPLY=("--y")
 }
 
-gcld1() {
+function gcl() {
     repo="$1"
-    git clone --depth 1 "$repo"
+    rest="${@:1}" # e.g., --depth=1 -b 2.4 git@....
+    # echo "$rest"
+    git clone $rest "$repo"
     if [ $? -eq 0 ]; then
         e="${repo##*/}"
         cd "${e%%.git}"
     fi
 }
 
-gcl() {
-    repo="$1"
-    git clone "$repo"
-    if [ $? -eq 0 ]; then
-        e="${repo##*/}"
-        cd "${e%%.git}"
-    fi
-}
-
-gamd() { git commit --amend; }
-gdt() { git difftool "$@"; }
-glike() { git branch | grep "$1"; }
-gstashshow() { git stash show -p; }
+function gamd() { git commit --amend; }
+function gdt() { git difftool "$@"; }
+function glike() { git branch | grep "$1"; }
+function gstashshow() { git stash show -p; }
 
 function lfind() { ls -alh | grep "$1" -i; }
 
