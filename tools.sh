@@ -1435,11 +1435,12 @@ function par() {
     cmd="${@:2}"
     # echo "command: '$cmd'"
     for i in $(seq 1 1 $1); do
-        (eval "$cmd" &)
+        eval "$cmd" &
         pids[${i}]=$!
     done
 
     for pid in ${pids[*]}; do
+        # echo "Waiting $pid"
         wait $pid &> /dev/null
     done
 
