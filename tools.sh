@@ -1080,10 +1080,15 @@ test_github_ssh() {
     # ssh -Tv git@github.com -vvv
 }
 
-compress_mp4() {
+cvt_mp4() {
     # https://unix.stackexchange.com/questions/28803/how-can-i-reduce-a-videos-size-with-ffmpeg
     # the higher the crf is, the worst the quality will be, 0 is lossless
-    ffmpeg -i "$1"  -vcodec libx264 -crf 32 -preset faster "$2"
+    # -ss 00:03:00 -t 00:00:20.0
+    ffmpeg -i "$1" -vcodec libx264 -crf 32 -preset faster "$2"
+}
+
+cvt_mp4_audio() {
+    ffmpeg -i "$1" -crf 32 -preset faster "$2"
 }
 
 function analyze() {
