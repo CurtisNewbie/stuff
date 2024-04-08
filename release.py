@@ -68,6 +68,12 @@ if __name__ == '__main__':
         print()
         exit(1)
 
+    force_push = False
+    for v in sys.argv[1:]:
+        if v == "-f":
+            force_push = True
+            break
+
     branch = current_branch()
     target = sys.argv[1]
 
@@ -117,4 +123,10 @@ if __name__ == '__main__':
     print(cli_run(f"git commit -am \"Release {target}\""))
     print(cli_run(f"git tag \"{target}\""))
     print("Done, it's time to push your tag to remote origin! :D")
-    print(f"\ngit push && git push origin {target}\n\n")
+
+    if not force_push:
+        print(f"\ngit push && git push origin {target}\n\n")
+    else:
+        cmd=f"git push && git push origin {target}"
+        print(f"\nExecuting '{cmd}' ...\n")
+        cli_run(cmd)
