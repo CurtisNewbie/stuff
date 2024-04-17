@@ -16,7 +16,7 @@ def current_branch():
     out = cli_run("git status")
     lines = out.splitlines()
     for l in lines:
-        m = re.match('On branch ([^\s]+)', l)
+        m = re.match('On branch ([^\\s]+)', l)
         if m:
             return m[1]
 
@@ -40,21 +40,21 @@ def guess_next(last):
     return incr_release(last)
 
 def incr_release(v):
-    pat = re.compile('(v?\d+\.\d+\.)(\d+)\.?.*')
+    pat = re.compile('(v?\\d+\\.\\d+\\.)(\\d+)\\.?.*')
     m = pat.match(v)
     return m[1] + str(int(m[2]) + 1)
 
 def incr_beta(v):
-    pat = re.compile('^v?\d+\.\d+\.\d+$')
+    pat = re.compile('^v?\\d+\\.\\d+\\.\\d+$')
     m = pat.match(v)
     if m: return v + "-beta.1"
 
-    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    pat = re.compile('(v?\\d+\\.\\d+\\.\\d+-beta\\.)(\\d+)')
     m = pat.match(v)
     return m[1] + str(int(m[2]) + 1)
 
 def is_beta(v):
-    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    pat = re.compile('(v?\\d+\\.\\d+\\.\\d+-beta\\.)(\\d+)')
     return pat.match(v)
 
 if __name__ == '__main__':
