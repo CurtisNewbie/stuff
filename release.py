@@ -16,7 +16,7 @@ def current_branch():
     out = cli_run("git status")
     lines = out.splitlines()
     for l in lines:
-        m = re.match('On branch ([^\s]+)', l)
+        m = re.match('On branch ([^\\s]+)', l)
         if m:
             return m[1]
 
@@ -40,21 +40,21 @@ def guess_next(last):
     return incr_release(last)
 
 def incr_release(v):
-    pat = re.compile('(v?\d+\.\d+\.)(\d+)\.?.*')
+    pat = re.compile('(v?\\d+\\.\\d+\\.)(\\d+)\\.?.*')
     m = pat.match(v)
     return m[1] + str(int(m[2]) + 1)
 
 def incr_beta(v):
-    pat = re.compile('^v?\d+\.\d+\.\d+$')
+    pat = re.compile('^v?\\d+\\.\\d+\\.\\d+$')
     m = pat.match(v)
     if m: return v + "-beta.1"
 
-    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    pat = re.compile('(v?\\d+\\.\\d+\\.\\d+-beta\\.)(\\d+)')
     m = pat.match(v)
     return m[1] + str(int(m[2]) + 1)
 
 def is_beta(v):
-    pat = re.compile('(v?\d+\.\d+\.\d+-beta\.)(\d+)')
+    pat = re.compile('(v?\\d+\\.\\d+\\.\\d+-beta\\.)(\\d+)')
     return pat.match(v)
 
 if __name__ == '__main__':
@@ -67,6 +67,12 @@ if __name__ == '__main__':
         print(f"release {guessed}")
         print()
         exit(1)
+
+    force_push = False
+    for v in sys.argv[1:]:
+        if v == "-f":
+            force_push = True
+            break
 
     branch = current_branch()
     target = sys.argv[1]
@@ -117,4 +123,10 @@ if __name__ == '__main__':
     print(cli_run(f"git commit -am \"Release {target}\""))
     print(cli_run(f"git tag \"{target}\""))
     print("Done, it's time to push your tag to remote origin! :D")
-    print(f"\ngit push && git push origin {target}\n\n")
+
+    if not force_push:
+        print(f"\ngit push && git push origin {target}\n\n")
+    else:
+        cmd=f"git push && git push origin {target}"
+        print(f"\nExecuting '{cmd}' ...\n")
+        cli_run(cmd)
