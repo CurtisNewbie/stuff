@@ -1096,6 +1096,10 @@ cvt_mp4_cut() {
     ffmpeg -i "$1" -ss "$2" "$3"
 }
 
+ffmpeg_loop() {
+    ffmpeg -stream_loop $3 -i "$1" "$2"
+}
+
 function analyze() {
     go build -gcflags='-m -l' ./... 2>&1 | grep -v 'does not escape' | grep escape > "analyze.log"
 }
