@@ -1471,3 +1471,7 @@ function restore_tmux() {
     fi
     tmux attach-session -t "$prev"
 }
+
+function kill_scim() {
+    kill -9 $(pgrep SCIM)
+}
