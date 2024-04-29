@@ -119,7 +119,15 @@ if __name__ == '__main__':
                     ""
                 ])
 
-    print(cli_run("go fmt ./..."))
+
+    mod_file = None
+    for (dir_path, dir_name, file_names) in walk("."):
+        for fn in file_names:
+            if fn == 'go.mod':
+                print(f"\nrunning 'go fmt ./...' in {dir_path}/")
+                print(cli_run(f"cd {dir_path} && go fmt ./..."))
+                break
+
     print(cli_run(f"git commit -am \"Release {target}\""))
     print(cli_run(f"git tag \"{target}\""))
     print("Done, it's time to push your tag to remote origin! :D")
