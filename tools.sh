@@ -1182,7 +1182,7 @@ function myddl() {
     echo "    cby VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
     echo "    utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
     echo "    uby VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
-    echo "    del CHAR(1) NOT NULL DEFAULT 'N' comment 'is record deleted: Y/N'"
+    echo "    deleted TINYINT(1) NOT NULL DEFAULT 'N' comment 'record deleted'"
     echo ") ENGINE=INNODB COMMENT '';"
 }
 
