@@ -1182,8 +1182,8 @@ function myddl() {
     echo "    cby VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
     echo "    utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
     echo "    uby VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
-    echo "    deleted TINYINT(1) NOT NULL DEFAULT 'N' comment 'record deleted'"
-    echo ") ENGINE=INNODB COMMENT '';"
+    echo "    deleted TINYINT(1) NOT NULL DEFAULT 0 comment 'record deleted'"
+    echo ") ENGINE=INNODB CHARSET="utf8mb4" COMMENT '';"
 }
 
 function copymyddl() {
