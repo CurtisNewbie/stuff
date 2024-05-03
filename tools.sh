@@ -14,7 +14,7 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-miso_ver="v0.0.30-beta.1"
+miso_ver="v0.0.30-beta.2"
 gc_ver=""
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
@@ -1175,15 +1175,15 @@ function prefix_file() {
 
 
 function myddl() {
-    echo "CREATE TABLE IF NOT EXISTS _ ("
+    echo "CREATE TABLE IF NOT EXISTS ("
     echo "    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT 'primary key',"
     echo ""
     echo "    ctime TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',"
-    echo "    cby VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
+    echo "    created_by VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
     echo "    utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
-    echo "    uby VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
+    echo "    updated_by VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
     echo "    deleted TINYINT(1) NOT NULL DEFAULT 0 comment 'record deleted'"
-    echo ") ENGINE=INNODB CHARSET="utf8mb4" COMMENT '';"
+    echo ") ENGINE=INNODB DEFAULT CHARSET="utf8mb4" COMMENT='';"
 }
 
 function copymyddl() {
