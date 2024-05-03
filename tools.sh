@@ -1475,3 +1475,7 @@ function restore_tmux() {
 function kill_scim() {
     kill -9 $(pgrep SCIM)
 }
+
+function newng() {
+  ng new ng-chill --no-standalone --routing --ssr=false
+}
