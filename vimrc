@@ -5,8 +5,9 @@
 :set expandtab
 :set expandtab
 :set number
-:set autoindent
 :syntax enable
+
+" :set autoindent
 
 :set tabstop=2
 :set shiftwidth=2
