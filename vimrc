@@ -3,7 +3,6 @@
 :set ignorecase
 :set smartcase
 :set expandtab
-:set expandtab
 :set number
 :syntax enable
 
