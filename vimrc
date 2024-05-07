@@ -1,10 +1,11 @@
-:set paste
 :set hlsearch
 :set incsearch
 :set ignorecase
 :set smartcase
 :set expandtab
+:set expandtab
 :set number
+:set autoindent
 :syntax enable
 
 :set tabstop=2
@@ -54,5 +55,4 @@ Plug 'sheerun/vim-polyglot'
 
 " Initialize plugin system
 call plug#end()
-
 
