@@ -1317,6 +1317,30 @@ function upgrade() {
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
 
+    moddir=""
+    modf="go.mod"
+    if [ ! -f "$modf" ]; then
+        for di in ./* ; do
+            if [ ! -d "$di" ]; then
+                continue
+            fi
+            submod="$di/go.mod"
+            if [ -f "$submod" ]; then
+                modf="$submod"
+                moddir="$di"
+            else
+                break
+            fi
+        done
+    fi
+
+    wd=$(pwd)
+    echo "Mod file found: $modf"
+
+    if [ "$moddir" != "" ]; then
+        cd "$moddir"
+    fi
+
     [ ! -z $gc_ver ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
 
     go get "github.com/curtisnewbie/miso@$miso_ver" \
@@ -1324,6 +1348,8 @@ function upgrade() {
         && go fmt ./... \
         && go build ./... \
         && git commit -am "Upgrade miso to $miso_ver"
+
+    cd "$wd"
     return 0
 }
 
