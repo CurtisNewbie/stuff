@@ -1,8 +1,8 @@
+import re
 import argparse
 import mysql.connector
 import mysql.connector.cursor
 import sys
-
 
 def parsearg():
     ap = argparse.ArgumentParser("dbinsert.py by Yongj.Zhuang")
@@ -15,11 +15,11 @@ def parsearg():
         "-host", help="host (by default it's localhost)", type=str, default="localhost", required=False)
     ap.add_argument(
         "-sql", help="SELECT SQL", type=str, required=True)
-    ap.add_argument(
-        "-database",  help="database", type=str, required=False, default="")
-    ap.add_argument(
-        "-table",  help="table", type=str, required=False, default="")
     return ap.parse_args()
+
+def extract_schema_table(sql: str) -> tuple[str]:
+    res = re.search(r"^select .* from ([^ \.]+).([^ \.;]+).*$", sql, re.IGNORECASE)
+    return res.group(1), res.group(2)
 
 
 """
@@ -44,29 +44,38 @@ if __name__ == '__main__':
         sys.exit(0)
 
     cursor.execute(args.sql)
-    trs: list = cursor.fetchall()
+    rs: list = cursor.fetchall()
 
     print(f">> {args.sql}")
-    print(f">> {args.database}.{args.table}")
-#     print(cursor.column_names)
-#     print(trs)
+
+    schema, table = extract_schema_table(args.sql)
+
+    print(f">> will query {schema}.{table}")
     print()
 
-    built = f"INSERT INTO {args.database}.{args.table} ("
+    excl_cols = ['id']
+    excl_idx = []
+
+    built = f"INSERT INTO {schema}.{table} ("
     for i in range(len(cursor.column_names)):
         c = cursor.column_names[i]
+        if c in excl_cols:
+            excl_idx.append(i)
+            continue
+
         built = built + c
         if i < len(cursor.column_names) - 1:
             built = built + ","
     built = built + ") VALUES"
 
+
     rows = []
-    for i in range(len(trs)):
-        r = trs[i]
+    for i in range(len(rs)):
+        r = rs[i]
         qr = []
         for j in range(len(r)):
+            if j in excl_idx: continue
             qr.append(f"'{r[j]}'")
-
         rows.append(",".join(qr))
 
     for i in range(len(rows)):
