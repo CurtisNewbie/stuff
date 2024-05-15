@@ -46,12 +46,11 @@ if __name__ == '__main__':
     cursor.execute(args.sql)
     rs: list = cursor.fetchall()
 
-    print(f">> {args.sql}")
-
+    # print(f">> {args.sql}")
     schema, table = extract_schema_table(args.sql)
 
-    print(f">> will query {schema}.{table}")
-    print()
+    # print(f">> will query {schema}.{table}")
+    # print()
 
     excl_cols = ['id']
     excl_idx = []
