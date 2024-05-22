@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export HOMEBREW_NO_AUTO_UPDATE=1
-export MAVEN_OPTS="-Xmx1000m"
+export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
@@ -329,7 +329,7 @@ function mcp() {
         echored ">>> pom.xml is not found, aborted"
     else
         echogreen ">>> found $pom"
-        mvn clean compile -T 1C -o -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -f $pom -DadditionalJOption=-Xdoclint:none -DskipTests
+        mvn compile -T 1C -o -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -f $pom -DadditionalJOption=-Xdoclint:none -DskipTests
     fi
 }
 
