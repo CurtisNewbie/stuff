@@ -318,7 +318,7 @@ function mcpt() {
         echored ">>> pom.xml is not found, aborted"
     else
         echogreen ">>> found $pom"
-        mvn -f "$pom" -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
+        mvn -f "$pom" -T 1C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none test-compile
     fi
 }
 
@@ -328,23 +328,23 @@ function mcp() {
         echored ">>> pom.xml is not found, aborted"
     else
         echogreen ">>> found $pom"
-        mvn compile -T 0.5C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
+        mvn compile -T 1C -o -Dmaven.test.skip=true -f $pom  -DadditionalJOption=-Xdoclint:none
     fi
 }
 
 function mdeploy() {
     if [ $# -gt 0 ]; then
-        mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
+        mvn -T 1C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
     else
-        mvn -T 0.5C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn -T 1C deploy -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 }
 
 function minst() {
     if [ $# -gt 0 ]; then
-        mvn install -N && mvn clean install -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
+        mvn install -N && mvn clean install -T 1C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -pl "$@"
     else
-        mvn clean install -T 0.5C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
+        mvn clean install -T 1C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none
     fi
 }
 
@@ -354,7 +354,7 @@ function mtest() {
         echored ">>> pom.xml is not found, aborted"
     else
         echogreen ">>> found $pom"
-        mvn test -T 0.5C -f $pom
+        mvn test -T 1C -f $pom
     fi
 }
 
@@ -1130,7 +1130,7 @@ function springbootrun() {
     fi
 
     mvn install -N -q && echo "Installed root pom" \
-    && mvn install -T 0.5C -Dmaven.test.skip=true -q && echo "Installed modules" \
+    && mvn install -T 1C -Dmaven.test.skip=true -q && echo "Installed modules" \
         && ( \
             cd "$app" && echo "Running mvn spring-boot:run at $app" \
                 && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xmx400m" \
