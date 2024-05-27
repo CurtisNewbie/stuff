@@ -4,6 +4,7 @@
 :set smartcase
 :set expandtab
 :set number
+:set relativenumber
 :syntax enable
 
 " :set autoindent
