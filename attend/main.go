@@ -99,21 +99,21 @@ func main() {
 	s := string(buf)
 	lines := strings.Split(s, "\n")
 
-	// 2024-05-01 00:00 - 00:00
-	// [2024-05-01,00:00,-,00:00]
-	trs := make([]TimeRange, 0, 5)
+	date := "2024-01-01" // doesn't matter
 
+	// 00:00 - 00:00
+	trs := make([]TimeRange, 0, 5)
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l == "" {
 			continue
 		}
 		tkn := strings.Split(l, " ")
-		if len(tkn) < 4 {
+		if len(tkn) < 3 {
 			fmt.Printf("Error - Illegal format: %s\n", l)
 			continue
 		}
-		tr, err := NewTimeRange(tkn[0], tkn[1], tkn[3])
+		tr, err := NewTimeRange(date, tkn[0], tkn[2])
 		if err != nil {
 			panic(err)
 		}
@@ -123,10 +123,15 @@ func main() {
 	total := float64(0)
 	for _, tr := range trs {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*prec)) / prec
-		fmt.Printf("%s [%v -> %v] - %.2fh (diff %.2fm)\n", tr.date, tr.starts, tr.ends, h, float64(h*60)-float64(8*60))
+		fmt.Printf("%v - %v: %.2fh (diff %.2fm)\n", tr.starts, tr.ends, h, float64(h*60)-float64(8*60))
 		total += h
 	}
 
 	remain := 40 - total
-	fmt.Printf("total: %.2fh, need: %.2fh (extra %.2fh per day)\n", total, remain, remain-16)
+	wdh := float64((5 - len(trs)) * 8)
+	extPerDay := remain - wdh
+	if extPerDay < 0 {
+		extPerDay = 0
+	}
+	fmt.Printf("total: %.2fh, need: %.2fh (%.1fm) (extra %.2fh per day)\n", total, remain, remain*60, extPerDay)
 }

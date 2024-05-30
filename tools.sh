@@ -1476,6 +1476,7 @@ function gen_graph() {
 function installbin() {
     mv $1 $LOC_BIN && echo "Moved $1 to $LOC_BIN/$1"
 }
+export -f installbin
 
 function par() {
     cmd="${@:2}"
