@@ -92,6 +92,12 @@ func main() {
 	}
 
 	s := string(buf)
+	seg := strings.Split(s, "---")
+	if len(seg) < 1 {
+		return
+	}
+	s = seg[len(seg)-1]
+
 	lines := strings.Split(s, "\n")
 
 	date := "2024-01-01" // doesn't matter
