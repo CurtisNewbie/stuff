@@ -129,15 +129,19 @@ func main() {
 	}
 
 	remain := 40 - total
+	if remain < 0 {
+		remain = 0
+	}
+
 	if len(trs) < 5 {
 		wdh := float64((5 - len(trs)) * 8)
 		extPerDay := remain - wdh
 		if extPerDay < 0 {
 			extPerDay = 0
 		}
-		fmt.Printf("total: %.2fh, need: %.2fh (%.1fm) (extra %.2fh per day)\n", total, remain, remain*60, extPerDay)
+		fmt.Printf("\ntotal: %.2fh, need: %.2fh (%.1fm) (extra %.2fh per day)\n", total, remain, remain*60, extPerDay)
 	} else {
-		fmt.Printf("total: %.2fh, need: %.2fh (%.1fm)\n", total, remain, remain*60)
+		fmt.Printf("\ntotal: %.2fh, need: %.2fh (%.1fm)\n", total, remain, remain*60)
 	}
 	fmt.Println()
 }
