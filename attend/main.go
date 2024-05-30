@@ -8,14 +8,12 @@ import (
 	"time"
 )
 
-var (
-	DebugFlag = flag.Bool("debug", false, "Enable debug log")
-	FileFlag  = flag.String("file", "", "input file path")
+const (
+	precision = 100000
 )
 
 var (
-	ConfByt = []byte(`
-`)
+	FileFlag = flag.String("file", "", "input file path")
 )
 
 type TimeRange struct {
@@ -79,10 +77,6 @@ func NewTimeRange(date string, start string, end string) (TimeRange, error) {
 	return tr, nil
 }
 
-const (
-	prec = 100000
-)
-
 func main() {
 	flag.Parse()
 
@@ -123,7 +117,7 @@ func main() {
 
 	total := float64(0)
 	for _, tr := range trs {
-		h := float64(int(float64(tr.Dur())/float64(time.Hour)*prec)) / prec
+		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		fmt.Printf("%v - %v: %.2fh (diff %.2fm)\n", tr.starts, tr.ends, h, float64(h*60)-float64(8*60))
 		total += h
 	}
