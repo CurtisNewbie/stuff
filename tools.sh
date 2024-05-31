@@ -1512,3 +1512,6 @@ function kill_scim() {
 function newng() {
   ng new ng-chill --no-standalone --routing --ssr=false
 }
+
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+export -f urldecode
