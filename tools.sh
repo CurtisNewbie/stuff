@@ -1463,6 +1463,8 @@ function conn_pprof() {
 }
 
 function benchmark_pprof() {
+    # $1 - test name, %2 - path to pkg
+    # e.g., benchmark_pprof BenchmarkError ./miso/
     go test -bench $1 -run $1 $2 -v -count=1 -memprofile profile.out && go tool pprof -http=: profile.out
 }
 
