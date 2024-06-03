@@ -15,7 +15,7 @@ cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 trash_can="$HOME/trash"
 
-miso_ver="v0.0.33-beta.3"
+miso_ver="v0.0.33"
 gc_ver=""
 
 [ -z "$STUFF" ] && STUFF="$HOME/stuff"
@@ -1368,11 +1368,12 @@ function upgrade_all() {
         return 1
     fi
 
-    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    # l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    l="vfm mini-fstore user-vault gatekeeper logbot"
     for r in $l;
     do
         echogreen ">>> $r"
-        (cd $GIT_PATH/$r; git switch dev && upgrade && git push)
+        (cd $GIT_PATH/$r; upgrade && git push)
         printf "\n"
     done
 }
