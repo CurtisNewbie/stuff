@@ -1385,11 +1385,12 @@ function sync_all() {
         return 1
     fi
 
-    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    # l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    l="vfm mini-fstore user-vault event-pump gatekeeper logbot"
     for r in $l;
     do
         echogreen ">>> $r"
-        (cd $GIT_PATH/$r; git switch main && git fetch && git merge && git switch dev && git merge && git merge main)
+        (cd $GIT_PATH/$r; git switch main && git fetch && git merge)
         printf "\n"
     done
 }
