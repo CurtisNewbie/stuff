@@ -30,7 +30,7 @@ func (t *TimeRange) _withEnd(s string) error {
 		return err
 	}
 	t.end = tt
-	t.ends = s
+	t.ends = tt.Format("15:04")
 	return nil
 }
 
@@ -40,12 +40,18 @@ func (t *TimeRange) _withStart(s string) error {
 		return err
 	}
 	t.start = tt
-	t.starts = s
+	t.starts = tt.Format("15:04")
 	return nil
 }
 
 func (t *TimeRange) _parseTime(s string) (time.Time, error) {
-	return time.Parse("2006-01-02 15:04", fmt.Sprintf("%s %s", t.date, s))
+	s = strings.TrimSpace(s)
+	tt, err := time.Parse("2006-01-02 15:04", fmt.Sprintf("%s %s", t.date, s))
+	if err != nil {
+		tt, err = time.Parse("2006-01-02 1504", fmt.Sprintf("%s %s", t.date, s))
+		return tt, err
+	}
+	return tt, nil
 }
 
 func (t *TimeRange) Dur() time.Duration {
@@ -109,39 +115,42 @@ func main() {
 		if l == "" {
 			continue
 		}
-		tkn := strings.Split(l, " ")
-		if len(tkn) < 3 {
+		if strings.HasPrefix(l, "#") {
+			continue
+		}
+		tkn := strings.Split(l, "-")
+		if len(tkn) < 2 {
 			fmt.Printf("Error - Illegal format: %s\n", l)
 			continue
 		}
-		tr, err := NewTimeRange(date, tkn[0], tkn[2])
+		tr, err := NewTimeRange(date, tkn[0], tkn[1])
 		if err != nil {
 			panic(err)
 		}
 		trs = append(trs, tr)
 	}
 
+	j := len(trs) % 5
+	dec := j > 0
+	i := 0
 	total := float64(0)
 	for _, tr := range trs {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		fmt.Printf("%v - %v: %.2fh (diff %.2fm)\n", tr.starts, tr.ends, h, float64(h*60)-float64(8*60))
 		total += h
+		i += 1
+		j--
+		if (dec && j == 0) || i == 5 {
+			fmt.Println("")
+			i = 0
+		}
 	}
 
-	remain := 40 - total
+	remain := float64(len(trs)*8) - total
 	if remain < 0 {
 		remain = 0
 	}
 
-	if len(trs) < 5 {
-		wdh := float64((5 - len(trs)) * 8)
-		extPerDay := remain - wdh
-		if extPerDay < 0 {
-			extPerDay = 0
-		}
-		fmt.Printf("\ntotal: %.2fh, need: %.2fh (%.1fm) (extra %.2fh per day)\n", total, remain, remain*60, extPerDay)
-	} else {
-		fmt.Printf("\ntotal: %.2fh, need: %.2fh (%.1fm)\n", total, remain, remain*60)
-	}
+	fmt.Printf("\ntotal: %.2fh (for %d days), need: %.2fh (%.1fm)\n", total, len(trs), remain, remain*60)
 	fmt.Println()
 }
