@@ -1520,3 +1520,8 @@ function newng() {
 
 function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 export -f urldecode
+
+function ocr() {
+    tesseract "$1" - --psm 3 quiet
+}
+export -f ocr
