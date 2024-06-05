@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/curtisnewbie/miso/miso"
 )
 
 const (
@@ -46,12 +48,12 @@ func (t *TimeRange) _withStart(s string) error {
 
 func (t *TimeRange) _parseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
-	tt, err := time.Parse("2006-01-02 15:04", fmt.Sprintf("%s %s", t.date, s))
-	if err != nil {
-		tt, err = time.Parse("2006-01-02 1504", fmt.Sprintf("%s %s", t.date, s))
-		return tt, err
-	}
-	return tt, nil
+	es := fmt.Sprintf("%s %s", t.date, s)
+	return miso.FuzzParseTime([]string{
+		"2006-01-02 15:04",
+		"2006-01-02 1504",
+		"2006-01-02 15 04",
+	}, es)
 }
 
 func (t *TimeRange) Dur() time.Duration {
@@ -136,7 +138,12 @@ func main() {
 	total := float64(0)
 	for _, tr := range trs {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
-		fmt.Printf("%v - %v: %.2fh (diff %.2fm)\n", tr.starts, tr.ends, h, float64(h*60)-float64(8*60))
+		diff := float64(h*60) - float64(8*60)
+		start := miso.ANSIGreen
+		if diff-0 <= 0.000001 {
+			start = miso.ANSIRed
+		}
+		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", tr.starts, tr.ends, h, start, diff, miso.ANSIReset)
 		total += h
 		i += 1
 		j--
