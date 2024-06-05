@@ -1522,6 +1522,7 @@ function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 export -f urldecode
 
 function ocr() {
-    tesseract "$1" - --psm 3 quiet
+    # brew update && brew install tesseract-lang
+    tesseract "$1" - -l "chi_sim+eng" --psm 3 quiet
 }
 export -f ocr
