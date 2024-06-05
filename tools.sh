@@ -2,6 +2,7 @@
 
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+export CGO_ENABLED=1
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
