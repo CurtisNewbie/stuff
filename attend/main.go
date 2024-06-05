@@ -1,17 +1,21 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/curtisnewbie/miso/miso"
 )
 
 const (
 	precision = 100000
+
+	ANSIRed   = "\033[1;31m"
+	ANSIGreen = "\033[1;32m"
+	ANSICyan  = "\033[1;36m"
+	ANSIReset = "\033[0m"
 )
 
 var (
@@ -49,7 +53,7 @@ func (t *TimeRange) _withStart(s string) error {
 func (t *TimeRange) _parseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
 	es := fmt.Sprintf("%s %s", t.date, s)
-	return miso.FuzzParseTime([]string{
+	return FuzzParseTime([]string{
 		"2006-01-02 15:04",
 		"2006-01-02 1504",
 		"2006-01-02 15 04",
@@ -139,11 +143,11 @@ func main() {
 	for _, tr := range trs {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		diff := float64(h*60) - float64(8*60)
-		start := miso.ANSIGreen
+		start := ANSIGreen
 		if diff-0 <= 0.000001 {
-			start = miso.ANSIRed
+			start = ANSIRed
 		}
-		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", tr.starts, tr.ends, h, start, diff, miso.ANSIReset)
+		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", tr.starts, tr.ends, h, start, diff, ANSIReset)
 		total += h
 		i += 1
 		j--
@@ -160,4 +164,20 @@ func main() {
 
 	fmt.Printf("\ntotal: %.2fh (for %d days), need: %.2fh (%.1fm)\n", total, len(trs), remain, remain*60)
 	fmt.Println()
+}
+
+func FuzzParseTime(formats []string, value string) (time.Time, error) {
+	if len(formats) < 1 {
+		return time.Time{}, errors.New("formats is empty")
+	}
+
+	var t time.Time
+	var err error
+	for _, f := range formats {
+		t, err = time.Parse(f, value)
+		if err == nil {
+			return t, nil
+		}
+	}
+	return t, err
 }
