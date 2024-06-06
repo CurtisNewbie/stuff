@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/curtisnewbie/miso/miso"
+	"github.com/spf13/cast"
 )
 
 const (
@@ -219,10 +220,22 @@ func main() {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		diff := float64(h*60) - float64(8*60)
 		start := ANSIGreen
-		if diff-0 <= 0.000001 {
+		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
-		fmt.Printf("%v (%v) - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
+
+		// 10.70 -> 1070 -> 70
+		hr := h - float64(int(h))
+		hrf := float64(int(hr*precision)) / precision
+		m := int(hrf * 60)
+		// fmt.Printf("hr: %v, hrf: %v, m: %v\n", hr, hrf, m)
+
+		hs := cast.ToString(int(h)) + "h"
+		if m > 0 {
+			hs += cast.ToString(m)
+		}
+
+		fmt.Printf("%v (%v) - %v  %s  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), hs, start, diff, ANSIReset)
 		total += h
 		currMonthCnt += 1
 		subtotal += h

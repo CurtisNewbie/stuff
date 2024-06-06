@@ -49,13 +49,12 @@ func (t *TimeRange) Dur() time.Duration {
 	lstart, _ := ParseTime(t.date + " 18:30:00")
 	lend, _ := ParseTime(t.date + " 19:00:00")
 
-	if t.end.After(lend) {
+	if !t.end.Before(lend) {
 		return lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
 	}
 
 	if t.end.Before(lend) {
-		return lstart.Sub(t.start) - (90 * time.Minute)
-
+		return t.end.Sub(t.start) - (90 * time.Minute)
 	}
 
 	return t.end.Sub(t.start) - (90 * time.Minute)
