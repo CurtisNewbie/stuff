@@ -195,7 +195,27 @@ func main() {
 	fmt.Println()
 
 	total := float64(0)
+	subtotal := float64(0)
+
+	currMonth := ""
+	currMonthCnt := 0
+
 	for _, tr := range trs {
+		month := FormatMoth(tr.start)
+		if currMonth == "" {
+			currMonth = month
+		} else if currMonth != month {
+			remain := float64(currMonthCnt*8) - subtotal
+			if remain < 0 {
+				remain = 0
+			}
+			fmt.Printf("\n%s subtotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, subtotal, currMonthCnt, currMonthCnt*8, remain, remain*60)
+			fmt.Println()
+			currMonth = month
+			currMonthCnt = 0
+			subtotal = 0
+		}
+
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		diff := float64(h*60) - float64(8*60)
 		start := ANSIGreen
@@ -204,15 +224,28 @@ func main() {
 		}
 		fmt.Printf("%v (%v) - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
 		total += h
+		currMonthCnt += 1
+		subtotal += h
 	}
 
-	remain := float64(len(trs)*8) - total
-	if remain < 0 {
-		remain = 0
+	// subtotal for last month
+	{
+		remain := float64(currMonthCnt*8) - subtotal
+		if remain < 0 {
+			remain = 0
+		}
+		fmt.Printf("\n%s subtotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, subtotal, currMonthCnt, currMonthCnt*8, remain, remain*60)
 	}
 
-	fmt.Printf("\ntotal: %.2fh (for %d days), need: %.2fh (%.1fm)\n", total, len(trs), remain, remain*60)
-	fmt.Println()
+	// total
+	{
+		remain := float64(len(trs)*8) - total
+		if remain < 0 {
+			remain = 0
+		}
+		fmt.Printf("\ntotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", total, len(trs), len(trs)*8, remain, remain*60)
+		fmt.Println()
+	}
 
 	for k := range cache {
 		if !cacheHit.Has(k) {

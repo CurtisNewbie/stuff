@@ -15,12 +15,20 @@ func ParseTime(s string) (time.Time, error) {
 		"2006-01-02 15:0405",
 		"2006-01-02 1504:05",
 		"2006-01-02 150405",
+		"2006-01-0215:04:05",
+		"2006-01-0215:0405",
+		"2006-01-021504:05",
+		"2006-01-02150405",
 		"2006-01-02",
 	}, s)
 }
 
 func FormatTime(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
+}
+
+func FormatMoth(t time.Time) string {
+	return t.Format("2006/01")
 }
 
 func FormatDate(t time.Time) string {
