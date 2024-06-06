@@ -3,12 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/curtisnewbie/miso/miso"
@@ -28,6 +30,16 @@ var (
 	AfterFlag = flag.String("after", "", "after date")
 )
 
+type CachedTimeRange struct {
+	Start string
+	End   string
+}
+
+var (
+	cache   map[string]string
+	cacheMu sync.Mutex
+)
+
 func main() {
 	flag.Parse()
 
@@ -42,9 +54,26 @@ func main() {
 		log.Fatal(err)
 	}
 
+	const cacheFile = "/tmp/attend_cache.json"
+	{
+		cf, err := miso.ReadWriteFile(cacheFile)
+		if err == nil {
+			buf, err := io.ReadAll(cf)
+			cf.Close()
+
+			if err == nil {
+				miso.ParseJson(buf, &cache)
+			}
+			if cache == nil {
+				cache = map[string]string{}
+			}
+		}
+	}
+
 	now := time.Now()
 	pool := miso.NewAsyncPool(500, 10)
 	ocrFutures := miso.NewAwaitFutures[string](pool)
+	cacheHit := miso.NewSet[string]()
 	for _, f := range files {
 		inf, err := f.Info()
 		if err != nil {
@@ -56,8 +85,25 @@ func main() {
 		}
 
 		fpath := path.Join(*DirFlag, f.Name())
+		cacheKey := fpath + "_" + inf.ModTime().String()
+		cacheHit.Add(cacheKey)
+
 		ocrFutures.SubmitAsync(func() (string, error) {
-			return Ocr(fpath)
+
+			cacheMu.Lock()
+			if v, ok := cache[cacheKey]; ok {
+				cacheMu.Unlock()
+				return v, nil
+			}
+			cacheMu.Unlock()
+
+			s, err := Ocr(fpath)
+			if err == nil {
+				cacheMu.Lock()
+				cache[cacheKey] = s
+				cacheMu.Unlock()
+			}
+			return s, err
 		})
 	}
 
@@ -167,4 +213,22 @@ func main() {
 
 	fmt.Printf("\ntotal: %.2fh (for %d days), need: %.2fh (%.1fm)\n", total, len(trs), remain, remain*60)
 	fmt.Println()
+
+	for k := range cache {
+		if !cacheHit.Has(k) {
+			delete(cache, k)
+		}
+	}
+
+	cf, err := miso.ReadWriteFile(cacheFile)
+	if err == nil {
+		defer cf.Close()
+		buf, err := miso.WriteJson(cache)
+		if err == nil {
+			_, err = cf.Write(buf)
+			if err != nil {
+				fmt.Printf("failed to flush cache, %v\n", err)
+			}
+		}
+	}
 }
