@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/curtisnewbie/miso/miso"
 )
 
 const (
@@ -37,11 +39,32 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fileContent := make([]string, 0, len(files))
+
+	now := time.Now()
+	pool := miso.NewAsyncPool(500, 10)
+	ocrFutures := miso.NewAwaitFutures[string](pool)
 	for _, f := range files {
-		s, err := Ocr(path.Join(*DirFlag, f.Name()))
+		inf, err := f.Info()
 		if err != nil {
-			panic(fmt.Errorf("failed to read file: %v, %v", f.Name(), err))
+			panic(fmt.Errorf("failed to read file info: %v, %v", f.Name(), err))
+		}
+
+		if inf.ModTime().Before(now.Add(-time.Hour * 24 * 14)) { // 14 days ago
+			continue
+		}
+
+		fpath := path.Join(*DirFlag, f.Name())
+		ocrFutures.SubmitAsync(func() (string, error) {
+			return Ocr(fpath)
+		})
+	}
+
+	fileContent := make([]string, 0, len(files))
+	futures := ocrFutures.Await()
+	for _, fu := range futures {
+		s, err := fu.Get()
+		if err != nil {
+			panic(err)
 		}
 		fileContent = append(fileContent, s)
 	}

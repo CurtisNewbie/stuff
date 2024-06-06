@@ -1,30 +1,15 @@
 package main
 
 import (
-	"errors"
 	"strings"
 	"time"
+
+	"github.com/curtisnewbie/miso/miso"
 )
-
-func FuzzParseTime(formats []string, value string) (time.Time, error) {
-	if len(formats) < 1 {
-		return time.Time{}, errors.New("formats is empty")
-	}
-
-	var t time.Time
-	var err error
-	for _, f := range formats {
-		t, err = time.Parse(f, value)
-		if err == nil {
-			return t, nil
-		}
-	}
-	return t, err
-}
 
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
-	return FuzzParseTime([]string{
+	return miso.FuzzParseTime([]string{
 		"2006-01-02 15:04:05",
 		"2006-01-02 150405",
 	}, s)
