@@ -224,12 +224,12 @@ func main() {
 
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
 		diff := float64(h*60) - float64(8*60)
-		start := ANSIGreen
+		start := ANSIGreen + "+"
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
 
-		fmt.Printf("%v (%v) - %v  %s  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), HourMin(h), start, diff, ANSIReset)
+		fmt.Printf("%v (%v) - %v  %-8s %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), HourMin(h), start, diff, ANSIReset)
 		total += h
 		currMonthCnt += 1
 		subtotal += h
