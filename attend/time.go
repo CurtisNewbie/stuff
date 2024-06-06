@@ -75,7 +75,7 @@ func HourMin(h float64) string {
 	m := int(hrf * 60)
 	hs := cast.ToString(int(h)) + "h"
 	if m > 0 {
-		hs += cast.ToString(m) + "m"
+		hs += " " + cast.ToString(m) + "m"
 	}
 	return hs
 }

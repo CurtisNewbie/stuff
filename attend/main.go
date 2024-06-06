@@ -74,8 +74,6 @@ func main() {
 	pool := miso.NewAsyncPool(500, 10)
 	ocrFutures := miso.NewAwaitFutures[string](pool)
 
-	// cacheHit := miso.NewSet[string]()
-
 	for _, f := range files {
 		inf, err := f.Info()
 		if err != nil {
@@ -88,8 +86,6 @@ func main() {
 
 		fpath := path.Join(*DirFlag, f.Name())
 		cacheKey := fpath + "_" + inf.ModTime().String()
-
-		// cacheHit.Add(cacheKey)
 
 		ocrFutures.SubmitAsync(func() (string, error) {
 
@@ -211,11 +207,12 @@ func main() {
 		if currMonth == "" {
 			currMonth = month
 		} else if currMonth != month {
-			remain := float64(currMonthCnt*8) - subtotal
-			if remain < 0 {
-				remain = 0
+			diff := subtotal - float64(currMonthCnt*8)
+			start := ANSIGreen + "+"
+			if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
+				start = ANSIRed
 			}
-			fmt.Printf("\n%s subtotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, subtotal, currMonthCnt, currMonthCnt*8, remain, remain*60)
+			fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
 			fmt.Println()
 			currMonth = month
 			currMonthCnt = 0
@@ -237,28 +234,24 @@ func main() {
 
 	// subtotal for last month
 	{
-		remain := float64(currMonthCnt*8) - subtotal
-		if remain < 0 {
-			remain = 0
+		diff := subtotal - float64(currMonthCnt*8)
+		start := ANSIGreen + "+"
+		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
+			start = ANSIRed
 		}
-		fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, remain, remain*60)
+		fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
 	}
 
 	// total
 	{
-		remain := float64(len(trs)*8) - total
-		if remain < 0 {
-			remain = 0
+		diff := total - float64(len(trs)*8)
+		start := ANSIGreen + "+"
+		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
+			start = ANSIRed
 		}
-		fmt.Printf("\ntotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", total, len(trs), len(trs)*8, remain, remain*60)
+		fmt.Printf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s%s\n", total, len(trs), len(trs)*8, start, HourMin(diff), ANSIReset)
 		fmt.Println()
 	}
-
-	// for k := range cache {
-	// 	if !cacheHit.Has(k) {
-	// 		delete(cache, k)
-	// 	}
-	// }
 
 	cf, err := miso.ReadWriteFile(cacheFile)
 	if err == nil {
