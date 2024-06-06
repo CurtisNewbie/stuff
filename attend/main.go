@@ -1,10 +1,12 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"path"
+	"sort"
 	"strings"
 	"time"
 )
@@ -19,122 +21,90 @@ const (
 )
 
 var (
-	FileFlag = flag.String("file", "", "input file path")
+	DirFlag = flag.String("dir", "", "input file dir")
 )
-
-type TimeRange struct {
-	date   string
-	start  time.Time
-	starts string
-	end    time.Time
-	ends   string
-}
-
-func (t *TimeRange) _withEnd(s string) error {
-	tt, err := t._parseTime(s)
-	if err != nil {
-		return err
-	}
-	t.end = tt
-	t.ends = tt.Format("15:04")
-	return nil
-}
-
-func (t *TimeRange) _withStart(s string) error {
-	tt, err := t._parseTime(s)
-	if err != nil {
-		return err
-	}
-	t.start = tt
-	t.starts = tt.Format("15:04")
-	return nil
-}
-
-func (t *TimeRange) _parseTime(s string) (time.Time, error) {
-	s = strings.TrimSpace(s)
-	es := fmt.Sprintf("%s %s", t.date, s)
-	return FuzzParseTime([]string{
-		"2006-01-02 15:04",
-		"2006-01-02 1504",
-		"2006-01-02 15 04",
-	}, es)
-}
-
-func (t *TimeRange) Dur() time.Duration {
-	lstart, _ := t._parseTime("18:30")
-	lend, _ := t._parseTime("19:00")
-
-	if t.end.After(lend) {
-		return lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
-	}
-
-	if t.end.Before(lend) {
-		return lstart.Sub(t.start) - (90 * time.Minute)
-
-	}
-
-	return t.end.Sub(t.start) - (90 * time.Minute)
-
-}
-
-func NewTimeRange(date string, start string, end string) (TimeRange, error) {
-	tr := TimeRange{}
-	tr.date = date
-	if err := tr._withStart(start); err != nil {
-		return tr, err
-	}
-	if err := tr._withEnd(end); err != nil {
-		return tr, err
-	}
-	return tr, nil
-}
 
 func main() {
 	flag.Parse()
 
-	if *FileFlag == "" {
+	if *DirFlag == "" {
 		flag.PrintDefaults()
 		return
 	}
-
 	fmt.Println()
-	buf, err := os.ReadFile(*FileFlag)
+
+	files, err := os.ReadDir(*DirFlag)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-
-	s := string(buf)
-	seg := strings.Split(s, "---")
-	if len(seg) < 1 {
-		return
-	}
-	s = seg[len(seg)-1]
-
-	lines := strings.Split(s, "\n")
-
-	date := "2024-01-01" // doesn't matter
-
-	// 00:00 - 00:00
-	trs := make([]TimeRange, 0, 5)
-	for _, l := range lines {
-		l = strings.TrimSpace(l)
-		if l == "" {
-			continue
-		}
-		if strings.HasPrefix(l, "#") {
-			continue
-		}
-		tkn := strings.Split(l, "-")
-		if len(tkn) < 2 {
-			fmt.Printf("Error - Illegal format: %s\n", l)
-			continue
-		}
-		tr, err := NewTimeRange(date, tkn[0], tkn[1])
+	fileContent := make([]string, 0, len(files))
+	for _, f := range files {
+		s, err := Ocr(path.Join(*DirFlag, f.Name()))
 		if err != nil {
-			panic(err)
+			panic(fmt.Errorf("failed to read file: %v, %v", f.Name(), err))
 		}
+		fileContent = append(fileContent, s)
+	}
+
+	// 打卡时间: 2024-06-06 09:11:46
+	dateMap := map[string][]time.Time{}
+
+	for _, s := range fileContent {
+		lines := strings.Split(s, "\n")
+
+		for _, l := range lines {
+			l = strings.TrimSpace(l)
+			if l == "" {
+				continue
+			}
+
+			ds, ok := strings.CutPrefix(l, "打卡时间")
+			if !ok {
+				continue
+			}
+			ds, _ = strings.CutPrefix(ds, ":")
+			ds = strings.TrimSpace(ds)
+			parsedTime, err := ParseTime(ds)
+			if err != nil {
+				fmt.Printf("error - failed to parse time: %v, %v\n", ds, err)
+				continue
+			}
+
+			date := FormatDate(parsedTime)
+			if prev, ok := dateMap[date]; ok {
+				duplicate := false
+				for _, v := range prev {
+					if v.Equal(parsedTime) {
+						duplicate = true
+						break
+					}
+				}
+				if !duplicate {
+					dateMap[date] = append(prev, parsedTime)
+				}
+			} else {
+				dateMap[date] = []time.Time{parsedTime}
+			}
+		}
+	}
+	// fmt.Printf("dataMap: %+v\n", dateMap)
+
+	trs := make([]TimeRange, 0, len(dateMap)/2)
+	for k, v := range dateMap {
+		if len(v) < 2 {
+			fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
+			continue
+		}
+		var st time.Time = v[0]
+		var ed time.Time = v[1]
+		if st.After(ed) {
+			st, ed = ed, st
+		}
+		tr := NewTimeRange(k, st, ed)
 		trs = append(trs, tr)
 	}
+	sort.Slice(trs, func(i, j int) bool { return trs[i].start.Before(trs[j].start) })
+	fmt.Println()
 
 	j := len(trs) % 5
 	dec := j > 0
@@ -147,7 +117,7 @@ func main() {
 		if diff-0 <= 0.000001 {
 			start = ANSIRed
 		}
-		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", tr.starts, tr.ends, h, start, diff, ANSIReset)
+		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
 		total += h
 		i += 1
 		j--
@@ -164,20 +134,4 @@ func main() {
 
 	fmt.Printf("\ntotal: %.2fh (for %d days), need: %.2fh (%.1fm)\n", total, len(trs), remain, remain*60)
 	fmt.Println()
-}
-
-func FuzzParseTime(formats []string, value string) (time.Time, error) {
-	if len(formats) < 1 {
-		return time.Time{}, errors.New("formats is empty")
-	}
-
-	var t time.Time
-	var err error
-	for _, f := range formats {
-		t, err = time.Parse(f, value)
-		if err == nil {
-			return t, nil
-		}
-	}
-	return t, err
 }
