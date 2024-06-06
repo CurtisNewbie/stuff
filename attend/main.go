@@ -24,7 +24,8 @@ const (
 )
 
 var (
-	DirFlag = flag.String("dir", "", "input file dir")
+	DirFlag   = flag.String("dir", "", "input file dir")
+	AfterFlag = flag.String("after", "", "after date")
 )
 
 func main() {
@@ -70,9 +71,18 @@ func main() {
 		fileContent = append(fileContent, s)
 	}
 
+	var aft *time.Time = nil
+	if *AfterFlag != "" {
+		v, err := ParseTime(*AfterFlag)
+		if err != nil {
+			panic(err)
+		}
+		aft = &v
+	}
+
 	// 打卡时间: 2024-06-06 09:11:46
 	dateMap := map[string][]time.Time{}
-	pat := regexp.MustCompile(`.*打卡时间: *(\d{4}-\d{2}-\d{2} *\d{2}:\d{2}:\d{2}).*`)
+	pat := regexp.MustCompile(`.*打卡时间: *(\d{4}-\d{2}-\d{2} *\d{2}:?\d{2}:?\d{2}).*`)
 
 	for _, s := range fileContent {
 		lines := strings.Split(s, "\n")
@@ -85,13 +95,20 @@ func main() {
 
 			res := pat.FindStringSubmatch(l)
 			if len(res) < 1 {
+				if strings.Contains(l, "打卡时间") {
+					fmt.Printf("line invalid: %s\n", l)
+				}
 				continue
 			}
 
 			ds := strings.TrimSpace(res[1])
 			parsedTime, err := ParseTime(ds)
 			if err != nil {
-				fmt.Printf("error - failed to parse time: %v, %v\n", ds, err)
+				fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
+				continue
+			}
+
+			if aft != nil && parsedTime.Before(*aft) {
 				continue
 			}
 
@@ -131,9 +148,6 @@ func main() {
 	sort.Slice(trs, func(i, j int) bool { return trs[i].start.Before(trs[j].start) })
 	fmt.Println()
 
-	j := len(trs) % 5
-	dec := j > 0
-	i := 0
 	total := float64(0)
 	for _, tr := range trs {
 		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
@@ -144,12 +158,6 @@ func main() {
 		}
 		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
 		total += h
-		i += 1
-		j--
-		if (dec && j == 0) || i == 5 {
-			fmt.Println("")
-			i = 0
-		}
 	}
 
 	remain := float64(len(trs)*8) - total
