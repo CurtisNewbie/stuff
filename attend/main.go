@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -71,6 +72,7 @@ func main() {
 
 	// 打卡时间: 2024-06-06 09:11:46
 	dateMap := map[string][]time.Time{}
+	pat := regexp.MustCompile(`.*打卡时间: *(\d{4}-\d{2}-\d{2} *\d{2}:\d{2}:\d{2}).*`)
 
 	for _, s := range fileContent {
 		lines := strings.Split(s, "\n")
@@ -81,12 +83,12 @@ func main() {
 				continue
 			}
 
-			ds, ok := strings.CutPrefix(l, "打卡时间")
-			if !ok {
+			res := pat.FindStringSubmatch(l)
+			if len(res) < 1 {
 				continue
 			}
-			ds, _ = strings.CutPrefix(ds, ":")
-			ds = strings.TrimSpace(ds)
+
+			ds := strings.TrimSpace(res[1])
 			parsedTime, err := ParseTime(ds)
 			if err != nil {
 				fmt.Printf("error - failed to parse time: %v, %v\n", ds, err)

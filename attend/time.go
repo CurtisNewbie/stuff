@@ -10,6 +10,7 @@ import (
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
 	return miso.FuzzParseTime([]string{
+		"2006-01-0215:04:05",
 		"2006-01-02 15:04:05",
 		"2006-01-02 150405",
 	}, s)
