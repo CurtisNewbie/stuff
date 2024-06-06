@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/curtisnewbie/miso/miso"
-	"github.com/spf13/cast"
 )
 
 const (
@@ -74,7 +73,9 @@ func main() {
 	now := time.Now()
 	pool := miso.NewAsyncPool(500, 10)
 	ocrFutures := miso.NewAwaitFutures[string](pool)
-	cacheHit := miso.NewSet[string]()
+
+	// cacheHit := miso.NewSet[string]()
+
 	for _, f := range files {
 		inf, err := f.Info()
 		if err != nil {
@@ -87,7 +88,8 @@ func main() {
 
 		fpath := path.Join(*DirFlag, f.Name())
 		cacheKey := fpath + "_" + inf.ModTime().String()
-		cacheHit.Add(cacheKey)
+
+		// cacheHit.Add(cacheKey)
 
 		ocrFutures.SubmitAsync(func() (string, error) {
 
@@ -103,6 +105,8 @@ func main() {
 				cacheMu.Lock()
 				cache[cacheKey] = s
 				cacheMu.Unlock()
+			} else {
+				fmt.Printf("ocr failed %v, %v\n", fpath, err)
 			}
 			return s, err
 		})
@@ -113,7 +117,8 @@ func main() {
 	for _, fu := range futures {
 		s, err := fu.Get()
 		if err != nil {
-			panic(err)
+			fmt.Printf("OCR failed, %v", err)
+			continue
 		}
 		fileContent = append(fileContent, s)
 	}
@@ -224,18 +229,7 @@ func main() {
 			start = ANSIRed
 		}
 
-		// 10.70 -> 1070 -> 70
-		hr := h - float64(int(h))
-		hrf := float64(int(hr*precision)) / precision
-		m := int(hrf * 60)
-		// fmt.Printf("hr: %v, hrf: %v, m: %v\n", hr, hrf, m)
-
-		hs := cast.ToString(int(h)) + "h"
-		if m > 0 {
-			hs += cast.ToString(m)
-		}
-
-		fmt.Printf("%v (%v) - %v  %s  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), hs, start, diff, ANSIReset)
+		fmt.Printf("%v (%v) - %v  %s  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), HourMin(h), start, diff, ANSIReset)
 		total += h
 		currMonthCnt += 1
 		subtotal += h
@@ -247,7 +241,7 @@ func main() {
 		if remain < 0 {
 			remain = 0
 		}
-		fmt.Printf("\n%s subtotal: %.2fh (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, subtotal, currMonthCnt, currMonthCnt*8, remain, remain*60)
+		fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), need: %.2fh (%.1fm)\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, remain, remain*60)
 	}
 
 	// total
@@ -260,11 +254,11 @@ func main() {
 		fmt.Println()
 	}
 
-	for k := range cache {
-		if !cacheHit.Has(k) {
-			delete(cache, k)
-		}
-	}
+	// for k := range cache {
+	// 	if !cacheHit.Has(k) {
+	// 		delete(cache, k)
+	// 	}
+	// }
 
 	cf, err := miso.ReadWriteFile(cacheFile)
 	if err == nil {

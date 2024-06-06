@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/curtisnewbie/miso/miso"
+	"github.com/spf13/cast"
 )
 
 func ParseTime(s string) (time.Time, error) {
@@ -66,4 +67,15 @@ func NewTimeRange(date string, start time.Time, end time.Time) TimeRange {
 	tr.start = start
 	tr.end = end
 	return tr
+}
+
+func HourMin(h float64) string {
+	hr := h - float64(int(h))
+	hrf := float64(int(hr*precision)) / precision
+	m := int(hrf * 60)
+	hs := cast.ToString(int(h)) + "h"
+	if m > 0 {
+		hs += cast.ToString(m) + "m"
+	}
+	return hs
 }
