@@ -202,7 +202,7 @@ func main() {
 		if diff-0 <= 0.000001 {
 			start = ANSIRed
 		}
-		fmt.Printf("%v - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
+		fmt.Printf("%v (%v) - %v  %.2fh  %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), h, start, diff, ANSIReset)
 		total += h
 	}
 

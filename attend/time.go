@@ -27,6 +27,10 @@ func FormatDate(t time.Time) string {
 	return t.Format("2006-01-02")
 }
 
+func FormatWkDay(t time.Time) string {
+	return t.Format("Mon")
+}
+
 type TimeRange struct {
 	date  string
 	start time.Time
