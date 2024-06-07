@@ -22,7 +22,7 @@ const (
 	ANSIRed   = "\033[1;31m"
 	ANSIGreen = "\033[1;32m"
 	ANSICyan  = "\033[1;36m"
-	ANSIReset = "\033[0m"
+	ANSIReset = miso.ANSIReset
 )
 
 var (
@@ -178,19 +178,28 @@ func main() {
 		}
 	}
 	// fmt.Printf("dataMap: %+v\n", dateMap)
-
 	trs := make([]TimeRange, 0, len(dateMap)/2)
 	for k, v := range dateMap {
+		var st time.Time
+		var ed time.Time
+		var guessed bool = false
 		if len(v) < 2 {
-			fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
-			continue
+			st = v[0]
+			if FormatDate(st) != FormatDate(now) {
+				fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
+				continue
+			}
+			ed = time.Date(now.Year(), now.Month(), now.Day(), 18, 30, 0, 0, time.UTC)
+			guessed = true
+		} else {
+			st = v[0]
+			ed = v[1]
 		}
-		var st time.Time = v[0]
-		var ed time.Time = v[1]
+
 		if st.After(ed) {
 			st, ed = ed, st
 		}
-		tr := NewTimeRange(k, st, ed)
+		tr := NewTimeRange(k, st, ed, guessed)
 		trs = append(trs, tr)
 	}
 	sort.Slice(trs, func(i, j int) bool { return trs[i].start.Before(trs[j].start) })
@@ -212,21 +221,30 @@ func main() {
 			if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 				start = ANSIRed
 			}
-			fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
+			fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8,
+				start, HourMin(diff), ANSIReset)
 			fmt.Println()
 			currMonth = month
 			currMonthCnt = 0
 			subtotal = 0
 		}
 
-		h := float64(int(float64(tr.Dur())/float64(time.Hour)*precision)) / precision
+		h := float64(tr.Dur()) / float64(time.Hour)
+		diffh := h - 8
 		diff := float64(h*60) - float64(8*60)
 		start := ANSIGreen + "+"
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
 
-		fmt.Printf("%v (%v) - %v  %-8s %s%.2fm%s\n", FormatTime(tr.start), FormatWkDay(tr.start), FormatTime(tr.end), HourMin(h), start, diff, ANSIReset)
+		if tr.guessed {
+			fmt.Printf("%v (%v)  %v - \033[1;36m%v\x1b[0m  %-10s %s%s%s     ---     \033[1;36mEstimated\x1b[0m\n", FormatDate(tr.start),
+				FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end), HourMin(h), start, HourMin(diffh), ANSIReset)
+		} else {
+			fmt.Printf("%v (%v)  %v - %v  %-10s %s%s%s\n", FormatDate(tr.start), FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end),
+				HourMin(h), start, HourMin(diffh), ANSIReset)
+		}
+
 		total += h
 		currMonthCnt += 1
 		subtotal += h

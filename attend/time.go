@@ -1,16 +1,17 @@
 package main
 
 import (
+	"fmt"
+	"math"
 	"strings"
 	"time"
 
 	"github.com/curtisnewbie/miso/miso"
-	"github.com/spf13/cast"
 )
 
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
-	return miso.FuzzParseTime([]string{
+	t, err := miso.FuzzParseTime([]string{
 		"2006-01-0215:04:05",
 		"2006-01-02 15:04:05",
 		"2006-01-02 15:0405",
@@ -22,6 +23,7 @@ func ParseTime(s string) (time.Time, error) {
 		"2006-01-02150405",
 		"2006-01-02",
 	}, s)
+	return t, err
 }
 
 func FormatTime(t time.Time) string {
@@ -40,10 +42,15 @@ func FormatWkDay(t time.Time) string {
 	return t.Format("Mon")
 }
 
+func FormatHms(t time.Time) string {
+	return t.Format("15:04:05")
+}
+
 type TimeRange struct {
-	date  string
-	start time.Time
-	end   time.Time
+	date    string
+	start   time.Time
+	end     time.Time
+	guessed bool
 }
 
 func (t *TimeRange) Dur() time.Duration {
@@ -61,21 +68,34 @@ func (t *TimeRange) Dur() time.Duration {
 	return t.end.Sub(t.start) - (90 * time.Minute)
 }
 
-func NewTimeRange(date string, start time.Time, end time.Time) TimeRange {
+func NewTimeRange(date string, start time.Time, end time.Time, guessed bool) TimeRange {
 	tr := TimeRange{}
 	tr.date = date
 	tr.start = start
 	tr.end = end
+	tr.guessed = guessed
 	return tr
 }
 
 func HourMin(h float64) string {
+	sb := strings.Builder{}
+	if h < 0 {
+		sb.WriteRune('-')
+	}
+	h = math.Abs(h)
 	hr := h - float64(int(h))
 	hrf := float64(int(hr*precision)) / precision
-	m := int(hrf * 60)
-	hs := cast.ToString(int(h)) + "h"
-	if m > 0 {
-		hs += " " + cast.ToString(m) + "m"
+	m := hrf * 60
+
+	ih := int(h)
+	if ih > 0 {
+		sb.WriteString(fmt.Sprintf("%dh", ih))
 	}
-	return hs
+	if m > 0.1 {
+		if sb.Len() > 1 {
+			sb.WriteRune(' ')
+		}
+		sb.WriteString(fmt.Sprintf("%.1fm", m))
+	}
+	return sb.String()
 }
