@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/curtisnewbie/miso/miso"
+	"github.com/curtisnewbie/miso/util"
 )
 
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
-	t, err := miso.FuzzParseTime([]string{
+	t, err := util.FuzzParseTime([]string{
 		"2006-01-0215:04:05",
 		"2006-01-02 15:04:05",
 		"2006-01-02 15:0405",

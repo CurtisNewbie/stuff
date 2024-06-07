@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/curtisnewbie/miso/miso"
+	"github.com/curtisnewbie/miso/util"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 	ANSIRed   = "\033[1;31m"
 	ANSIGreen = "\033[1;32m"
 	ANSICyan  = "\033[1;36m"
-	ANSIReset = miso.ANSIReset
+	ANSIReset = util.ANSIReset
 )
 
 var (
@@ -56,13 +56,13 @@ func main() {
 
 	const cacheFile = "/tmp/attend_cache.json"
 	{
-		cf, err := miso.ReadWriteFile(cacheFile)
+		cf, err := util.ReadWriteFile(cacheFile)
 		if err == nil {
 			buf, err := io.ReadAll(cf)
 			cf.Close()
 
 			if err == nil {
-				miso.ParseJson(buf, &cache)
+				util.ParseJson(buf, &cache)
 			}
 			if cache == nil {
 				cache = map[string]string{}
@@ -71,8 +71,8 @@ func main() {
 	}
 
 	now := time.Now()
-	pool := miso.NewAsyncPool(500, 10)
-	ocrFutures := miso.NewAwaitFutures[string](pool)
+	pool := util.NewAsyncPool(500, 10)
+	ocrFutures := util.NewAwaitFutures[string](pool)
 
 	for _, f := range files {
 		inf, err := f.Info()
@@ -257,7 +257,7 @@ func main() {
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
-		fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
+		util.Printlnf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
 	}
 
 	// total
@@ -267,14 +267,14 @@ func main() {
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
-		fmt.Printf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s%s\n", total, len(trs), len(trs)*8, start, HourMin(diff), ANSIReset)
+		util.Printlnf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s%s", total, len(trs), len(trs)*8, start, HourMin(diff), ANSIReset)
 		fmt.Println()
 	}
 
-	cf, err := miso.ReadWriteFile(cacheFile)
+	cf, err := util.ReadWriteFile(cacheFile)
 	if err == nil {
 		defer cf.Close()
-		buf, err := miso.WriteJson(cache)
+		buf, err := util.WriteJson(cache)
 		if err == nil {
 			_, err = cf.Write(buf)
 			if err != nil {
