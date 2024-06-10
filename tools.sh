@@ -1177,15 +1177,15 @@ function prefix_file() {
 
 
 function myddl() {
-    echo "CREATE TABLE IF NOT EXISTS ("
-    echo "    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT 'primary key',"
+    echo "create table if not exists ("
+    echo "    id bigint unsigned primary key auto_increment comment 'primary key',"
     echo ""
-    echo "    ctime TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',"
-    echo "    created_by VARCHAR(255) NOT NULL DEFAULT '' comment 'created by',"
-    echo "    utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
-    echo "    updated_by VARCHAR(255) NOT NULL DEFAULT '' comment 'updated by',"
-    echo "    deleted TINYINT(1) NOT NULL DEFAULT 0 comment 'record deleted'"
-    echo ") ENGINE=INNODB DEFAULT CHARSET="utf8mb4" COMMENT='';"
+    echo "    ctime timestamp default current_timestamp comment 'created at',"
+    echo "    created_by varchar(255) not null default '' comment 'created by',"
+    echo "    utime timestamp default current_timestamp on update current_timestamp comment 'updated at',"
+    echo "    updated_by varchar(255) not null default '' comment 'updated by',"
+    echo "    deleted tinyint(1) not null default 0 comment 'record deleted'"
+    echo ") engine=innodb default charset="utf8mb4" comment='';"
 }
 
 function copymyddl() {
