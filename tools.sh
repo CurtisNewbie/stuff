@@ -1433,6 +1433,7 @@ function startcluster() {
     (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
     (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
     (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
+    (cd $GIT_PATH/acct; go run main.go 'logging.rolling.file=./logs/acct.log' > /dev/null 2>&1 &)
 }
 
 function stopcluster() {
