@@ -1177,15 +1177,21 @@ function prefix_file() {
 
 
 function myddl() {
-    echo "CREATE TABLE `` ("
-    echo "    \`id\` bigint unsigned primary key auto_increment COMMENT 'primary key',"
     echo ""
-    echo "    \`ctime\` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',"
-    echo "    \`created_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'created by',"
-    echo "    \`utime\` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',"
-    echo "    \`updated_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'updated by',"
-    echo "    \`deleted\` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'record deleted'"
-    echo ") ENGINE=InnoDB DEFAULT CHARSET="utf8mb4" COMMENT='';"
+    text="CREATE TABLE \`$1\` (
+  \`id\` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+
+  \`created_at\` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',
+  \`created_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'created by',
+  \`updated_at\` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',
+  \`updated_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'updated by',
+  \`deleted\` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'record deleted',
+  PRIMARY KEY (\`id\`)
+) ENGINE=InnoDB DEFAULT CHARSET="utf8mb4" COMMENT='$2';
+    "
+    echo "$text"
+    echo "$text" | pbcopy
+    echogreen ">>> copied to clipboard..."
 }
 
 function copymyddl() {
