@@ -1,5 +1,5 @@
-github.com/curtisnewbie/miso v0.1.0-beta.3.0.20240607034551-710807670740 h1:EQ0nSTCvIdwg960Vo1tF5c1g7iIr6Aei/6L+zaJmDaQ=
-github.com/curtisnewbie/miso v0.1.0-beta.3.0.20240607034551-710807670740/go.mod h1:xUvCVh5pb2DkXbA03Es4yBw9aoQ+zp5mmvVkH/MyR2A=
+github.com/curtisnewbie/miso v0.1.1-beta.1 h1:CcENTXRpMu983XXPJG1eqi6gdXJxpbwdtdwZKhC6FhU=
+github.com/curtisnewbie/miso v0.1.1-beta.1/go.mod h1:LuUtaY5YmWVjBOoN2AqSEFObrl3EUfr0WN0tB/dpoJI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
