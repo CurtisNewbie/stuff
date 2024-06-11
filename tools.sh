@@ -1523,6 +1523,6 @@ export -f urldecode
 function ocr() {
     # brew install tesseract
     # brew install tesseract-lang
-    tesseract "$1" - -l "chi_sim+eng" --psm 3 quiet
+    tesseract "$1" - -l "chi_sim+eng" --oem 3 --psm 3 quiet
 }
 export -f ocr
