@@ -22,6 +22,7 @@ func ParseTime(s string) (time.Time, error) {
 		"2006-01-021504:05",
 		"2006-01-02150405",
 		"2006-01-02",
+		"2006年01月02日 15:04:05",
 	}, s)
 	return t, err
 }
