@@ -1392,7 +1392,7 @@ function sync_all() {
         return 1
     fi
 
-    l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket"
+    l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket acct"
     for r in $l;
     do
         echogreen ">>> $r"
