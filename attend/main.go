@@ -215,15 +215,18 @@ func main() {
 	for k, v := range dateMap {
 		var st time.Time
 		var ed time.Time
-		var guessed bool = false
+		var estimated bool = false
 		if len(v) < 2 {
 			st = v[0]
 			if FormatDate(st) != FormatDate(now) {
 				fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
 				continue
 			}
-			ed = time.Date(now.Year(), now.Month(), now.Day(), 18, 30, 0, 0, time.UTC)
-			guessed = true
+			ed = time.Date(now.Year(), now.Month(), now.Day(), 18, 30, 0, 0, time.Local)
+			if now.After(ed) {
+				ed = now
+			}
+			estimated = true
 		} else {
 			st = v[0]
 			ed = v[1]
@@ -232,7 +235,7 @@ func main() {
 		if st.After(ed) {
 			st, ed = ed, st
 		}
-		tr := NewTimeRange(k, st, ed, guessed)
+		tr := NewTimeRange(k, st, ed, estimated)
 		trs = append(trs, tr)
 	}
 	sort.Slice(trs, func(i, j int) bool { return trs[i].start.Before(trs[j].start) })

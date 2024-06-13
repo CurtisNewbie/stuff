@@ -11,7 +11,7 @@ import (
 
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
-	t, err := util.FuzzParseTime([]string{
+	t, err := util.FuzzParseTimeLoc([]string{
 		"2006-01-0215:04:05",
 		"2006-01-02 15:04:05",
 		"2006-01-02 15:0405",
@@ -23,7 +23,7 @@ func ParseTime(s string) (time.Time, error) {
 		"2006-01-02150405",
 		"2006-01-02",
 		"2006年01月02日 15:04:05",
-	}, s)
+	}, s, time.Local)
 	return t, err
 }
 
