@@ -66,7 +66,11 @@ func SyncRepo(root string, repo string) string {
 			result = fmt.Sprintf("Sync %s failed, took %s, %v", repo, took, err)
 		}
 	} else {
-		result = fmt.Sprintf("Sync %s succeeded, took %s, %v", repo, took, outs)
+		if outs != "" {
+			result = fmt.Sprintf("Sync %s succeeded, took %s, %v", repo, took, outs)
+		} else {
+			result = fmt.Sprintf("Sync %s succeeded, took %s", repo, took)
+		}
 	}
 	return result
 }
