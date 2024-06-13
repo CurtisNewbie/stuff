@@ -2,7 +2,7 @@ module attend
 
 go 1.21.5
 
-require github.com/curtisnewbie/miso v0.1.1-beta.1
+require github.com/curtisnewbie/miso v0.1.1-beta.3
 
 require (
 	github.com/json-iterator/go v1.1.12 // indirect
