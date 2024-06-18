@@ -1427,13 +1427,27 @@ function startcluster() {
     # (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/doc-indexer.log' > /dev/null 2>&1 &)
     # (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/postbox.log' > /dev/null 2>&1 &)
 
-    (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/mini-fstore.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/user-vault.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
-    (cd $GIT_PATH/acct; go run main.go 'logging.rolling.file=./logs/acct.log' > /dev/null 2>&1 &)
+    if [ "$1" != "vfm" ]; then
+        (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "mini-fstore" ]; then
+        (cd $GIT_PATH/mini-fstore;go run cmd/main.go 'logging.rolling.file=./logs/mini-fstore.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "user-vault" ]; then
+        (cd $GIT_PATH/user-vault; go run cmd/main.go 'logging.rolling.file=./logs/user-vault.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "event-pump" ]; then
+        (cd $GIT_PATH/event-pump; go run main.go 'logging.rolling.file=./logs/event-pump.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "gatekeeper" ]; then
+        (cd $GIT_PATH/gatekeeper; go run main.go 'logging.rolling.file=./logs/gatekeeper.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "logbot" ]; then
+        (cd $GIT_PATH/logbot; go run main.go 'logging.rolling.file=./logs/logbot.log' > /dev/null 2>&1 &)
+    fi
+    if [ "$1" != "acct" ]; then
+        (cd $GIT_PATH/acct; go run main.go 'logging.rolling.file=./logs/acct.log' > /dev/null 2>&1 &)
+    fi
 }
 
 function stopcluster() {
