@@ -1422,11 +1422,6 @@ function pushtag() {
 }
 
 function startcluster() {
-    # (cd $GIT_PATH/goauth; go run cmd/main.go 'logging.rolling.file=./logs/${app.name}.log' > /dev/null 2>&1 &)
-    # (cd $GIT_PATH/hammer; go run cmd/main.go 'logging.rolling.file=./logs/hammer.log' > /dev/null 2>&1 &)
-    # (cd $GIT_PATH/doc-indexer ; go run main.go 'logging.rolling.file=./logs/doc-indexer.log' > /dev/null 2>&1 &)
-    # (cd $GIT_PATH/postbox ; go run cmd/main.go 'logging.rolling.file=./logs/postbox.log' > /dev/null 2>&1 &)
-
     if [ "$1" != "vfm" ]; then
         (cd $GIT_PATH/vfm; go run cmd/main.go 'logging.rolling.file=./logs/vfm.log' > /dev/null 2>&1 &)
     fi
