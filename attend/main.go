@@ -83,7 +83,7 @@ func main() {
 			panic(fmt.Errorf("failed to read file info: %v, %v", f.Name(), err))
 		}
 
-		if inf.ModTime().Before(now.Add(-time.Hour * 24 * 14)) { // 14 days ago
+		if inf.ModTime().Before(now.Add(-time.Hour * 24 * 30)) { // 14 days ago
 			continue
 		}
 
