@@ -993,30 +993,59 @@ function rmr() {
 
 function grepcode() {
   if [ -z "$1" ];then
+    echo "What are you searching for?"
     return 0
   fi
 
-  grep -i -R "$1" . \
-  -C 1 \
-  --exclude-dir "target" \
-  --exclude-dir ".git" \
-  --exclude-dir ".vscode" \
-  --exclude-dir "node_modules" \
-  --exclude-dir "dist" \
-  --exclude-dir "logs" \
-  --exclude-dir "log" \
-  --exclude-dir ".idea" \
-  --exclude "*.dmg" \
-  --exclude "*.jar" \
-  --exclude "*.zip" \
-  --exclude "*.gzip" \
-  --exclude "*.tar" \
-  --exclude "*.mp4" \
-  --exclude "*.mov" \
-  --exclude "*.jpg" \
-  --exclude "*.jpeg" \
-  --exclude "*.png"
+#   grep -i -R "$1" . \
+#     -C 1 \
+#     --exclude-dir "target" \
+#     --exclude-dir ".git" \
+#     --exclude-dir ".vscode" \
+#     --exclude-dir "node_modules" \
+#     --exclude-dir "dist" \
+#     --exclude-dir "logs" \
+#     --exclude-dir "log" \
+#     --exclude-dir ".idea" \
+#     --exclude "*.dmg" \
+#     --exclude "*.jar" \
+#     --exclude "*.zip" \
+#     --exclude "*.gzip" \
+#     --exclude "*.tar" \
+#     --exclude "*.mp4" \
+#     --exclude "*.mov" \
+#     --exclude "*.jpg" \
+#     --exclude "*.jpeg" \
+#     --exclude "*.png"
   # -l
+
+  ag -i -r "$1" . \
+    -C 1 \
+    --ignore-dir "target" \
+    --ignore-dir ".git" \
+    --ignore-dir ".vscode" \
+    --ignore-dir "node_modules" \
+    --ignore-dir "dist" \
+    --ignore-dir "logs" \
+    --ignore-dir "log" \
+    --ignore-dir ".idea" \
+    --ignore "*.dmg" \
+    --ignore "*.jar" \
+    --ignore "*.zip" \
+    --ignore "*.gzip" \
+    --ignore "*.tar" \
+    --ignore "*.mp4" \
+    --ignore "*.mov" \
+    --ignore "*.jpg" \
+    --ignore "*.jpeg" \
+    --ignore "*.png" \
+    --ignore "*.sql" \
+    --ignore "*.excalidraw" \
+    --ignore "go.sum" \
+    --ignore "*.svg" \
+    --ignore "*.md" \
+    $@
+    # -l
 }
 
 function tips_tdump() {
