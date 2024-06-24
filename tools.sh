@@ -3,6 +3,27 @@
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 export CGO_ENABLED=1
+export LANG=en_US.UTF-8
+
+# stuff location
+[ -z "$STUFF" ] && STUFF="$(pwd)"
+
+# default trash can location: ~/trash
+trash_can="$HOME/trash"
+
+# link to python files in current directory
+export PYTHONPATH="$PYTHONPATH:$STUFF"
+
+# local executable bin directory
+export LOC_BIN="/usr/local/bin"
+
+# upgrade miso version
+miso_ver="v0.1.1"
+
+# github repo path
+# export GIT_PATH=
+
+# ---------------------------------------------------------------
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
@@ -14,16 +35,6 @@ blue=$'\e[1;34m'
 purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
 white=$'\e[1;37m'
-trash_can="$HOME/trash"
-
-miso_ver="v0.1.1"
-gc_ver=""
-
-[ -z "$STUFF" ] && STUFF="$HOME/stuff"
-
-export PYTHONPATH="$PYTHONPATH:$STUFF"
-export LANG=en_US.UTF-8
-export LOC_BIN="/usr/local/bin"
 
 alias reset_alarm="sfltool resetbtm"
 alias mk="minikube"
@@ -124,7 +135,7 @@ function rfind() {
     fi
 }
 
-function trashsize() {
+function trash_size() {
     if [ ! -d "$trash_can" ]; then
         echocyan "Trash can is not found"
         return 0
@@ -132,6 +143,14 @@ function trashsize() {
 
     size=$(cd $trash_can; du -h -d 1 . | tail -n 1)
     echocyan "$size"
+}
+
+function trash_ls() {
+    if [ ! -d "$trash_can" ]; then
+        echocyan "Trash can is not found"
+        return 0
+    fi
+    ls "$trash_can"
 }
 
 # dump file to trash can
@@ -218,9 +237,11 @@ function gcb() {
     fi
 }
 
-function guntrack() { git rm --cache "$@"; }
+function guntrack() {
+    git rm --cache "$@";
+}
 
-mresolve() {
+function mresolve() {
     pom=$(python3 $STUFF/findpom.py $@)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
@@ -230,7 +251,7 @@ mresolve() {
     fi
 }
 
-mresolve_src() {
+function mresolve_src() {
     pom=$(python3 $STUFF/findpom.py)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
         echored ">>> pom.xml is not found, aborted"
@@ -299,18 +320,28 @@ function installall(){
     done
 }
 
-function diskusage() { du -d 1 -h; }
+function diskusage() {
+    du -d 1 -h;
+}
 
-function echored() { echo $red"$1"$colourreset; }
+function echored() {
+    echo $red"$1"$colourreset;
+}
 export -f echored
 
-function echogreen() { echo $green"$1"$colourreset; }
+function echogreen() {
+    echo $green"$1"$colourreset;
+}
 export -f echogreen
 
-function echoyellow() { echo $yellow"$1"$colourreset; }
+function echoyellow() {
+    echo $yellow"$1"$colourreset;
+}
 export -f echoyellow
 
-function echocyan() { echo $cyan"$1"$colourreset; }
+function echocyan() {
+    echo $cyan"$1"$colourreset;
+}
 export -f echocyan
 
 # mvn test-compile
@@ -360,7 +391,9 @@ function mtest() {
     fi
 }
 
-function gencmtmsg() { python3 $STUFF/gencmtmsg.py; }
+function gencmtmsg() {
+    python3 $STUFF/gencmtmsg.py;
+}
 export -f gencmtmsg
 
 function rkcmt() {
@@ -372,11 +405,15 @@ function rkcmt() {
     fi
 }
 
-function rbash() { source ~/.bashrc; }
-function rtmux() { tmux source-file ~/.tmux.conf; }
+function rbash() {
+    source ~/.bashrc;
+}
+function rtmux() {
+    tmux source-file ~/.tmux.conf;
+}
 
 # check whether $1 is in master branch, return 1-true, 0-false
-function is_master(){
+function is_master() {
 
     if [ -z "$1" ]; then
         echo 0
@@ -524,7 +561,7 @@ function repocheck () {
     done
 }
 
-function last_weekly_report(){
+function last_weekly_report() {
 
     (cd $1
 
@@ -805,7 +842,7 @@ function gxpatch() {
     git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$1" > "$2"
 }
 
-function gapplypatch(){
+function gapplypatch() {
     if [ -z "$1" ]; then
         echored "please specify where the generated patch is"
         return 1
@@ -819,7 +856,7 @@ function gapplypatch(){
     git am < "$1"
 }
 
-function attachcli(){
+function attachcli() {
     docker exec -it "$1" /bin/sh
 }
 
@@ -832,14 +869,37 @@ function docker-compose-rebuild(){
     # docker-compose up -d --build $1
 }
 
-function docker-compose-up() { docker-compose up -d --build --remove-orphans; }
-function docker-compose-down() { docker-compose down; }
-function docker-compose-re-up() { docker-compose-down; docker-compose-up; }
-function encrypt() { python3 "$STUFF/aes.py" -m encrypt; }
-function decrypt() { python3 "$STUFF/aes.py" -m decrypt; }
-function split() { res=$(python3 "$STUFF/split.py" $@); echo $res; echo $res | clipboard; }
-function jsonarray() { res=$(python3 "$STUFF/json_array.py" $@); echo $res; echo $res | clipboard; }
-function strlen() { python3 "$STUFF/strlen.py" "$@"; }
+function docker-compose-up() {
+    docker-compose up -d --build --remove-orphans;
+}
+
+function docker-compose-down() {
+    docker-compose down;
+}
+
+function docker-compose-re-up() {
+    docker-compose-down; docker-compose-up;
+}
+
+function encrypt() {
+    python3 "$STUFF/aes.py" -m encrypt;
+}
+
+function decrypt() {
+    python3 "$STUFF/aes.py" -m decrypt;
+}
+
+function split() {
+    res=$(python3 "$STUFF/split.py" $@); echo $res; echo $res | clipboard;
+}
+
+function jsonarray() {
+    res=$(python3 "$STUFF/json_array.py" $@); echo $res; echo $res | clipboard;
+}
+
+function strlen() {
+    python3 "$STUFF/strlen.py" "$@";
+}
 
 function readpom() {
   if [ ! -z "$2" ]; then
@@ -1351,7 +1411,6 @@ function upgrade() {
         cd "$moddir"
     fi
 
-    [ ! -z $gc_ver ] && go get -x "github.com/curtisnewbie/gocommon@$gc_ver"
     [ ! -z "$commit" ] && miso_ver="$commit"
 
     echo "Upgrading miso to $miso_ver"
@@ -1365,7 +1424,6 @@ function upgrade() {
     cd "$wd"
     return 0
 }
-
 export -f upgrade
 
 function upgrade_all() {
@@ -1385,21 +1443,21 @@ function upgrade_all() {
     done
 }
 
-function sync_all() {
-    gitpath="${GIT_PATH}"
-    if [ -z $gitpath ]; then
-        echo "GIT_PATH is empty"
-        return 1
-    fi
+# function sync_all() {
+#     gitpath="${GIT_PATH}"
+#     if [ -z $gitpath ]; then
+#         echo "GIT_PATH is empty"
+#         return 1
+#     fi
 
-    l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket acct"
-    for r in $l;
-    do
-        echogreen ">>> $r"
-        (cd $GIT_PATH/$r; git switch main && git fetch && git merge)
-        printf "\n"
-    done
-}
+#     l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket acct"
+#     for r in $l;
+#     do
+#         echogreen ">>> $r"
+#         (cd $GIT_PATH/$r; git switch main && git fetch && git merge)
+#         printf "\n"
+#     done
+# }
 
 function status_all() {
     gitpath="${GIT_PATH}"
@@ -1408,7 +1466,7 @@ function status_all() {
         return 1
     fi
 
-    l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
+    l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket acct"
     for r in $l;
     do
         echogreen ">>> $r"
@@ -1477,6 +1535,7 @@ function restartapp() {
 }
 
 function conn_pprof() {
+    # $1 - host:port
     go tool pprof -http=: http://$1/debug/pprof/heap
 }
 
