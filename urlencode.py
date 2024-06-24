@@ -1,6 +1,6 @@
 import sys
 import argparse
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote, unquote
 
 ap = argparse.ArgumentParser()
 ap.add_argument('-value')
@@ -12,6 +12,6 @@ if not v:
     sys.exit()
 
 if args.decode:
-    print(unquote_plus(v))
+    print(unquote(v))
 else:
-    print(quote_plus(v))
+    print(quote(v))
