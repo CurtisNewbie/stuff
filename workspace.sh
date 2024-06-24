@@ -23,6 +23,9 @@ miso_ver="v0.1.1"
 # github repo path
 # export GIT_PATH=
 
+# work repo path
+# export WORK_REPO_PATH=""
+
 # ---------------------------------------------------------------
 
 # colours https://www.shellhacks.com/bash-colors/
@@ -64,6 +67,22 @@ alias ll="ls -lth"
 alias tmux="tmux -2"
 alias less="less -n"
 alias bc="bc -l"
+
+function cgit() {
+  repo="$1"
+  if [ ! -z "$repo" ]; then
+    repo="/$repo"
+  fi
+  cd "$GIT_PATH$repo"
+}
+
+function cwork() {
+  repo="$1"
+  if [ ! -z "$repo" ]; then
+    repo="/$repo"
+  fi
+  cd "$WORK_REPO_PATH$repo"
+}
 
 function pprint() {
     printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
@@ -1630,3 +1649,51 @@ function ocr() {
     tesseract "$1" - -l "chi_sim+eng" --oem 3 --psm 3 quiet
 }
 export -f ocr
+
+function stopservices() {
+  brew services stop consul
+  brew services stop "mysql@5.7"
+  brew services stop redis
+  brew services stop rabbitmq
+}
+
+function startservices() {
+  brew services start consul
+  brew services start "mysql@5.7"
+  brew services start redis
+  brew services start rabbitmq
+}
+
+function redis_del_keys() {
+    host="$1"
+    password="$2"
+    pattern="$3"
+    if [ -z "$pattern" ]; then
+        echo "Please specify key pattern"
+        return 0
+    fi
+    redis-cli -h "$host" -a "$password" keys "$pattern" | xargs -I {} bash -c "echo 'Deleting key {}' || devredis del {}"
+}
+
+function unload_corplink() {
+  # sudo launchctl list | grep corplink
+  sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.service.plist
+  sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.systemextension.plist
+  sudo launchctl unload -w /Users/photon/Library/LaunchAgents/CorpLink.plist
+}
+
+function load_corplink() {
+  sudo launchctl load -w /Library/LaunchDaemons/com.volcengine.corplink.service.plist
+  sudo launchctl load -w /Library/LaunchDaemons/com.volcengine.corplink.systemextension.plist
+  sudo launchctl load -w /Users/photon/Library/LaunchAgents/CorpLink.plist
+}
+
+function sqlclone() {
+  ip="$1"
+  user="$2"
+  password="$3"
+  sql="$4"
+  echo ""
+  python3 "$STUFF/dbinsert.py" -host "$ip" -user "$user" -password "$password" -sql "$sql"
+  python3 "$STUFF/dbupdate.py" -host "$ip" -user "$user" -password "$password" -sql "$sql"
+}
