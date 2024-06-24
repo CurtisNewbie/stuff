@@ -1062,8 +1062,7 @@ function grepcode() {
     --ignore "*.excalidraw" \
     --ignore "go.sum" \
     --ignore "*.svg" \
-    --ignore "*.md" \
-    $@
+    --ignore "*.md"
     # -l
 }
 
@@ -1640,8 +1639,15 @@ function newng() {
   ng new ng-chill --no-standalone --routing --ssr=false
 }
 
-function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+function urldecode() {
+    python3 "$STUFF/urlencode.py" -decode -value "$1"
+}
 export -f urldecode
+
+function urlencode() {
+    python3 "$STUFF/urlencode.py" -value "$1"
+}
+export -f urlencode
 
 function ocr() {
     # brew install tesseract
