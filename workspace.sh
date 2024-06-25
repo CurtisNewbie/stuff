@@ -18,7 +18,7 @@ export PYTHONPATH="$PYTHONPATH:$STUFF"
 export LOC_BIN="/usr/local/bin"
 
 # upgrade miso version
-miso_ver="v0.1.1"
+miso_ver="v0.1.2"
 
 # github repo path
 # export GIT_PATH=
@@ -1581,9 +1581,14 @@ function restartapp() {
     startcluster
 }
 
-function conn_pprof() {
+function pprof_heap() {
     # $1 - host:port
     go tool pprof -http=: http://$1/debug/pprof/heap
+}
+
+function pprof_profile() {
+    # $1 - host:port
+    go tool pprof -http=: http://$1/debug/pprof/profile
 }
 
 function benchmark_pprof() {
