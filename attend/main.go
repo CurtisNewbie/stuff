@@ -26,8 +26,10 @@ const (
 )
 
 var (
-	DirFlag   = flag.String("dir", "", "input file dir")
-	AfterFlag = flag.String("after", "", "after date")
+	ExtraDates = util.FlagStrSlice("extra", "extra date time records")
+	DebugFlag  = flag.Bool("debug", false, "input file dir")
+	DirFlag    = flag.String("dir", "", "input file dir")
+	AfterFlag  = flag.String("after", "", "after date")
 )
 
 type CachedTimeRange struct {
@@ -90,6 +92,10 @@ func main() {
 		fpath := path.Join(*DirFlag, f.Name())
 		cacheKey := fpath + "_" + inf.ModTime().String()
 
+		if *DebugFlag {
+			fmt.Printf("cache_key: %v\n", cacheKey)
+		}
+
 		ocrFutures.SubmitAsync(func() (string, error) {
 
 			cacheMu.Lock()
@@ -137,79 +143,94 @@ func main() {
 	attPat := regexp.MustCompile(`.*打卡时间: *(\d{4}-\d{2}-\d{2} *\d{2}:?\d{2}:?\d{2}).*`)
 	leavePat := regexp.MustCompile(`.*(开始|结束)时间: *(\d{4}年\d{2}月\d{2}日) *(上午|下午).*`)
 
+	lines := make([]string, 0, 100)
+
 	for _, s := range fileContent {
-		lines := strings.Split(s, "\n")
-
-		for _, l := range lines {
-			l = strings.TrimSpace(l)
-			if l == "" {
-				continue
-			}
-
-			// leave from work
-			var ds string
-			res := attPat.FindStringSubmatch(l)
-			if len(res) < 1 {
-				if strings.Contains(l, "打卡时间") {
-					fmt.Printf("line invalid: %s\n", l)
-				}
-
-				res = leavePat.FindStringSubmatch(l)
-				if len(res) < 4 {
-					if strings.Contains(l, "开始时间") || strings.Contains(l, "结束时间") {
-						fmt.Printf("line invalid: %s\n", l)
-					}
-					continue
-				}
-
-				s1 := res[1]
-				s2 := res[2]
-				s3 := res[3]
-
-				if s1 == "结束" {
-					if s3 == "上午" {
-						ds = fmt.Sprintf("%s 12:00:00", s2)
-					} else {
-						ds = fmt.Sprintf("%s 18:30:00", s2)
-					}
-				} else {
-					if s3 == "上午" {
-						ds = fmt.Sprintf("%s 09:00:00", s2)
-					} else {
-						continue
-					}
-				}
-			} else {
-				ds = strings.TrimSpace(res[1])
-			}
-
-			parsedTime, err := ParseTime(ds)
-			if err != nil {
-				fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
-				continue
-			}
-
-			if aft != nil && parsedTime.Before(*aft) {
-				continue
-			}
-
-			date := FormatDate(parsedTime)
-			if prev, ok := dateMap[date]; ok {
-				duplicate := false
-				for _, v := range prev {
-					if v.Equal(parsedTime) {
-						duplicate = true
-						break
-					}
-				}
-				if !duplicate {
-					dateMap[date] = append(prev, parsedTime)
-				}
-			} else {
-				dateMap[date] = []time.Time{parsedTime}
-			}
+		sp := strings.Split(s, "\n")
+		lines = append(lines, sp...)
+	}
+	if ExtraDates != nil {
+		if *DebugFlag {
+			fmt.Printf("ExtraDates: %v\n", *ExtraDates)
+		}
+		for _, ed := range *ExtraDates {
+			lines = append(lines, "打卡时间: "+ed)
 		}
 	}
+
+	for _, l := range lines {
+		l = strings.TrimSpace(l)
+		if l == "" {
+			continue
+		}
+		if *DebugFlag {
+			fmt.Printf("l: %v\n", l)
+		}
+
+		// leave from work
+		var ds string
+		res := attPat.FindStringSubmatch(l)
+		if len(res) < 1 {
+			if strings.Contains(l, "打卡时间:") {
+				fmt.Printf("line invalid: %s\n", l)
+			}
+
+			res = leavePat.FindStringSubmatch(l)
+			if len(res) < 4 {
+				if strings.Contains(l, "开始时间") || strings.Contains(l, "结束时间") {
+					fmt.Printf("line invalid: %s\n", l)
+				}
+				continue
+			}
+
+			s1 := res[1]
+			s2 := res[2]
+			s3 := res[3]
+
+			if s1 == "结束" {
+				if s3 == "上午" {
+					ds = fmt.Sprintf("%s 12:00:00", s2)
+				} else {
+					ds = fmt.Sprintf("%s 18:30:00", s2)
+				}
+			} else {
+				if s3 == "上午" {
+					ds = fmt.Sprintf("%s 09:00:00", s2)
+				} else {
+					continue
+				}
+			}
+		} else {
+			ds = strings.TrimSpace(res[1])
+		}
+
+		parsedTime, err := ParseTime(ds)
+		if err != nil {
+			fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
+			continue
+		}
+
+		if aft != nil && parsedTime.Before(*aft) {
+			continue
+		}
+
+		date := FormatDate(parsedTime)
+		if prev, ok := dateMap[date]; ok {
+			duplicate := false
+			for _, v := range prev {
+				if v.Equal(parsedTime) {
+					duplicate = true
+					break
+				}
+			}
+			if !duplicate {
+				dateMap[date] = append(prev, parsedTime)
+			}
+		} else {
+			dateMap[date] = []time.Time{parsedTime}
+		}
+	}
+
 	// fmt.Printf("dataMap: %+v\n", dateMap)
 	trs := make([]TimeRange, 0, len(dateMap)/2)
 	for k, v := range dateMap {
