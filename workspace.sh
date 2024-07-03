@@ -1374,12 +1374,10 @@ function myddl() {
 ) ENGINE=InnoDB DEFAULT CHARSET="utf8mb4" COMMENT='$2';
     "
     echo "$text"
-    echo "$text" | pbcopy
-    echogreen ">>> copied to clipboard..."
 }
 
 function copymyddl() {
-    if [ ismac ]; then
+    if ismac; then
         myddl | tr -d '' | pbcopy
     else
         myddl | tr -d '' | xclip -selection clipboard
