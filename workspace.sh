@@ -68,11 +68,18 @@ for c in $cmds; do
     fi
 done
 
-if [ ! -d "/usr/local/etc/bash_completion.d" ]; then
-    echored "bash_completion.d is not found"
-else
+gitps1=0
+if [ -f "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh" ]; then
+    source "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh"
+    gitps1=1
+fi
+if [ $gitps1 -ne 1 ] && [ -d "/usr/local/etc/bash_completion.d" ]; then
     source /usr/local/etc/bash_completion.d/git-prompt.sh
     source /usr/local/etc/bash_completion.d/git-completion.bash
+    gitps1=1
+fi
+
+if [ $gitps1 -eq 1 ]; then
     PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \w\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
 fi
 
