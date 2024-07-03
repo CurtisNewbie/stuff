@@ -1,8 +1,59 @@
 #!/bin/bash
 
+# colours https://www.shellhacks.com/bash-colors/
+# bash coloring https://gist.github.com/vratiu/9780109
+colourreset=$'\e[0m'
+red=$'\e[1;31m'
+green=$'\e[1;32m'
+yellow=$'\e[1;33m'
+blue=$'\e[1;34m'
+purple=$'\e[1;35m'
+cyan=$'\e[1;36m'
+white=$'\e[1;37m'
+
+function echored() {
+    echo $red"$1"$colourreset;
+}
+export -f echored
+
+function echogreen() {
+    echo $green"$1"$colourreset;
+}
+export -f echogreen
+
+function echoyellow() {
+    echo $yellow"$1"$colourreset;
+}
+export -f echoyellow
+
+function echocyan() {
+    echo $cyan"$1"$colourreset;
+}
+export -f echocyan
+
+# --------------- command check ---------------
+
+cmds="brew git mvn java go ag"
+for c in $cmds; do
+    if ! command -v "brew" 2&> /dev/null ; then
+        echored "$c is not found"
+    fi
+done
+
+if [ ! -d "/usr/local/etc/bash_completion.d" ]; then
+    echored "bash_completion.d is not found"
+else
+    source /usr/local/etc/bash_completion.d/git-prompt.sh
+    source /usr/local/etc/bash_completion.d/git-completion.bash
+    PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \w\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
+fi
+
+# -------------------- env -------------------------
+
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 export CGO_ENABLED=1
+export LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # stuff location
@@ -27,17 +78,6 @@ miso_ver="v0.1.2"
 # export WORK_REPO_PATH=""
 
 # ---------------------------------------------------------------
-
-# colours https://www.shellhacks.com/bash-colors/
-# bash coloring https://gist.github.com/vratiu/9780109
-colourreset=$'\e[0m'
-red=$'\e[1;31m'
-green=$'\e[1;32m'
-yellow=$'\e[1;33m'
-blue=$'\e[1;34m'
-purple=$'\e[1;35m'
-cyan=$'\e[1;36m'
-white=$'\e[1;37m'
 
 alias reset_alarm="sfltool resetbtm"
 alias mk="minikube"
@@ -96,6 +136,21 @@ function gcl() {
     if [ $? -eq 0 ]; then
         e="${repo##*/}"
         cd "${e%%.git}"
+    fi
+}
+
+function gcl_shallow() {
+    # gcl "repo_url" "tag/branch"
+    # e.g.,
+    # gcl_shallow git@github.com:elastic/go-elasticsearch.git 5.x
+
+    repo="$1"
+    tag="$2"
+
+    if [ ! -z "$tag" ]; then
+        gcl "$repo" --depth=1 -b "$tag"
+    else
+        gcl "$repo" --depth=1
     fi
 }
 
@@ -342,26 +397,6 @@ function installall(){
 function diskusage() {
     du -d 1 -h;
 }
-
-function echored() {
-    echo $red"$1"$colourreset;
-}
-export -f echored
-
-function echogreen() {
-    echo $green"$1"$colourreset;
-}
-export -f echogreen
-
-function echoyellow() {
-    echo $yellow"$1"$colourreset;
-}
-export -f echoyellow
-
-function echocyan() {
-    echo $cyan"$1"$colourreset;
-}
-export -f echocyan
 
 # mvn test-compile
 function mcpt() {
@@ -1184,28 +1219,28 @@ function unsettermproxy() {
     printf "unset proxy\n"
 }
 
-test_github_ssh() {
+function test_github_ssh() {
     ssh -Tv git@github.com
     # ssh -Tv git@github.com -vvv
 }
 
-cvt_mp4_codec() {
+function cvt_mp4_codec() {
     # https://unix.stackexchange.com/questions/28803/how-can-i-reduce-a-videos-size-with-ffmpeg
     # the higher the crf is, the worst the quality will be, 0 is lossless
     # -ss 00:03:00 -t 00:00:20.0
     ffmpeg -i "$1" -vcodec libx264 -crf 32 -preset faster "$2"
 }
 
-cvt_mp4() {
+function cvt_mp4() {
     ffmpeg -i "$1" -crf 32 -preset faster "$2"
 }
 
-cvt_mp4_cut() {
+function cvt_mp4_cut() {
     # -ss 00:03:00 -t 00:00:20.0
     ffmpeg -i "$1" -ss "$2" "$3"
 }
 
-ffmpeg_loop() {
+function ffmpeg_loop() {
     ffmpeg -stream_loop $3 -i "$1" "$2"
 }
 
@@ -1230,7 +1265,6 @@ function mergeto() {
 }
 
 function springbootrun() {
-
     app="$1"
     if [ -z "$app" ]; then
         echo "Running mvn spring-boot:run at ./"
@@ -1490,22 +1524,6 @@ function upgrade_all() {
     done
 }
 
-# function sync_all() {
-#     gitpath="${GIT_PATH}"
-#     if [ -z $gitpath ]; then
-#         echo "GIT_PATH is empty"
-#         return 1
-#     fi
-
-#     l="vfm mini-fstore user-vault event-pump gatekeeper logbot miso grapher chill moon pocket acct"
-#     for r in $l;
-#     do
-#         echogreen ">>> $r"
-#         (cd $GIT_PATH/$r; git switch main && git fetch && git merge)
-#         printf "\n"
-#     done
-# }
-
 function status_all() {
     gitpath="${GIT_PATH}"
     if [ -z $gitpath ]; then
@@ -1582,13 +1600,13 @@ function restartapp() {
 }
 
 function pprof_heap() {
-    # $1 - host:port
-    go tool pprof -http=: http://$1/debug/pprof/heap
+    host_port="$1"
+    go tool pprof -http=: http://$host_port/debug/pprof/heap
 }
 
 function pprof_profile() {
-    # $1 - host:port
-    go tool pprof -http=: http://$1/debug/pprof/profile
+    host_port="$1"
+    go tool pprof -http=: http://$host_port/debug/pprof/profile
 }
 
 function benchmark_pprof() {
@@ -1610,9 +1628,11 @@ function installbin() {
 export -f installbin
 
 function par() {
+    # par 10 echo "!"
+    conc="$1"
     cmd="${@:2}"
-    # echo "command: '$cmd'"
-    for i in $(seq 1 1 $1); do
+    # echo "concurrency: $conc, '$cmd'"
+    for i in $(seq 1 1 $conc); do
         eval "$cmd" &
         pids[${i}]=$!
     done
@@ -1661,18 +1681,17 @@ function ocr() {
 }
 export -f ocr
 
+export BREW_SERVICES="consul mysql@5.7 redis rabbitmq"
 function stopservices() {
-  brew services stop consul
-  brew services stop "mysql@5.7"
-  brew services stop redis
-  brew services stop rabbitmq
+  for s in $BREW_SERVICES; do
+    brew services stop $s
+  done
 }
 
 function startservices() {
-  brew services start consul
-  brew services start "mysql@5.7"
-  brew services start redis
-  brew services start rabbitmq
+  for s in $BREW_SERVICES; do
+    brew services start $s
+  done
 }
 
 function redis_del_keys() {
@@ -1690,13 +1709,13 @@ function unload_corplink() {
   # sudo launchctl list | grep corplink
   sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.service.plist
   sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.systemextension.plist
-  sudo launchctl unload -w /Users/photon/Library/LaunchAgents/CorpLink.plist
+  sudo launchctl unload -w ~/Library/LaunchAgents/CorpLink.plist
 }
 
 function load_corplink() {
   sudo launchctl load -w /Library/LaunchDaemons/com.volcengine.corplink.service.plist
   sudo launchctl load -w /Library/LaunchDaemons/com.volcengine.corplink.systemextension.plist
-  sudo launchctl load -w /Users/photon/Library/LaunchAgents/CorpLink.plist
+  sudo launchctl load -w ~/Library/LaunchAgents/CorpLink.plist
 }
 
 function sqlclone() {
