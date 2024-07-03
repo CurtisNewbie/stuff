@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# mirrors for brew
+export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
 colourreset=$'\e[0m'
@@ -71,8 +78,9 @@ fi
 
 if ismac; then
     if ! command -v "greadlink" 2&> /dev/null; then
+        echo "missing greadlink"
         if command -v "brew" 2&> /dev/null ; then
-            echo "missing greadlink, installing coreutils"
+            echo "installing coreutils for greadlink"
             brew install coreutils
         fi
     fi
@@ -84,7 +92,6 @@ fi
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 export CGO_ENABLED=1
-export LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # for brew's executables
