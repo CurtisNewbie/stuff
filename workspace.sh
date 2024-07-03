@@ -31,6 +31,13 @@ function echocyan() {
 }
 export -f echocyan
 
+function readenv() {
+  env="$1"
+  renv="echo \$$env"
+  eval $renv
+}
+export -f readenv
+
 # --------------- command check ---------------
 
 cmds="brew git mvn java go ag"
@@ -71,11 +78,14 @@ export LOC_BIN="/usr/local/bin"
 # upgrade miso version
 miso_ver="v0.1.2"
 
-# github repo path
-# export GIT_PATH=
-
-# work repo path
-# export WORK_REPO_PATH=""
+# github repo path: GIT_PATH
+# work repo path: WORK_REPO_PATH
+expected_env="GIT_PATH WORK_REPO_PATH"
+for env in $expected_env; do
+  if [ -z "$env" ]; then
+    echored "Missing $env environment variable, please export $env=... in ~/.bashrc"
+  fi
+done
 
 # ---------------------------------------------------------------
 
@@ -116,6 +126,10 @@ function cgit() {
   cd "$GIT_PATH$repo"
 }
 
+function cstuff() {
+  cd "$STUFF"
+}
+
 function cwork() {
   repo="$1"
   if [ ! -z "$repo" ]; then
@@ -125,33 +139,33 @@ function cwork() {
 }
 
 function pprint() {
-    printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
+  printf ' %-35s %-40s %-35s\n' "$green${1}"  "$yellow${2}$colourreset" "${cyan}${3}$colourreset"
 }
 
 function gcl() {
-    repo="$1"
-    rest="${@:2}" # e.g., --depth=1 -b 2.4 git@....
-    # echo "$rest"
-    git clone $rest "$repo"
-    if [ $? -eq 0 ]; then
-        e="${repo##*/}"
-        cd "${e%%.git}"
-    fi
+  repo="$1"
+  rest="${@:2}" # e.g., --depth=1 -b 2.4 git@....
+  # echo "$rest"
+  git clone $rest "$repo"
+  if [ $? -eq 0 ]; then
+      e="${repo##*/}"
+      cd "${e%%.git}"
+  fi
 }
 
 function gcl_shallow() {
-    # gcl "repo_url" "tag/branch"
-    # e.g.,
-    # gcl_shallow git@github.com:elastic/go-elasticsearch.git 5.x
+  # gcl "repo_url" "tag/branch"
+  # e.g.,
+  # gcl_shallow git@github.com:elastic/go-elasticsearch.git 5.x
 
-    repo="$1"
-    tag="$2"
+  repo="$1"
+  tag="$2"
 
-    if [ ! -z "$tag" ]; then
-        gcl "$repo" --depth=1 -b "$tag"
-    else
-        gcl "$repo" --depth=1
-    fi
+  if [ ! -z "$tag" ]; then
+      gcl "$repo" --depth=1 -b "$tag"
+  else
+      gcl "$repo" --depth=1
+  fi
 }
 
 function gamd() {
@@ -333,11 +347,9 @@ function mresolve_src() {
         echogreen ">>> found $pom"
         if [ $# -gt 0 ]; then
             echogreen ">>> resolving sources for '$1'"
-            mvn dependency:sources -f "$pom" -DincludeArtifactIds="$1"
             mvn dependency:resolve -f "$pom" -Dclassifier=javadoc -DincludeArtifactIds="$1"
         else
             echogreen ">>> resolving sources for all dependencies"
-            mvn dependency:sources -f "pom"
             mvn dependency:resolve -f "$pom" -Dclassifier=javadoc
         fi
     fi
@@ -468,7 +480,6 @@ function rtmux() {
 
 # check whether $1 is in master branch, return 1-true, 0-false
 function is_master() {
-
     if [ -z "$1" ]; then
         echo 0
         return 0
@@ -1447,11 +1458,7 @@ function jcmdcheck() {
     jcmd $pid JFR.check
 }
 
-function resetbtm() {
-    sfltool resetbtm
-}
-
-function tcpecho() {
+function tcp_echo() {
     port="$1"
     if [ -z "$port" ]; then
         port="8080"
@@ -1462,9 +1469,7 @@ function tcpecho() {
 }
 
 function upgrade() {
-
     commit="$1"
-
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
 
