@@ -11,6 +11,11 @@ purple=$'\e[1;35m'
 cyan=$'\e[1;36m'
 white=$'\e[1;37m'
 
+if ! cat ~/.bashrc | grep -q "stuff/workspace.sh"; then
+    f="$(pwd)/workspace.sh"
+    echo -e "# Automatically inserted by workspace.sh\nsource $f\n$(cat ~/.bashrc)" > ~/.bashrc
+fi
+
 function echored() {
     echo $red"$1"$colourreset;
 }
@@ -38,6 +43,15 @@ function readenv() {
 }
 export -f readenv
 
+function ismac() {
+    if [ $(uname) == 'Darwin' ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+export -f ismac
+
 # --------------- command check ---------------
 
 cmds="brew git mvn java go ag"
@@ -55,6 +69,16 @@ else
     PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \w\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
 fi
 
+if ismac; then
+    if ! command -v "greadlink" 2&> /dev/null; then
+        if command -v "brew" 2&> /dev/null ; then
+            echo "missing greadlink, installing coreutils"
+            brew install coreutils
+        fi
+    fi
+    alias readlink="greadlink"
+fi
+
 # -------------------- env -------------------------
 
 export HOMEBREW_NO_AUTO_UPDATE=1
@@ -63,7 +87,10 @@ export CGO_ENABLED=1
 export LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-# stuff location
+# for brew's executables
+[ -d "/usr/local/opt/ruby/bin" ] && export PATH="/usr/local/opt/ruby/bin:$PATH"
+
+# stuff repo location
 [ -z "$STUFF" ] && STUFF="$(pwd)"
 
 # default trash can location: ~/trash
@@ -117,6 +144,7 @@ alias ll="ls -lth"
 alias tmux="tmux -2"
 alias less="less -n"
 alias bc="bc -l"
+alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
 
 function cgit() {
   repo="$1"
@@ -865,16 +893,6 @@ function cc() {
 function codediff() {
     /usr/local/bin/code --diff "$1" "$2"
 }
-
-# check if current OS is MAC, return 1 is true, else 0
-function ismac() {
-    if [ $(uname) == 'Darwin' ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-export -f ismac
 
 function clipboard() {
     read c
