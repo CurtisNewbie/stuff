@@ -24,6 +24,9 @@ func ParseTime(s string) (time.Time, error) {
 		"2006-01-02",
 		"2006年01月02日 15:04:05",
 	}, s, time.Local)
+	if err == nil {
+		return time.ParseInLocation("2006-01-02 15:04", t.Format("2006-01-02 15:04"), time.Local)
+	}
 	return t, err
 }
 
@@ -48,6 +51,7 @@ func FormatHms(t time.Time) string {
 }
 
 type TimeRange struct {
+	Leave   bool
 	date    string
 	start   time.Time
 	end     time.Time
@@ -55,18 +59,29 @@ type TimeRange struct {
 }
 
 func (t *TimeRange) Dur() time.Duration {
+	nstart0, _ := ParseTime(t.date + " 12:00:00")
+	nstart1, _ := ParseTime(t.date + " 13:30:00")
 	lstart, _ := ParseTime(t.date + " 18:30:00")
 	lend, _ := ParseTime(t.date + " 19:00:00")
 
-	if !t.end.Before(lend) {
-		return lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
+	var d time.Duration
+	if t.end.Before(nstart0) {
+		d = t.end.Sub(t.start)
+	} else if t.end.Before(nstart1) {
+		d = nstart0.Sub(t.start)
+	} else if !t.end.Before(lend) {
+		d = lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
+	} else if t.end.Before(lend) {
+		d = t.end.Sub(t.start) - (90 * time.Minute)
+	} else {
+		d = t.end.Sub(t.start) - (90 * time.Minute)
 	}
 
-	if t.end.Before(lend) {
-		return t.end.Sub(t.start) - (90 * time.Minute)
+	// util.Printlnf("start: %v, end: %v, d: %v", t.start, t.end, d)
+	if t.Leave {
+		d = d + (time.Hour * 4)
 	}
-
-	return t.end.Sub(t.start) - (90 * time.Minute)
+	return d
 }
 
 func NewTimeRange(date string, start time.Time, end time.Time, guessed bool) TimeRange {

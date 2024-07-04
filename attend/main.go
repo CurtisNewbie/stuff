@@ -13,11 +13,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/curtisnewbie/miso/encoding"
 	"github.com/curtisnewbie/miso/util"
 )
 
 const (
-	precision = 100000
+	precision = 1000000000
 
 	ANSIRed   = "\033[1;31m"
 	ANSIGreen = "\033[1;32m"
@@ -64,7 +65,7 @@ func main() {
 			cf.Close()
 
 			if err == nil {
-				util.ParseJson(buf, &cache)
+				encoding.ParseJson(buf, &cache)
 			}
 			if cache == nil {
 				cache = map[string]string{}
@@ -139,7 +140,13 @@ func main() {
 
 	// 打卡时间: 2024-06-06 09:11:46
 	// 开始时间: 2024年06月12日 下午
-	dateMap := map[string][]time.Time{}
+
+	type DateTime struct {
+		Times []time.Time
+		Leave bool
+	}
+
+	dateMap := map[string]DateTime{}
 	attPat := regexp.MustCompile(`.*打卡时间: *(\d{4}-\d{2}-\d{2} *\d{2}:?\d{2}:?\d{2}).*`)
 	leavePat := regexp.MustCompile(`.*(开始|结束)时间: *(\d{4}年\d{2}月\d{2}日) *(上午|下午).*`)
 
@@ -168,6 +175,7 @@ func main() {
 		}
 
 		// leave from work
+		var leave bool = false
 		var ds string
 		res := attPat.FindStringSubmatch(l)
 		if len(res) < 1 {
@@ -200,6 +208,7 @@ func main() {
 					continue
 				}
 			}
+			leave = true
 		} else {
 			ds = strings.TrimSpace(res[1])
 		}
@@ -216,24 +225,35 @@ func main() {
 
 		date := FormatDate(parsedTime)
 		if prev, ok := dateMap[date]; ok {
-			duplicate := false
-			for _, v := range prev {
-				if v.Equal(parsedTime) {
-					duplicate = true
-					break
+			if leave {
+				prev.Leave = true
+				dateMap[date] = prev
+			} else {
+				duplicate := false
+				for _, v := range prev.Times {
+					if v.Equal(parsedTime) {
+						duplicate = true
+						break
+					}
+				}
+				if !duplicate {
+					prev.Times = append(prev.Times, parsedTime)
+					dateMap[date] = prev
 				}
 			}
-			if !duplicate {
-				dateMap[date] = append(prev, parsedTime)
-			}
 		} else {
-			dateMap[date] = []time.Time{parsedTime}
+			if leave {
+				dateMap[date] = DateTime{Leave: true}
+			} else {
+				dateMap[date] = DateTime{Times: []time.Time{parsedTime}}
+			}
 		}
 	}
 
 	// fmt.Printf("dataMap: %+v\n", dateMap)
 	trs := make([]TimeRange, 0, len(dateMap)/2)
-	for k, v := range dateMap {
+	for k, dt := range dateMap {
+		v := dt.Times
 		var st time.Time
 		var ed time.Time
 		var estimated bool = false
@@ -257,6 +277,9 @@ func main() {
 			st, ed = ed, st
 		}
 		tr := NewTimeRange(k, st, ed, estimated)
+		if dt.Leave {
+			tr.Leave = true
+		}
 		trs = append(trs, tr)
 	}
 	sort.Slice(trs, func(i, j int) bool { return trs[i].start.Before(trs[j].start) })
@@ -278,8 +301,8 @@ func main() {
 			if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 				start = ANSIRed
 			}
-			fmt.Printf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s\n", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8,
-				start, HourMin(diff), ANSIReset)
+			fmt.Printf("\n%s subtotal: %s %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
+				start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
 			fmt.Println()
 			currMonth = month
 			currMonthCnt = 0
@@ -295,11 +318,12 @@ func main() {
 		}
 
 		if tr.guessed {
-			fmt.Printf("%v (%v)  %v - \033[1;36m%v\x1b[0m  %-10s %s%s%s     ---     \033[1;36mEstimated\x1b[0m\n", FormatDate(tr.start),
-				FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end), HourMin(h), start, HourMin(diffh), ANSIReset)
+			fmt.Printf("%v (%v)  %v - \033[1;36m%v\x1b[0m  %-10s | %-10.6f %s%s%s     ---     \033[1;36mEstimated\x1b[0m\n", FormatDate(tr.start),
+				FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end), HourMin(h), h, start, HourMin(diffh), ANSIReset)
+
 		} else {
-			fmt.Printf("%v (%v)  %v - %v  %-10s %s%s%s\n", FormatDate(tr.start), FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end),
-				HourMin(h), start, HourMin(diffh), ANSIReset)
+			fmt.Printf("%v (%v)  %v - %v  %-10s | %-10.6f %s%s%s\n", FormatDate(tr.start), FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end),
+				HourMin(h), h, start, HourMin(diffh), ANSIReset)
 		}
 
 		total += h
@@ -314,24 +338,27 @@ func main() {
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
-		util.Printlnf("\n%s subtotal: %s (for %d days, %d hours), diff: %s%s%s", currMonth, HourMin(subtotal), currMonthCnt, currMonthCnt*8, start, HourMin(diff), ANSIReset)
+
+		fmt.Printf("\n%s subtotal: %s %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
+			start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
 	}
 
 	// total
-	{
-		diff := total - float64(len(trs)*8)
-		start := ANSIGreen + "+"
-		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
-			start = ANSIRed
-		}
-		util.Printlnf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s%s", total, len(trs), len(trs)*8, start, HourMin(diff), ANSIReset)
-		fmt.Println()
-	}
+	// {
+	// 	diff := total - float64(len(trs)*8)
+	// 	start := ANSIGreen + "+"
+	// 	if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
+	// 		start = ANSIRed
+	// 	}
+	// 	util.Printlnf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s %.6f%s", total, len(trs), len(trs)*8, start, HourMin(diff), diff, ANSIReset)
+	// 	fmt.Println()
+	// }
+	println("")
 
 	cf, err := util.ReadWriteFile(cacheFile)
 	if err == nil {
 		defer cf.Close()
-		buf, err := util.WriteJson(cache)
+		buf, err := encoding.WriteJson(cache)
 		if err == nil {
 			_, err = cf.Write(buf)
 			if err != nil {
