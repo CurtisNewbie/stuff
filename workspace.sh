@@ -1762,3 +1762,33 @@ function sqlclone() {
   python3 "$STUFF/dbinsert.py" -host "$ip" -user "$user" -password "$password" -sql "$sql"
   python3 "$STUFF/dbupdate.py" -host "$ip" -user "$user" -password "$password" -sql "$sql"
 }
+
+function xrq_start() {
+  caffe_pid="$(ps -ef | grep caffeinate | grep -v grep | awk '{ print $2 }')"
+  if [ "$caffe_pid" == "" ]; then
+    caffeinate -s & &> /dev/null \
+      && echogreen "caffeinate started in background with pid: $(ps -ef | grep caffeinate | grep -v grep | awk '{ print $2 }')"
+  else
+    echogreen "caffeinate already running with pid: $caffe_pid"
+  fi
+
+  slc_pid="$(ps -ef | grep MacOS/SunloginClient | grep -v grep | grep -v "mod=service" | awk '{ print $2 }')"
+  if [ "$slc_pid" == "" ]; then
+    open /Applications/SunloginClient.app \
+      && echogreen "sunloginclient started with pid: $(ps -ef | grep MacOS/SunloginClient | grep -v grep | grep -v "mod=service" | awk '{ print $2 }')"
+  else
+    echogreen "sunloginclient already running with pid: $slc_pid"
+  fi
+}
+
+function xrq_stop() {
+  caffe_pid="$(ps -ef | grep caffeinate | grep -v grep | awk '{ print $2 }')"
+  if [ "$caffe_pid" != "" ]; then
+    kill -15 "$caffe_pid" && echored "stopped $caffe_pid"
+  fi
+
+  slc_pid="$(ps -ef | grep MacOS/SunloginClient | grep -v grep | grep -v "mod=service" | awk '{ print $2 }')"
+  if [ "$slc_pid" != "" ]; then
+    kill -15 "$slc_pid" && echored "stopped $slc_pid"
+  fi
+}
