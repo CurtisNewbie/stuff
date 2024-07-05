@@ -116,6 +116,9 @@ export PYTHONPATH="$PYTHONPATH:$STUFF"
 # local executable bin directory
 export LOC_BIN="/usr/local/bin"
 
+# not directly executable files
+export USER_EXEC=~/exec
+
 # upgrade miso version
 miso_ver="v0.1.2"
 
@@ -159,6 +162,10 @@ alias tmux="tmux -2"
 alias less="less -n"
 alias bc="bc -l"
 alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
+
+if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
+    alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
+fi
 
 function cgit() {
   repo="$1"
@@ -1791,4 +1798,10 @@ function xrq_stop() {
   if [ "$slc_pid" != "" ]; then
     kill -15 "$slc_pid" && echored "stopped $slc_pid"
   fi
+}
+
+function download_arthas() {
+    curl -O https://arthas.aliyun.com/arthas-boot.jar \
+        && mv arthas-boot.jar "$USER_EXEC/" \
+        && echogreen "arthas-boot.jar moved to $USER_EXEC"
 }
