@@ -98,7 +98,7 @@ fi
 
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
-export CGO_ENABLED=1
+export CGO_ENABLED=0
 export LANG=en_US.UTF-8
 
 # for brew's executables
@@ -120,7 +120,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.1.2"
+miso_ver="v0.1.3"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
