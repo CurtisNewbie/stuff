@@ -317,15 +317,26 @@ func main() {
 			start = ANSIRed
 		}
 
+		var estimated string
+		var endHmsColorStart string
 		if tr.guessed {
-			fmt.Printf("%v (%v)  %v - \033[1;36m%v\x1b[0m  %-10s | %-10.6f %s%s%s     ---     \033[1;36mEstimated\x1b[0m\n", FormatDate(tr.start),
-				FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end), HourMin(h), h, start, HourMin(diffh), ANSIReset)
-
-		} else {
-			fmt.Printf("%v (%v)  %v - %v  %-10s | %-10.6f %s%s%s\n", FormatDate(tr.start), FormatWkDay(tr.start), FormatHms(tr.start), FormatHms(tr.end),
-				HourMin(h), h, start, HourMin(diffh), ANSIReset)
+			estimated = "     ---     \033[1;36mEstimated\x1b[0m"
+			endHmsColorStart = ANSICyan
 		}
-
+		util.NamedPrintlnf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${estimated}",
+			map[string]any{
+				"startDate":        FormatDate(tr.start),
+				"startWkDay":       FormatWkDay(tr.start),
+				"startHms":         FormatHms(tr.start),
+				"endHms":           FormatHms(tr.end),
+				"hHourMin":         util.PadSpace(-10, HourMin(h)),
+				"h":                util.FmtFloat(h, -10, 6),
+				"colorStart":       start,
+				"diffhHourMin":     HourMin(diffh),
+				"colorReset":       ANSIReset,
+				"estimated":        estimated,
+				"endHmsColorStart": endHmsColorStart,
+			})
 		total += h
 		currMonthCnt += 1
 		subtotal += h
@@ -342,17 +353,6 @@ func main() {
 		fmt.Printf("\n%s subtotal: %s %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
 			start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
 	}
-
-	// total
-	// {
-	// 	diff := total - float64(len(trs)*8)
-	// 	start := ANSIGreen + "+"
-	// 	if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
-	// 		start = ANSIRed
-	// 	}
-	// 	util.Printlnf("\ntotal: %.2fh (for %d days, %d hours), diff: %s%s %.6f%s", total, len(trs), len(trs)*8, start, HourMin(diff), diff, ANSIReset)
-	// 	fmt.Println()
-	// }
 	println("")
 
 	cf, err := util.ReadWriteFile(cacheFile)
