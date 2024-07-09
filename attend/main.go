@@ -301,7 +301,7 @@ func main() {
 			if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 				start = ANSIRed
 			}
-			fmt.Printf("\n%s subtotal: %s %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
+			fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
 				start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
 			fmt.Println()
 			currMonth = month
@@ -350,7 +350,7 @@ func main() {
 			start = ANSIRed
 		}
 
-		fmt.Printf("\n%s subtotal: %s %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
+		fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
 			start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
 	}
 	println("")
