@@ -1541,7 +1541,6 @@ function upgrade() {
     go get "github.com/curtisnewbie/miso@$miso_ver" \
         && go mod tidy \
         && go fmt ./... \
-        && go build ./... \
         && git commit -am "Upgrade miso to $miso_ver"
 
     cd "$wd"
