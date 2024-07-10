@@ -1805,3 +1805,7 @@ function download_arthas() {
         && mv arthas-boot.jar "$USER_EXEC/" \
         && echogreen "arthas-boot.jar moved to $USER_EXEC"
 }
+
+function download_jmc() {
+    brew install --cask jdk-mission-control
+}
