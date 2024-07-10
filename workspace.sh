@@ -1405,7 +1405,7 @@ function fmt() {
 }
 
 function build() {
-    go build ./...
+    go build -o /dev/null ./...
 }
 
 function initwork() {
