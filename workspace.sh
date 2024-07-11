@@ -159,7 +159,7 @@ alias ex='exit'
 alias l="ll"
 alias ll="ls -lth"
 alias tmux="tmux -2"
-alias less="less -n"
+alias less="less -nR"
 alias bc="bc -l"
 alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
 
