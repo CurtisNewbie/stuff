@@ -106,7 +106,8 @@ export LANG=en_US.UTF-8
 
 # stuff repo location
 script_source=${BASH_SOURCE[0]}
-[ -z "$STUFF" ] && STUFF="$script_source"
+script_dir="$( cd -- "$( dirname -- "$script_source" )" &> /dev/null && pwd )"
+[ -z "$STUFF" ] && STUFF="$script_dir"
 
 # default trash can location: ~/trash
 trash_can="$HOME/trash"
