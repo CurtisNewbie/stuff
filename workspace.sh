@@ -1296,6 +1296,18 @@ function ffmpeg_loop() {
     ffmpeg -stream_loop $3 -i "$1" "$2"
 }
 
+function ffmpeg_hls_download() {
+    # $1 - https://****.m3u8
+    out="output.mp4"
+    if [ ! -z "$2" ]; then
+        out="$2"
+    fi
+    ffmpeg -loglevel debug -f hls \
+        -user_agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" \
+        -i "$1" \
+        -c copy "$out"
+}
+
 function analyze() {
     go build -gcflags='-m -l' ./... 2>&1 | grep -v 'does not escape' | grep escape > "analyze.log"
 }
@@ -1811,4 +1823,3 @@ function download_arthas() {
 function download_jmc() {
     brew install --cask jdk-mission-control
 }
-
