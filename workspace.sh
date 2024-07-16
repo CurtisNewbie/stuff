@@ -105,7 +105,8 @@ export LANG=en_US.UTF-8
 [ -d "/usr/local/opt/ruby/bin" ] && export PATH="/usr/local/opt/ruby/bin:$PATH"
 
 # stuff repo location
-[ -z "$STUFF" ] && STUFF="$(pwd)"
+script_source=${BASH_SOURCE[0]}
+[ -z "$STUFF" ] && STUFF="$script_source"
 
 # default trash can location: ~/trash
 trash_can="$HOME/trash"
@@ -1809,3 +1810,4 @@ function download_arthas() {
 function download_jmc() {
     brew install --cask jdk-mission-control
 }
+
