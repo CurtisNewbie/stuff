@@ -58,7 +58,19 @@ def is_beta(v):
     return pat.match(v)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
+
+    force_push = False
+    target = None
+
+    for v in sys.argv[1:]:
+        if not v: continue
+        if v == "-f":
+            force_push = True
+            continue
+        target = v
+        break
+
+    if not target and not force_push:
         last = current_tag()
         guessed = guess_next(last)
         print()
@@ -68,24 +80,21 @@ if __name__ == '__main__':
         print()
         exit(1)
 
-    force_push = False
-    for v in sys.argv[1:]:
-        if v == "-f":
-            force_push = True
-            break
+    if target:
+        branch = current_branch()
+        latest_tag = current_tag().strip()
+        if latest_tag == target:
+            print(f"{latest_tag} has been released")
+            exit(1)
 
-    branch = current_branch()
-    target = sys.argv[1]
-
-    latest_tag = current_tag().strip()
-    if latest_tag == target:
-        print(f"{latest_tag} has been released")
-        exit(1)
-
-    target_release = parse_beta(target)
-    if target_release != target and target_release in all_tags().splitlines():
-        print(f"{target_release} has been released")
-        exit(1)
+        target_release = parse_beta(target)
+        if target_release != target and target_release in all_tags().splitlines():
+            print(f"{target_release} has been released")
+            exit(1)
+    else:
+        last = current_tag()
+        target = guess_next(last)
+        print(f"Last release is '{last}'. Releasing '{target}'...")
 
     version_file = None
     for (dir_path, dir_name, file_names) in walk("."):
