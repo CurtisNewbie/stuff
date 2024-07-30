@@ -77,6 +77,15 @@ func main() {
 	pool := util.NewAsyncPool(500, 10)
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
+	var aft *time.Time = nil
+	if *AfterFlag != "" {
+		v, err := ParseTime(*AfterFlag)
+		if err != nil {
+			panic(err)
+		}
+		aft = &v
+	}
+
 	for _, f := range files {
 		if strings.HasPrefix(f.Name(), ".") {
 			continue
@@ -86,8 +95,10 @@ func main() {
 			panic(fmt.Errorf("failed to read file info: %v, %v", f.Name(), err))
 		}
 
-		if inf.ModTime().Before(now.Add(-time.Hour * 24 * 45)) { // 60 days ago
-			continue
+		if aft != nil {
+			if inf.ModTime().Before(*aft) {
+				continue
+			}
 		}
 
 		fpath := path.Join(*DirFlag, f.Name())
@@ -127,15 +138,6 @@ func main() {
 			continue
 		}
 		fileContent = append(fileContent, s)
-	}
-
-	var aft *time.Time = nil
-	if *AfterFlag != "" {
-		v, err := ParseTime(*AfterFlag)
-		if err != nil {
-			panic(err)
-		}
-		aft = &v
 	}
 
 	// 打卡时间: 2024-06-06 09:11:46
@@ -180,7 +182,9 @@ func main() {
 		res := attPat.FindStringSubmatch(l)
 		if len(res) < 1 {
 			if strings.Contains(l, "打卡时间:") {
-				fmt.Printf("line invalid: %s\n", l)
+				if *DebugFlag {
+					fmt.Printf("line invalid: %s\n", l)
+				}
 			}
 
 			res = leavePat.FindStringSubmatch(l)
