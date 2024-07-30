@@ -189,8 +189,10 @@ func main() {
 
 			res = leavePat.FindStringSubmatch(l)
 			if len(res) < 4 {
-				if strings.Contains(l, "开始时间") || strings.Contains(l, "结束时间") {
-					fmt.Printf("line invalid: %s\n", l)
+				if *DebugFlag {
+					if strings.Contains(l, "开始时间") || strings.Contains(l, "结束时间") {
+						fmt.Printf("line invalid: %s\n", l)
+					}
 				}
 				continue
 			}
