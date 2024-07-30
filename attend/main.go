@@ -20,10 +20,11 @@ import (
 const (
 	precision = 1000000000
 
-	ANSIRed   = "\033[1;31m"
-	ANSIGreen = "\033[1;32m"
-	ANSICyan  = "\033[1;36m"
-	ANSIReset = util.ANSIReset
+	ANSIRed    = "\033[1;31m"
+	ANSIGreen  = "\033[1;32m"
+	ANSICyan   = "\033[1;36m"
+	ANSIYellow = "\033[1;93m"
+	ANSIReset  = util.ANSIReset
 )
 
 var (
@@ -323,13 +324,17 @@ func main() {
 			start = ANSIRed
 		}
 
-		var estimated string
+		var extraTag string
 		var endHmsColorStart string
 		if tr.guessed {
-			estimated = "     ---     \033[1;36mEstimated\x1b[0m"
+			extraTag = fmt.Sprintf("     ---     %vEstimated\x1b[0m", ANSICyan)
 			endHmsColorStart = ANSICyan
+		} else if tr.Leave {
+			extraTag = fmt.Sprintf("     ---     %vLeave\x1b[0m", ANSIYellow)
+			endHmsColorStart = ANSIYellow
 		}
-		util.NamedPrintlnf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${estimated}",
+		dhms := util.PadSpace(-10, HourMin(diffh))
+		util.NamedPrintlnf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${extraTag}",
 			map[string]any{
 				"startDate":        FormatDate(tr.start),
 				"startWkDay":       FormatWkDay(tr.start),
@@ -338,9 +343,9 @@ func main() {
 				"hHourMin":         util.PadSpace(-10, HourMin(h)),
 				"h":                util.FmtFloat(h, -10, 6),
 				"colorStart":       start,
-				"diffhHourMin":     HourMin(diffh),
+				"diffhHourMin":     dhms,
 				"colorReset":       ANSIReset,
-				"estimated":        estimated,
+				"extraTag":         extraTag,
 				"endHmsColorStart": endHmsColorStart,
 			})
 		total += h
