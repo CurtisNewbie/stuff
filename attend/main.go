@@ -267,7 +267,9 @@ func main() {
 		if len(v) < 2 {
 			st = v[0]
 			if FormatDate(st) != FormatDate(now) {
-				fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
+				if *DebugFlag {
+					fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
+				}
 				continue
 			}
 			ed = time.Date(now.Year(), now.Month(), now.Day(), 18, 30, 0, 0, time.Local)
