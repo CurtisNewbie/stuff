@@ -61,12 +61,14 @@ export -f ismac
 
 # --------------- command check ---------------
 
-cmds="brew git mvn java go ag"
-for c in $cmds; do
-    if ! command -v "brew" 2&> /dev/null ; then
-        echored "$c is not found"
-    fi
-done
+if ismac; then
+    cmds="brew git mvn java go ag"
+    for c in $cmds; do
+        if ! command -v "brew" 2&> /dev/null ; then
+            echored "$c is not found"
+        fi
+    done
+fi
 
 gitps1=0
 if [ -f "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh" ]; then
