@@ -28,6 +28,11 @@ var (
 	}
 )
 
+const (
+	color = "\033[1;32m"
+	reset = "\033[0m"
+)
+
 func main() {
 	root, ok := os.LookupEnv("GIT_PATH")
 	if !ok {
@@ -63,15 +68,15 @@ func SyncRepo(root string, repo string) string {
 	var result string
 	if err != nil {
 		if outs != "" {
-			result = fmt.Sprintf("Sync %s failed, took %s, %v, %v", repo, took, outs, err)
+			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v, %v", color, repo, reset, took, outs, err)
 		} else {
-			result = fmt.Sprintf("Sync %s failed, took %s, %v", repo, took, err)
+			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v", color, repo, reset, took, err)
 		}
 	} else {
 		if outs != "" {
-			result = fmt.Sprintf("Sync %s succeeded, took %s, %v", repo, took, outs)
+			result = fmt.Sprintf("Sync %s%s%s succeeded, took %s, %v", color, repo, reset, took, outs)
 		} else {
-			result = fmt.Sprintf("Sync %s succeeded, took %s", repo, took)
+			result = fmt.Sprintf("Sync %s%s%s succeeded, took %s", color, repo, reset, took)
 		}
 	}
 	return result
