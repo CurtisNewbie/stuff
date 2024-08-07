@@ -23,6 +23,8 @@ var (
 		"moon",
 		"pocket",
 		"acct",
+		"tamper_script",
+		"smash",
 	}
 )
 
