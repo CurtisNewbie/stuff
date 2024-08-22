@@ -68,7 +68,9 @@ if __name__ == '__main__':
             force_push = True
             continue
         target = v
-        break
+
+    # print(f"force: {force_push}")
+    # print(f"target: {target}")
 
     if not target and not force_push:
         last = current_tag()
