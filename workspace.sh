@@ -950,6 +950,20 @@ function gxpatch() {
     git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$1" > "$2"
 }
 
+function gitgrep() {
+    pat="$1"
+    path=""
+    if [ ! -z "$2" ]; then
+        path="$1"
+        pat="$2"
+    fi
+    if [ ! -z "$path" ]; then
+        git log -p -S "$pat" $path
+    else
+        git log -p -S "$pat"
+    fi
+}
+
 function gapplypatch() {
     if [ -z "$1" ]; then
         echored "please specify where the generated patch is"
