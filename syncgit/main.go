@@ -25,6 +25,7 @@ var (
 		"acct",
 		"tamper_script",
 		"smash",
+		"cvlet",
 	}
 )
 
