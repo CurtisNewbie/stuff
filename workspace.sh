@@ -1304,8 +1304,12 @@ function cvt_mp4() {
 }
 
 function cvt_mp4_cut() {
-    # -ss 00:03:00 -t 00:00:20.0
-    ffmpeg -i "$1" -ss "$2" "$3"
+    # -ss 00:03:00 -t 00:00:20.0 (-t is duration)
+    if [ "${#@}" -gt 3 ]; then
+        ffmpeg -i "$1" -ss "$2" -t "$3" "$4"
+    else
+        ffmpeg -i "$1" -ss "$2" "$3"
+    fi
 }
 
 function ffmpeg_loop() {
