@@ -976,6 +976,7 @@ function gapplypatch() {
         return 1
     fi
 
+    # git am --directory $AS_DIR_NAME $PATCH_FILE
     git am < "$1"
 }
 
