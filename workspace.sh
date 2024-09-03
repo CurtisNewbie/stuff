@@ -976,8 +976,11 @@ function gapplypatch() {
         return 1
     fi
 
-    # git am --directory $AS_DIR_NAME $PATCH_FILE
-    git am < "$1"
+    if [ ! -z "$2" ]; then
+        git am -C1 --ignore-space-change --ignore-whitespace --empty keep --directory "$2" "$1"
+    else
+        git am -C1 --ignore-space-change --ignore-whitespace --empty keep "$1"
+    fi
 }
 
 function attachcli() {
