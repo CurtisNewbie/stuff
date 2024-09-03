@@ -1440,7 +1440,16 @@ function basic_auth() {
 }
 
 function fmt() {
-    go fmt ./...
+    if [ -f "go.mod" ]; then
+        go fmt ./...
+        echo "Formatted $(pwd)"
+    fi
+    for d in $(ls);
+    do
+        if [ -f "$d/go.mod" ]; then
+            (cd $d && go fmt ./... && echo "Formatted $d")
+        fi
+    done
 }
 
 function build() {
