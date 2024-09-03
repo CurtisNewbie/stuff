@@ -1635,7 +1635,7 @@ function pushtag() {
 }
 
 function startcluster() {
-    for r in $(ls "$GIT_PATH/moon-monorepo");
+    for r in $(ls "$GIT_PATH/moon-monorepo/backend");
     do
         if [ -d "$r" ]; then
             echo "$r"
