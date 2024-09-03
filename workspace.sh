@@ -1637,17 +1637,14 @@ function pushtag() {
 function startcluster() {
     for r in $(ls "$GIT_PATH/moon-monorepo/backend");
     do
-        if [ -d "$r" ]; then
-            echo "$r"
-            (
-                cd "$r";
-                if [ -f "main.go" ]; then
-                    go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-                else
-                    go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-                fi
-            )
-        fi
+        (
+            cd "$GIT_PATH/moon-monorepo/backend/$r"
+            if [ -f "main.go" ]; then
+                go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+            else
+                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+            fi
+        )
     done
 }
 
