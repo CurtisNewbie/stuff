@@ -100,7 +100,7 @@ fi
 
 export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
-export CGO_ENABLED=0
+# export CGO_ENABLED=0
 export LANG=en_US.UTF-8
 
 # for brew's executables
