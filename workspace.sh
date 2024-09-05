@@ -1761,7 +1761,7 @@ function ocr() {
 }
 export -f ocr
 
-export BREW_SERVICES="consul mysql@5.7 redis rabbitmq"
+export BREW_SERVICES="consul mysql@5.7 redis rabbitmq zookeeper"
 function stopservices() {
   for s in $BREW_SERVICES; do
     brew services stop $s
