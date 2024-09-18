@@ -18,7 +18,6 @@ nnoremap gu :action GotoSuperMethod<CR>
 " nnoremap gf :action Forward<CR>
 nnoremap ge :action Generate<CR>
 nnoremap th :action TypeHierarchy<CR>
-nnoremap -- :action Tool.GotoRequestService<CR>
 nnoremap <C-n> :NERDTreeFocus<CR>
 
 " nnoremap <C-n> :NERDTreeToggle<CR>
@@ -28,3 +27,5 @@ nnoremap <C-n> :NERDTreeFocus<CR>
 
 :map <C-o> <Action>(Back)
 :map <C-i> <Action>(Forward)
+
+noremap -- :vsp<CR> <c-w>h :q<CR>
