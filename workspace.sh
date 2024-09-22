@@ -1648,7 +1648,7 @@ function startcluster() {
     done
     (
         cd "$GIT_PATH/moon-monorepo/frontend/moon"
-        ng serve &
+        ng serve > /dev/null 2>&1 &
     )
 }
 
