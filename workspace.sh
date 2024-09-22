@@ -1646,6 +1646,10 @@ function startcluster() {
             fi
         )
     done
+    (
+        cd "$GIT_PATH/moon-monorepo/frontend/moon"
+        ng serve &
+    )
 }
 
 function stopcluster() {
@@ -1655,6 +1659,8 @@ function stopcluster() {
     do
         kill -15 "$p"
     done
+
+    kill -15 $(ps -ef | grep "ng serve" | grep -v grep | awk '{ print $2}')
 }
 
 function findapp() {
