@@ -1856,7 +1856,6 @@ function download_jmc() {
 }
 
 function sync_monorepo() {
-    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/event-pump/* $GIT_PATH/event-pump/
     rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/vfm/* $GIT_PATH/vfm/
     rsync -av --exclude .git --exclude trash/ --exclude storage/ $GIT_PATH/moon-monorepo/backend/mini-fstore/* $GIT_PATH/mini-fstore/
     rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/user-vault/* $GIT_PATH/user-vault/
