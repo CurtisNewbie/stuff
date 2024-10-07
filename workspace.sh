@@ -167,6 +167,7 @@ alias less="less -nR"
 alias bc="bc -l"
 alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
 alias leetcode="cp $STUFF/leetcode/Solution.java . && code Solution.java"
+alias diff="diff -bur"
 
 if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
     alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
@@ -1852,4 +1853,14 @@ function download_arthas() {
 
 function download_jmc() {
     brew install --cask jdk-mission-control
+}
+
+function sync_monorepo() {
+    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/event-pump/* $GIT_PATH/event-pump/
+    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/vfm/* $GIT_PATH/vfm/
+    rsync -av --exclude .git --exclude trash/ --exclude storage/ $GIT_PATH/moon-monorepo/backend/mini-fstore/* $GIT_PATH/mini-fstore/
+    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/user-vault/* $GIT_PATH/user-vault/
+    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/logbot/* $GIT_PATH/logbot/
+    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/gatekeeper/* $GIT_PATH/gatekeeper/
+    rsync -av --exclude node_modules/ --exclude .git --exclude dist/ $GIT_PATH/moon-monorepo/frontend/moon/* $GIT_PATH/moon/
 }
