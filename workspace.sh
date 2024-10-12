@@ -1554,7 +1554,7 @@ function tcp_echo() {
     nc -kl $port
 }
 
-function upgrade() {
+function upgrade_commit() {
     commit="$1"
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
@@ -1592,6 +1592,50 @@ function upgrade() {
         && go fmt ./... \
         && go build -o /dev/null ./... \
         && git commit -am "Upgrade miso to $miso_ver"
+
+    cd "$wd"
+    return 0
+}
+export -f upgrade_commit
+
+function upgrade() {
+    commit="$1"
+    if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
+    if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
+
+    moddir=""
+    modf="go.mod"
+    if [ ! -f "$modf" ]; then
+        for di in ./* ; do
+            if [ ! -d "$di" ]; then
+                continue
+            fi
+            submod="$di/go.mod"
+            if [ -f "$submod" ]; then
+                modf="$submod"
+                moddir="$di"
+            else
+                break
+            fi
+        done
+    fi
+
+    wd=$(pwd)
+    echo "Mod file found: $modf"
+
+    if [ "$moddir" != "" ]; then
+        cd "$moddir"
+    fi
+
+    [ ! -z "$commit" ] && miso_ver="$commit"
+
+    echo "Upgrading miso to $miso_ver"
+
+    go get "github.com/curtisnewbie/miso@$miso_ver" \
+        && go mod tidy \
+        && go fmt ./... \
+        && go build -o /dev/null ./... \
+        && echo "git commit -am \"Upgrade miso to $miso_ver\""
 
     cd "$wd"
     return 0
