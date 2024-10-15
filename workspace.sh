@@ -1907,3 +1907,7 @@ function sync_monorepo() {
     rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/gatekeeper/* $GIT_PATH/gatekeeper/
     rsync -av --exclude node_modules/ --exclude .git --exclude dist/ $GIT_PATH/moon-monorepo/frontend/moon/* $GIT_PATH/moon/
 }
+
+function buildinstall() {
+    go build -o "$1" && installbin "$1"
+}
