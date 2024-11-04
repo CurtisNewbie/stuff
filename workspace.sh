@@ -1555,7 +1555,13 @@ function tcp_echo() {
 }
 
 function upgrade_commit() {
+    project="miso"
     commit="$1"
+    if [ $# -ge 2 ]; then
+        project="$1"
+        commit="$2"
+    fi
+
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
 
@@ -1585,13 +1591,13 @@ function upgrade_commit() {
 
     [ ! -z "$commit" ] && miso_ver="$commit"
 
-    echo "Upgrading miso to $miso_ver"
+    echo "Upgrading $project to $miso_ver"
 
-    go get "github.com/curtisnewbie/miso@$miso_ver" \
+    go get "github.com/curtisnewbie/$project@$miso_ver" \
         && go mod tidy \
         && go fmt ./... \
         && go build -o /dev/null ./... \
-        && git commit -am "Upgrade miso to $miso_ver"
+        && git commit -am "Upgrade $project to $miso_ver"
 
     cd "$wd"
     return 0
@@ -1599,7 +1605,13 @@ function upgrade_commit() {
 export -f upgrade_commit
 
 function upgrade() {
+    project="miso"
     commit="$1"
+    if [ $# -ge 2 ]; then
+        project="$1"
+        commit="$2"
+    fi
+
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
     if [ -f go.work.sum ]; then rm go.work.sum && echo "removed go.work.sum"; fi
 
@@ -1629,13 +1641,13 @@ function upgrade() {
 
     [ ! -z "$commit" ] && miso_ver="$commit"
 
-    echo "Upgrading miso to $miso_ver"
+    echo "Upgrading $project to $miso_ver"
 
-    go get "github.com/curtisnewbie/miso@$miso_ver" \
+    go get "github.com/curtisnewbie/$project@$miso_ver" \
         && go mod tidy \
         && go fmt ./... \
         && go build -o /dev/null ./... \
-        && echo "git commit -am \"Upgrade miso to $miso_ver\""
+        && echo "git commit -am \"Upgrade $project to $miso_ver\""
 
     cd "$wd"
     return 0
@@ -1643,18 +1655,12 @@ function upgrade() {
 export -f upgrade
 
 function upgrade_all() {
-    gitpath="${GIT_PATH}"
-    if [ -z $gitpath ]; then
-        echo "GIT_PATH is empty"
-        return 1
-    fi
-
     # l="vfm mini-fstore user-vault event-pump gatekeeper hammer doc-indexer postbox logbot"
-    l="vfm mini-fstore user-vault gatekeeper logbot"
+    l="vfm mini-fstore user-vault gatekeeper logbot acct"
     for r in $l;
     do
         echogreen ">>> $r"
-        (cd $GIT_PATH/$r; upgrade && git push)
+        (cd ./$r; upgrade)
         printf "\n"
     done
 }
