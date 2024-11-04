@@ -26,6 +26,7 @@ var (
 		"tamper_script",
 		"smash",
 		"cvlet",
+		"moon-monorepo",
 	}
 )
 
