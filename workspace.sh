@@ -124,7 +124,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.1.11"
+miso_ver="v0.1.12-beta.1"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
@@ -1711,7 +1711,12 @@ function stopcluster() {
         kill -15 "$p"
     done
 
-    kill -15 $(ps -ef | grep "ng serve" | grep -v grep | awk '{ print $2}')
+    pids=$(ps -ef | grep "ng serve" | grep -v grep | awk '{ print $2}')
+    for p in $pids
+    do
+        kill -15 "$p"
+        echo "killed $p"
+    done
 }
 
 function findapp() {
