@@ -1925,12 +1925,13 @@ function download_jmc() {
 }
 
 function sync_monorepo() {
-    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/vfm/* $GIT_PATH/vfm/
-    rsync -av --exclude .git --exclude trash/ --exclude storage/ $GIT_PATH/moon-monorepo/backend/mini-fstore/* $GIT_PATH/mini-fstore/
-    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/user-vault/* $GIT_PATH/user-vault/
-    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/logbot/* $GIT_PATH/logbot/
-    rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/gatekeeper/* $GIT_PATH/gatekeeper/
-    rsync -av --exclude node_modules/ --exclude .git --exclude dist/ $GIT_PATH/moon-monorepo/frontend/moon/* $GIT_PATH/moon/
+    rsync -av --exclude .git $GIT_PATH/event-pump/* $GIT_PATH/moon-monorepo/backend/event-pump/
+    # rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/vfm/* $GIT_PATH/vfm/
+    # rsync -av --exclude .git --exclude trash/ --exclude storage/ $GIT_PATH/moon-monorepo/backend/mini-fstore/* $GIT_PATH/mini-fstore/
+    # rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/user-vault/* $GIT_PATH/user-vault/
+    # rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/logbot/* $GIT_PATH/logbot/
+    # rsync -av --exclude .git $GIT_PATH/moon-monorepo/backend/gatekeeper/* $GIT_PATH/gatekeeper/
+    # rsync -av --exclude node_modules/ --exclude .git --exclude dist/ $GIT_PATH/moon-monorepo/frontend/moon/* $GIT_PATH/moon/
 }
 
 function buildinstall() {
