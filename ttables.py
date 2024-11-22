@@ -27,14 +27,15 @@ def show_create_table(cursor, table, database):
                      f"CREATE TABLE IF NOT EXISTS {database}.{table} ", ddl)
     else:
         ddl = re.sub("CREATE TABLE `[a-zA-Z_]+` ",
-                     f"CREATE TABLE IF NOT EXISTS {table} ", ddl)
+                     f"CREATE TABLE `{table}` ", ddl)
 
-    ddl = re.sub(
-        "AUTO_INCREMENT=[0-9]+ ?", "", ddl)
-    ddl = re.sub(
-        "DEFAULT CHARSET=[a-zA-Z_0-9]+ ?", "", ddl)
-    ddl = re.sub(
-        "COLLATE=[0-9a-zA-Z_]+ ?", "", ddl)
+    ddl = re.sub("AUTO_INCREMENT=[0-9]+ ?", "", ddl)
+
+    # ddl = re.sub(
+    #     "DEFAULT CHARSET=[a-zA-Z_0-9]+ ?", "", ddl)
+    # ddl = re.sub(
+    #     "COLLATE=[0-9a-zA-Z_]+ ?", "", ddl)
+
     ddl = ddl.strip() + ";"
 
     do_reshape = False
@@ -95,7 +96,8 @@ def reshape(ddl: str) -> str:
 def parsearg():
     ap = argparse.ArgumentParser("ttables.py by Yongj.Zhuang")
     required = ap.add_argument_group('required arguments')
-    required.add_argument("-user", '-u', help="username", type=str, required=True)
+    required.add_argument("-user", '-u', help="username",
+                          type=str, required=False, default='root')
     required.add_argument(
         "-database", '-db', help="database name", type=str, required=True)
 
@@ -106,7 +108,7 @@ def parsearg():
     ap.add_argument(
         "-table", '-t', help="table name (if not specified, all tables' DDL are queried and printed), there can be multiple table names delimited by comma", type=str, required=False)
     ap.add_argument(
-        "-exclschema", help="exclude schema name in CREATE TABLE DDL", action="store_true", required=False)
+        "-inclschema", help="include schema name in CREATE TABLE DDL", action="store_true", required=False)
     ap.add_argument(
         "-debug", help="debug mode", action="store_true", required=False)
     return ap.parse_args()
@@ -117,6 +119,7 @@ def debug(callback):
         print(callback())
 
 
+# python3 ttables.py -database acct  | pbcopy
 if __name__ == '__main__':
 
     args = parsearg()
@@ -148,7 +151,8 @@ if __name__ == '__main__':
     if len(tables) > 0:
         for i in range(len(tables)):
             debug(lambda: f"i: {i}, table: {tables[i]}")
-            show_create_table(cursor, tables[i], None if args.exclschema else database)
+            show_create_table(
+                cursor, tables[i], database if args.inclschema else None)
     else:
         cursor.execute('show tables')
         resultset: list = cursor.fetchall()
@@ -158,7 +162,7 @@ if __name__ == '__main__':
             table = str(resultset[i][0])
             debug(lambda: f"table: {table}, i: {i}")
             show_create_table(
-                cursor, table, None if args.exclschema else database)
+                cursor, table, database if args.inclschema else None)
 
     cursor.close()
     cnx.close()
