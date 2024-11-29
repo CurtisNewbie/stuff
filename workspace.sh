@@ -1462,8 +1462,12 @@ function initwork() {
     if [ $? -ne 0 ]; then
         return 1
     fi
+    echo "go 1.22" >> go.work
     echo "" >> go.work
     echo "use ." >> go.work
+    echo "" >> go.work
+    echo "replace github.com/curtisnewbie/miso => /Users/zhuangyongjie/dev/git/miso" >> go.work;
+    echo "" >> go.work
     ls -l
 }
 export -f initwork
