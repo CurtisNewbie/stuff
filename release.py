@@ -103,31 +103,28 @@ if __name__ == '__main__':
         for fn in file_names:
             if fn == 'version.go':
                 version_file = join(dir_path, fn)
+                # print(version_file)
+                pkg = "main"
+                matched = False
 
-    # print(version_file)
+                with open(version_file, "r") as f:
+                    lines = f.readlines()
+                    for l in lines:
+                        pat = re.compile('package (.*)')
+                        m = pat.match(l)
+                        if m: pkg = m[1]
+                        if re.match("\\s*Version *= *\".*\"\\s*", l): matched = True
 
-    if version_file:
-        pkg = "main"
-        matched = False
-
-        with open(version_file, "r") as f:
-            lines = f.readlines()
-            for l in lines:
-                pat = re.compile('package (.*)')
-                m = pat.match(l)
-                if m: pkg = m[1]
-                if re.match("\\s*Version *= *\".*\"\\s*", l): matched = True
-
-        # print("matched? ", matched)
-        if matched:
-            with open(version_file, "w") as f:
-                f.writelines([
-                    f"package {pkg}\n",
-                    "\n",
-                    "const (\n",
-                    f"\tVersion = \"{target}\"\n"
-                    ")\n"
-                    ""
+                # print("matched? ", matched)
+                if matched:
+                    with open(version_file, "w") as f:
+                        f.writelines([
+                            f"package {pkg}\n",
+                            "\n",
+                            "const (\n",
+                            f"\tVersion = \"{target}\"\n"
+                            ")\n"
+                            ""
                 ])
 
 
