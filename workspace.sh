@@ -394,6 +394,16 @@ function mresolve() {
     fi
 }
 
+function force_mresolve() {
+    pom=$(python3 $STUFF/findpom.py $@)
+    if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
+        echored ">>> pom.xml is not found, aborted"
+    else
+        echogreen ">>> found $pom"
+        mvn dependency:purge-local-repository -f "$pom" && mvn dependency:resolve -f "$pom" -U
+    fi
+}
+
 function mresolve_src() {
     pom=$(python3 $STUFF/findpom.py)
     if [ $? -ne 0 ] || [ ! -f "$pom" ]; then
