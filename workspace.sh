@@ -124,7 +124,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.1.12"
+miso_ver="v0.1.13-beta.3"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
@@ -1472,11 +1472,11 @@ function initwork() {
     if [ $? -ne 0 ]; then
         return 1
     fi
-    echo "go 1.22" >> go.work
-    echo "" >> go.work
+    # echo "go 1.22" >> go.work
+    # echo "" >> go.work
     echo "use ." >> go.work
     echo "" >> go.work
-    echo "replace github.com/curtisnewbie/miso => /Users/zhuangyongjie/dev/git/miso" >> go.work;
+    echo "replace github.com/curtisnewbie/miso => $GIT_PATH/miso" >> go.work;
     echo "" >> go.work
     ls -l
 }
