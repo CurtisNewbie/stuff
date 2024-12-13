@@ -530,7 +530,7 @@ export -f gencmtmsg
 function rkcmt() {
     git add .
     lines=`gencmtmsg`
-    git commit -m "$lines"
+    git commit -m "Polishing" -m "$lines"
     if [ $? -eq 0 ]; then
         echogreen ">>> you recklessly committed a change"
     fi
