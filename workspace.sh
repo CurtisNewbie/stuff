@@ -124,7 +124,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.1.13-beta.3"
+miso_ver="v0.1.13-beta.4"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
@@ -1674,7 +1674,7 @@ function upgrade_all() {
     for r in $l;
     do
         echogreen ">>> $r"
-        (cd ./$r; upgrade)
+        (cd ./$r; upgrade "$@")
         printf "\n"
     done
 }
