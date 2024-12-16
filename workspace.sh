@@ -1747,6 +1747,15 @@ function stopcluster() {
     done
 }
 
+function stopfront() {
+    pids=$(ps -ef | grep "ng serve" | grep -v grep | awk '{ print $2}')
+    for p in $pids
+    do
+        kill -15 "$p"
+        echo "killed $p"
+    done
+}
+
 function findapp() {
     app="$1"
     ps -ef | grep $app | grep -v grep
