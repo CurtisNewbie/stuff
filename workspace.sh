@@ -1704,6 +1704,12 @@ function startcluster_backend() {
     do
         (
             cd "$GIT_PATH/moon-monorepo/backend/$r"
+            logfile="./logs/$r.log"
+            if [ -f "$logfile" ]; then
+                echo "Truncate log file: $logfile"
+                > "$logfile"
+            fi
+
             if [ -f "main.go" ]; then
                 go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             else
@@ -1718,6 +1724,11 @@ function startcluster() {
     do
         (
             cd "$GIT_PATH/moon-monorepo/backend/$r"
+            logfile="./logs/$r.log"
+            if [ -f "$logfile" ]; then
+                > "$logfile"
+            fi
+
             if [ -f "main.go" ]; then
                 go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             else
