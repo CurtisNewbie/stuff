@@ -1157,6 +1157,8 @@ function grepcode() {
 #     --exclude "*.png"
   # -l
 
+    # --ignore "*.sql" \
+
   ag -i -r "$1" . \
     -C 1 \
     --ignore-dir "target" \
@@ -1177,7 +1179,6 @@ function grepcode() {
     --ignore "*.jpg" \
     --ignore "*.jpeg" \
     --ignore "*.png" \
-    --ignore "*.sql" \
     --ignore "*.excalidraw" \
     --ignore "go.sum" \
     --ignore "*.svg" \
