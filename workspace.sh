@@ -1701,6 +1701,11 @@ function pushtag() {
 }
 
 function startcluster_backend() {
+    (
+        cd "$GIT_PATH/event-pump"
+        go run main.go "logging.rolling.file=./logs/event-pump.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+    )
+
     for r in $(ls "$GIT_PATH/moon-monorepo/backend");
     do
         (
@@ -1721,6 +1726,11 @@ function startcluster_backend() {
 }
 
 function startcluster() {
+    (
+        cd "$GIT_PATH/event-pump"
+        go run main.go "logging.rolling.file=./logs/event-pump.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+    )
+
     for r in $(ls "$GIT_PATH/moon-monorepo/backend");
     do
         (
