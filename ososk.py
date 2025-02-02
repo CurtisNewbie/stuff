@@ -6,10 +6,20 @@ import time
 
 ap = argparse.ArgumentParser(description="ososk.py 2.0 by yongjie.zhuang", formatter_class=argparse.RawTextHelpFormatter)
 ap.add_argument('-u', '--url', type=str, help=f"site url", required=True)
+ap.add_argument('--http_proxy', type=str, help=f"http proxy", required=False)
+ap.add_argument('--https_proxy', type=str, help=f"https proxy", required=False)
 args = ap.parse_args()
 
-print(f"Parsing {args.url}")
-html = requests.get(args.url, impersonate="chrome").text
+if args.http_proxy or args.https_proxy:
+    print(f"Parsing {args.url} using proxy: {args.http_proxy}, {args.https_proxy}")
+else:
+    print(f"Parsing {args.url}")
+
+proxies = {
+  "http": args.http_proxy,
+  "https": args.https_proxy,
+}
+html = requests.get(args.url, impersonate="chrome", proxies= proxies).text
 # print(html)
 
 soup = bs4.BeautifulSoup(html, 'html.parser')
@@ -52,7 +62,7 @@ for h, n in hrefs:
     try:
         with open(n, "wb") as df:
             start = time.monotonic_ns()
-            response = requests.get(h, timeout=20)
+            response = requests.get(h, impersonate="chrome", timeout=20, proxies= proxies)
             df.write(response.content)
             print(f"Downloaded '{h}' as '{n}' ({(time.monotonic_ns() - start) / 1e9:.3}s)")
     except Exception as e:
