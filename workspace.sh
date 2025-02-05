@@ -1703,7 +1703,7 @@ function pushtag() {
 function startcluster_backend() {
     (
         cd "$GIT_PATH/event-pump"
-        go run main.go "logging.rolling.file=./logs/event-pump.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+        go run main.go "logging.rolling.file=./logs/event-pump.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
     )
 
     for r in $(ls "$GIT_PATH/moon-monorepo/backend");
@@ -1717,9 +1717,9 @@ function startcluster_backend() {
             fi
 
             if [ -f "main.go" ]; then
-                go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+                go run main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             else
-                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             fi
         )
     done
@@ -1807,19 +1807,27 @@ function restartapp() {
     app="$1"
     stopapp $app
     r=$app
-    (
-        cd "$GIT_PATH/moon-monorepo/backend/$r"
-        logfile="./logs/$r.log"
-        if [ -f "$logfile" ]; then
-            > "$logfile"
-        fi
 
-        if [ -f "main.go" ]; then
-            go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-        else
-            go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-        fi
-    )
+    if [ "$app" = "event-pump" ]; then
+        (
+            cd "$GIT_PATH/event-pump"
+            go run main.go "logging.rolling.file=./logs/event-pump.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+        )
+    else
+        (
+            cd "$GIT_PATH/moon-monorepo/backend/$r"
+            logfile="./logs/$r.log"
+            if [ -f "$logfile" ]; then
+                > "$logfile"
+            fi
+
+            if [ -f "main.go" ]; then
+                go run main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+            else
+                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+            fi
+        )
+    fi
 }
 
 function pprof_heap() {
