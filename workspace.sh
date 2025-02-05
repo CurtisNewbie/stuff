@@ -1806,7 +1806,20 @@ export -f stopapp
 function restartapp() {
     app="$1"
     stopapp $app
-    startcluster_backend
+    r=$app
+    (
+        cd "$GIT_PATH/moon-monorepo/backend/$r"
+        logfile="./logs/$r.log"
+        if [ -f "$logfile" ]; then
+            > "$logfile"
+        fi
+
+        if [ -f "main.go" ]; then
+            go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+        else
+            go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+        fi
+    )
 }
 
 function pprof_heap() {
