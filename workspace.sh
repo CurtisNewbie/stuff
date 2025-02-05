@@ -1806,7 +1806,7 @@ export -f stopapp
 function restartapp() {
     app="$1"
     stopapp $app
-    startcluster
+    startcluster_backend
 }
 
 function pprof_heap() {
