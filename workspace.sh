@@ -1980,7 +1980,11 @@ function applog() {
     if [ -z "$1" ]; then
         less -nR "$GIT_PATH/moon-monorepo/backend/logbot/logs/merged.log"
     else
-        less -nR "$GIT_PATH/moon-monorepo/backend/$1/logs/$1.log"
+        if [ "$1" = "event-pump" ]; then
+            less -nR "$GIT_PATH/event-pump/logs/$1.log"
+        else
+            less -nR "$GIT_PATH/moon-monorepo/backend/$1/logs/$1.log"
+        fi
     fi
 }
 
