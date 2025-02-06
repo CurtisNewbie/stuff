@@ -1774,16 +1774,16 @@ function startapp() {
         )
     else
         (
-            cd "$GIT_PATH/moon-monorepo/backend/$r"
-            logfile="./logs/$r.log"
+            cd "$GIT_PATH/moon-monorepo/backend/$app"
+            logfile="./logs/$app.log"
             if [ -f "$logfile" ]; then
                 > "$logfile"
             fi
 
             if [ -f "main.go" ]; then
-                go run main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+                go run main.go "logging.rolling.file=./logs/$app.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             else
-                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
+                go run cmd/main.go "logging.rolling.file=./logs/$app.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
             fi
         )
     fi
