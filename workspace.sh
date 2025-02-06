@@ -1700,57 +1700,12 @@ function pushtag() {
     git tag $1 && git push && git push origin $1
 }
 
-function startcluster_backend() {
-    (
-        cd "$GIT_PATH/event-pump"
-        go run main.go "logging.rolling.file=./logs/event-pump.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-    )
-
-    for r in $(ls "$GIT_PATH/moon-monorepo/backend");
-    do
-        (
-            cd "$GIT_PATH/moon-monorepo/backend/$r"
-            logfile="./logs/$r.log"
-            if [ -f "$logfile" ]; then
-                echo "Truncate log file: $logfile"
-                > "$logfile"
-            fi
-
-            if [ -f "main.go" ]; then
-                go run main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-            else
-                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'consul.enabled=true' 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-            fi
-        )
-    done
-}
-
 function startcluster() {
-    (
-        cd "$GIT_PATH/event-pump"
-        go run main.go "logging.rolling.file=./logs/event-pump.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-    )
-
-    for r in $(ls "$GIT_PATH/moon-monorepo/backend");
+    l="event-pump vfm mini-fstore gatekeeper acct logbot user-vault"
+    for r in $l;
     do
-        (
-            cd "$GIT_PATH/moon-monorepo/backend/$r"
-            logfile="./logs/$r.log"
-            if [ -f "$logfile" ]; then
-                > "$logfile"
-            fi
-
-            if [ -f "main.go" ]; then
-                go run main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-            else
-                go run cmd/main.go "logging.rolling.file=./logs/$r.log" 'logging.file.max-backups=1' 'logging.file.max-size=30' > /dev/null 2>&1 &
-            fi
-        )
+        startapp "$r"
     done
-    (
-        cd "$GIT_PATH/moon-monorepo/frontend/moon"
-        ng serve > /dev/null 2>&1 &
-    )
 }
 
 function stopcluster_backend() {
@@ -1806,8 +1761,12 @@ export -f stopapp
 function restartapp() {
     app="$1"
     stopapp $app
-    r=$app
+    startapp $app
+}
 
+function startapp() {
+    app="$1"
+    echo "Building $app"
     if [ "$app" = "event-pump" ]; then
         (
             cd "$GIT_PATH/event-pump"
@@ -1892,7 +1851,7 @@ function kill_scim() {
 }
 
 function newng() {
-  ng new ng-chill --no-standalone --routing --ssr=false
+  ng new "$1" --no-standalone --routing --ssr=false
 }
 
 function urldecode() {
@@ -2009,6 +1968,19 @@ function sync_monorepo() {
     # rsync -av --exclude node_modules/ --exclude .git --exclude dist/ $GIT_PATH/moon-monorepo/frontend/moon/* $GIT_PATH/moon/
 }
 
-function buildinstall() {
-    go build -o "$1" && installbin "$1"
+function deploy_moon_all() {
+    $STUFF/moon_deploy/deploy_moon_all.sh
 }
+
+function deploy_moon_backend() {
+    $STUFF/moon_deploy/deploy_moon_backend.sh
+}
+
+function applog() {
+    if [ -z "$1" ]; then
+        less -nR "$GIT_PATH/moon-monorepo/backend/logbot/logs/merged.log"
+    else
+        less -nR "$GIT_PATH/moon-monorepo/backend/$1/logs/$1.log"
+    fi
+}
+
