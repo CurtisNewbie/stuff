@@ -1988,3 +1988,19 @@ function applog() {
     fi
 }
 
+function root_cert() {
+    openssl s_client -showcerts -verify 10 -connect $1:443 > /dev/null
+}
+
+function scrape_all_cert() {
+    openssl s_client -showcerts -verify 10 -connect $1:443 < /dev/null |
+    awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="cert"a".pem"; print >out}'
+    i=0
+    echo ""
+    for cert in *.pem; do
+            newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').pem
+            echo "- ${i} /tmp/${newname}"
+            mv "$cert" "/tmp/${newname}"
+            i=$((i+1))
+    done
+}
