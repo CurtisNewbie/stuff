@@ -1248,14 +1248,31 @@ export -f today
 
 function pport() { lsof -i ":$1"; }
 
-function certinfo() { openssl x509 -noout -text -inform pem -in "$1"; }
+function certinfo() { openssl x509 -noout -text -in "$1"; }
 
 function certfingerprint() {
-    openssl x509 -noout -fingerprint -sha256 -inform pem -in "$1";
-    openssl x509 -noout -fingerprint -sha1 -inform pem -in "$1";
+    openssl x509 -noout -fingerprint -sha256 -in "$1";
+    openssl x509 -noout -fingerprint -sha1 -in "$1";
 }
 
 function fetchcert() { openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null | openssl x509 -text; }
+
+function root_cert() {
+    openssl s_client -showcerts -verify 10 -connect $1:443 > /dev/null
+}
+
+function scrape_all_cert() {
+    openssl s_client -showcerts -verify 10 -connect $1:443 < /dev/null |
+    awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="cert"a".pem"; print >out}'
+    i=0
+    echo ""
+    for cert in *.pem; do
+            newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').pem
+            echo "- ${i} /tmp/${newname}"
+            mv "$cert" "/tmp/${newname}"
+            i=$((i+1))
+    done
+}
 
 function use_vimdiff_for_git() {
     git config --global diff.tool vimdiff
@@ -1986,21 +2003,4 @@ function applog() {
             less -nR "$GIT_PATH/moon-monorepo/backend/$1/logs/$1.log"
         fi
     fi
-}
-
-function root_cert() {
-    openssl s_client -showcerts -verify 10 -connect $1:443 > /dev/null
-}
-
-function scrape_all_cert() {
-    openssl s_client -showcerts -verify 10 -connect $1:443 < /dev/null |
-    awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="cert"a".pem"; print >out}'
-    i=0
-    echo ""
-    for cert in *.pem; do
-            newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').pem
-            echo "- ${i} /tmp/${newname}"
-            mv "$cert" "/tmp/${newname}"
-            i=$((i+1))
-    done
 }
