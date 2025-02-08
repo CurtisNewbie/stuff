@@ -2004,3 +2004,22 @@ function applog() {
         fi
     fi
 }
+
+function jekyll_new_post() {
+    if [ ! -d "_posts" ]; then
+        echo_red "./_posts not found"
+        exit 1
+    fi
+    name="$1"
+    today=$(date +'%Y-%m-%d')
+    fn="./_posts/${today}-${name}.md"
+    touch "$fn" \
+        && echo "created $fn" \
+        && echo "---"  >> "$fn" \
+        && echo "layout: post"  >> "$fn" \
+        && echo "title: \"${name}\""  >> "$fn" \
+        && echo "date: ${today} 09:00:00 +0800"  >> "$fn" \
+        && echo "categories: Learning"  >> "$fn" \
+        && echo "hidden: 1"  >> "$fn" \
+        && echo "---"  >> "$fn"
+}
