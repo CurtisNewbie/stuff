@@ -1987,15 +1987,15 @@ function sync_monorepo() {
 
 function deploy_moon_all() {
     (
-        cd $STUFF
-        ./moon_deploy/deploy_moon_all.sh
+        cd $STUFF/moon_deploy
+        ./deploy_moon_all.sh
     )
 }
 
 function deploy_moon_backend() {
     (
-        cd $STUFF
-        ./moon_deploy/deploy_moon_backend.sh
+        cd $STUFF/moon_deploy
+        ./deploy_moon_backend.sh
     )
 }
 
