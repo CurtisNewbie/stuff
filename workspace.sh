@@ -1986,11 +1986,17 @@ function sync_monorepo() {
 }
 
 function deploy_moon_all() {
-    $STUFF/moon_deploy/deploy_moon_all.sh
+    (
+        cd $STUFF
+        ./moon_deploy/deploy_moon_all.sh
+    )
 }
 
 function deploy_moon_backend() {
-    $STUFF/moon_deploy/deploy_moon_backend.sh
+    (
+        cd $STUFF
+        ./moon_deploy/deploy_moon_backend.sh
+    )
 }
 
 function applog() {
