@@ -1438,14 +1438,14 @@ function prefix_file() {
 function myddl() {
     echo ""
     text="CREATE TABLE \`$1\` (
-  \`id\` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    \`id\` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
 
-  \`created_at\` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',
-  \`created_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'created by',
-  \`updated_at\` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',
-  \`updated_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'updated by',
-  \`deleted\` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'record deleted',
-  PRIMARY KEY (\`id\`)
+    \`created_at\` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',
+    \`created_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'created by',
+    \`updated_at\` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',
+    \`updated_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'updated by',
+    \`deleted\` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'record deleted',
+    PRIMARY KEY (\`id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET="utf8mb4" COMMENT='$2';
     "
     echo "$text"
