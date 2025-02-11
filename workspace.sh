@@ -124,7 +124,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.1.14-beta.3"
+miso_ver="v0.1.14"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
