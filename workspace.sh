@@ -1725,28 +1725,12 @@ function startcluster() {
     done
 }
 
-function stopcluster_backend() {
-    pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
-    echo $pids
-    for p in $pids
-    do
-        kill -15 "$p"
-    done
-}
-
 function stopcluster() {
     pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
     echo $pids
     for p in $pids
     do
         kill -15 "$p"
-    done
-
-    pids=$(ps -ef | grep "ng serve" | grep -v grep | awk '{ print $2}')
-    for p in $pids
-    do
-        kill -15 "$p"
-        echo "killed $p"
     done
 }
 
