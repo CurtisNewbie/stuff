@@ -2001,8 +2001,10 @@ function jekyll_new_post() {
         exit 1
     fi
     name="$1"
+    fname=$(echo "$name" | awk '{print tolower($0)}')
+    fname="${fname// /-}"
     today=$(date +'%Y-%m-%d')
-    fn="./_posts/${today}-${name}.md"
+    fn="./_posts/${today}-${fname}.md"
     touch "$fn" \
         && echo "created $fn" \
         && echo "---"  >> "$fn" \
