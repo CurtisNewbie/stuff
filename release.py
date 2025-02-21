@@ -4,6 +4,7 @@ import re
 import subprocess
 from os import walk
 from os.path import join
+import os
 
 
 def cli_run(cmd: str):
@@ -137,7 +138,7 @@ if __name__ == '__main__':
                         f.writelines([
                             f"package {pkg}\n",
                             "\n",
-                            "const (\n",
+                            "var (\n",
                             f"\tVersion = \"{target}\"\n"
                             ")\n"
                             ""
@@ -168,6 +169,22 @@ if __name__ == '__main__':
                 print(f"\nrunning 'go fmt ./...' in {dir_path}/")
                 print(cli_run(f"cd {dir_path} && go fmt ./..."))
                 break
+
+    wd = os.getcwd()
+    if "beta" not in target and "miso" in wd:
+        for (dir_path, dir_name, file_names) in walk("."):
+            for fn in file_names:
+                if fn == 'README.md':
+                    with open(join(dir_path, fn), "r+") as f:
+                        all = f.read()
+                        m = re.compile("v\\d+\\.\\d+\\.\\d+")
+                        all = m.sub(target, all)
+                        f.truncate(0)
+                        f.seek(0)
+                        f.write(all)
+                    break
+
+    sys.exit(0)
 
     print(cli_run(f"git add ."))
     print(cli_run(f"git commit -m \"Release {target}\""))
