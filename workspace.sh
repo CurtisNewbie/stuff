@@ -111,8 +111,16 @@ script_source=${BASH_SOURCE[0]}
 script_dir="$( cd -- "$( dirname -- "$script_source" )" &> /dev/null && pwd )"
 [ -z "$STUFF" ] && STUFF="$script_dir"
 
-if [ -d "$STUFF/vscode_snippet" ] && [ -d "$HOME/Library/Application Support/Code/User/snippets/" ] ; then
-    cp  $STUFF/vscode_snippet/* "$HOME/Library/Application Support/Code/User/snippets/"
+if ismac; then
+    if [ -d "$STUFF/vscode_snippet" ] && [ -d "$HOME/Library/Application Support/Code/User/snippets/" ]; then
+        l=$(ls $STUFF/vscode_snippet)
+        for f in "$l" ; do
+            if [ ! -f "$HOME/Library/Application Support/Code/User/snippets/$f" ]; then
+                cp "$STUFF/vscode_snippet/$f" "$HOME/Library/Application Support/Code/User/snippets/"
+                echo "Copied $STUFF/vscode_snippet/$f to $HOME/Library/Application Support/Code/User/snippets/"
+            fi
+        done
+    fi
 fi
 
 # default trash can location: ~/trash
