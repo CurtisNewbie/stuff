@@ -111,6 +111,10 @@ script_source=${BASH_SOURCE[0]}
 script_dir="$( cd -- "$( dirname -- "$script_source" )" &> /dev/null && pwd )"
 [ -z "$STUFF" ] && STUFF="$script_dir"
 
+if [ -d "$STUFF/vscode_snippet" ] && [ -d "$HOME/Library/Application Support/Code/User/snippets/" ] ; then
+    cp  $STUFF/vscode_snippet/* "$HOME/Library/Application Support/Code/User/snippets/"
+fi
+
 # default trash can location: ~/trash
 trash_can="$HOME/trash"
 
@@ -2014,4 +2018,8 @@ function jekyll_new_post() {
         && echo "categories: Learning"  >> "$fn" \
         && echo "hidden: 1"  >> "$fn" \
         && echo "---"  >> "$fn"
+}
+
+function link_title() {
+    python3.11 $STUFF/link_title.py -f $1
 }

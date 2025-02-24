@@ -1,0 +1,60 @@
+{
+  "Json Tag": {
+    "prefix": "jt",
+    "body": ["`json:\"$1\"`"],
+    "description": "Generate json tag"
+  },
+  "misoapi": {
+    "prefix": "misoapi",
+    "body": [
+      "// $1",
+      "//",
+      "// \t - misoapi-http: ",
+      "// \t - misoapi-desc: ",
+      "// \t - misoapi-query: ",
+      "// \t - misoapi-header: ",
+      "// \t - misoapi-scope: ",
+      "// \t - misoapi-resource: ref()"
+    ],
+    "description": "Generate misoapi"
+  },
+  "argparse py": {
+    "prefix": "argparse",
+    "body": [
+      "import argparse",
+      "ap = argparse.ArgumentParser(description=\"\", formatter_class=argparse.RawTextHelpFormatter)",
+      "ap.add_argument(\"-u\", type=str, help=f\"\", required=True)",
+      "ap.add_argument(\"-flag\", help=f\"\", required=False, action=\"store_true\", default=False)",
+      "args = ap.parse_args()"
+    ],
+    "description": "Generate python argparse"
+  },
+  "mat-form-field input": {
+    "scope": "html",
+    "prefix": "mffi",
+    "body": [
+      "<mat-form-field style=\"width: 100%\">",
+      "    <mat-label>$1</mat-label>",
+      "    <input matInput [(ngModel)]=\"$2\" />",
+      "</mat-form-field>"
+    ],
+    "description": "Ng mat-form-field"
+  },
+  "mat-form-field-area": {
+    "scope": "html",
+    "prefix": "mffa",
+    "body": [
+      "<mat-form-field style=\"width: 100%\">",
+      "    <mat-label>$1</mat-label>",
+      "    <textarea matInput [(ngModel)]=\"$2\" ></textarea>",
+      "</mat-form-field>"
+    ],
+    "description": "Ng mat-form-field"
+  },
+  "md-tick": {
+    "scope": "Markdown",
+    "prefix": "tick",
+    "body": ["&#10004;"],
+    "description": "insert tick unicode"
+  }
+}
