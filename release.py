@@ -184,7 +184,6 @@ if __name__ == '__main__':
                         f.write(all)
                     break
 
-    sys.exit(0)
 
     print(cli_run(f"git add ."))
     print(cli_run(f"git commit -m \"Release {target}\""))
