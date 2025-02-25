@@ -75,6 +75,7 @@ func main() {
 	}
 
 	now := time.Now()
+	today := FormatDate(now)
 	pool := util.NewAsyncPool(500, 10)
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
@@ -163,8 +164,40 @@ func main() {
 		if *DebugFlag {
 			fmt.Printf("ExtraDates: %v\n", *ExtraDates)
 		}
+
+		maybeTimeOnly := true
 		for _, ed := range *ExtraDates {
-			lines = append(lines, "打卡时间: "+ed)
+			if _, err := ParseTime(ed); err == nil {
+				maybeTimeOnly = false
+				break
+			}
+
+			if _, err := ParseTime(today + " " + ed); err != nil {
+				maybeTimeOnly = false
+				break
+			}
+		}
+
+		if maybeTimeOnly {
+			start := now
+			n := 1
+			year, month, day := now.Date()
+			today2130 := time.Date(year, month, day, 21, 30, 0, 0, time.Local) // today at 21:30
+			if now.After(today2130) {                                          // if now is after 21:30, we start from tomorrow
+				start = start.AddDate(0, 0, 1)
+				n = 0
+			}
+
+			for _, ed := range *ExtraDates {
+				ex := "打卡时间: " + FormatDate(start) + " " + ed
+				util.Printlnf("extra: %v", ex)
+				lines = append(lines, ex)
+				n += 1
+				if n == 2 {
+					start = start.AddDate(0, 0, 1)
+					n = 0
+				}
+			}
 		}
 	}
 
@@ -266,7 +299,7 @@ func main() {
 		var estimated bool = false
 		if len(v) < 2 {
 			st = v[0]
-			if FormatDate(st) != FormatDate(now) {
+			if FormatDate(st) != today {
 				if *DebugFlag {
 					fmt.Printf("Date missing attendence record, skipped: %+v\n", v)
 				}
