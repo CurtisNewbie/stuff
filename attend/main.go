@@ -79,13 +79,13 @@ func main() {
 	pool := util.NewAsyncPool(500, 10)
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
-	var aft *time.Time = nil
+	var aft time.Time = util.ToETime(now).AddDate(0, -3, 0).ToTime()
 	if *AfterFlag != "" {
 		v, err := ParseTime(*AfterFlag)
 		if err != nil {
 			panic(err)
 		}
-		aft = &v
+		aft = v
 	}
 
 	for _, f := range files {
@@ -97,10 +97,8 @@ func main() {
 			panic(fmt.Errorf("failed to read file info: %v, %v", f.Name(), err))
 		}
 
-		if aft != nil {
-			if inf.ModTime().Before(*aft) {
-				continue
-			}
+		if inf.ModTime().Before(aft) {
+			continue
 		}
 
 		fpath := path.Join(*DirFlag, f.Name())
@@ -161,9 +159,9 @@ func main() {
 		lines = append(lines, sp...)
 	}
 	if ExtraDates != nil {
-		if *DebugFlag {
-			fmt.Printf("ExtraDates: %v\n", *ExtraDates)
-		}
+		// if *DebugFlag {
+		fmt.Printf("ExtraDates: %v\n", *ExtraDates)
+		// }
 
 		maybeTimeOnly := true
 		for _, ed := range *ExtraDates {
@@ -262,7 +260,7 @@ func main() {
 			continue
 		}
 
-		if aft != nil && parsedTime.Before(*aft) {
+		if parsedTime.Before(aft) {
 			continue
 		}
 
