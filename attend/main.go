@@ -190,13 +190,16 @@ func main() {
 
 			for _, ed := range *ExtraDates {
 				ex := "打卡时间: " + FormatDate(start) + " " + ed
-				util.Printlnf("extra: %v", ex)
 				lines = append(lines, ex)
 				n += 1
 				if n == 2 {
 					start = start.AddDate(0, 0, 1)
 					n = 0
 				}
+			}
+		} else {
+			for _, ed := range *ExtraDates {
+				lines = append(lines, "打卡时间: "+ed)
 			}
 		}
 	}
