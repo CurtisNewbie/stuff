@@ -12,6 +12,8 @@ dockerfile="./Dockerfile_local"
 # ---------
 
 (
+    n=$(date "+%Y-%m-%d %H:%M:%S")
+    echo "--- Building $service $n"
     cd $GIT_PATH/moon-monorepo/backend/mini-fstore
 
     echo "Building Go app for platform $os/$arch to binary '$build'"

@@ -14,6 +14,8 @@ dockerfile="./Dockerfile"
 # ---------
 
 (
+    n=$(date "+%Y-%m-%d %H:%M:%S")
+    echo "--- Building $service $n"
     cd $GIT_PATH/drone
 
     echo "Building Go app for platform $os/$arch to binary '$build'"

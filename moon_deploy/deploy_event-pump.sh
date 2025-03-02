@@ -14,6 +14,8 @@ dockerfile="./Dockerfile_local"
 set -e
 
 (
+    n=$(date "+%Y-%m-%d %H:%M:%S")
+    echo "--- Building $service $n"
     cd $GIT_PATH/event-pump
 
     # dashboard frontend
