@@ -4,13 +4,14 @@
 set -e
 
 ./deploy_event-pump.sh
-
-echo "Wait 5s for event-pump"
 sleep 5
 
-./deploy_acct.sh
+./deploy_user-vault.sh
+sleep 3
+
 ./deploy_gatekeeper.sh
+./deploy_acct.sh
 ./deploy_logbot.sh
 ./deploy_mini-fstore.sh
-./deploy_user-vault.sh
 ./deploy_vfm.sh
+./deploy_drone.sh
