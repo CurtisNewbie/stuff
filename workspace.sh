@@ -149,6 +149,7 @@ done
 
 # ---------------------------------------------------------------
 
+alias rm="rm -i"
 alias reset_alarm="sfltool resetbtm"
 alias mk="minikube"
 alias kb="kubectl"
