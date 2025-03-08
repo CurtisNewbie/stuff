@@ -15,5 +15,5 @@ sleep 3
 ./deploy_vfm.sh
 ./deploy_drone.sh
 
-./deploy_moon_front.sh
+./deploy_moon.sh
 
