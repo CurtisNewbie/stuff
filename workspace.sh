@@ -2032,3 +2032,12 @@ function jekyll_new_post() {
 function link_title() {
     python3.11 $STUFF/link_title.py -f $1
 }
+
+function deploy() {
+    app="$1"
+    if [ -z "$app" ]; then
+        echo "Which app"
+        return 0
+    fi
+    $STUFF/moon_deploy/deploy_$app.sh
+}
