@@ -2010,8 +2010,8 @@ function applog() {
 
 function jekyll_new_post() {
     if [ ! -d "_posts" ]; then
-        echo_red "./_posts not found"
-        exit 1
+        echored "./_posts not found"
+        return 1
     fi
     name="$1"
     fname=$(echo "$name" | awk '{print tolower($0)}')
@@ -2040,4 +2040,13 @@ function deploy() {
         return 0
     fi
     $STUFF/moon_deploy/deploy_$app.sh
+}
+
+function activate() {
+    if [ -f "./bin/activate" ]; then
+        source ./bin/activate
+    else
+        echored "bin/activate not found"
+        return 1
+    fi
 }
