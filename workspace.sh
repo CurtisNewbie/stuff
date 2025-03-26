@@ -2050,3 +2050,9 @@ function activate() {
         return 1
     fi
 }
+
+function mac_hide_desktop() {
+    defaults write com.apple.finder CreateDesktop FALSE; killall Finder
+    # to restore
+    # defaults write com.apple.finder CreateDesktop TRUE; killall Finder
+}
