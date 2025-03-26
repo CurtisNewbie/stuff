@@ -2052,7 +2052,9 @@ function activate() {
 }
 
 function mac_hide_desktop() {
+    # https://www.reddit.com/r/mac/comments/1axg037/hide_all_files_and_folders_on_desktop/
     defaults write com.apple.finder CreateDesktop FALSE; killall Finder
+
     # to restore
     # defaults write com.apple.finder CreateDesktop TRUE; killall Finder
 }
