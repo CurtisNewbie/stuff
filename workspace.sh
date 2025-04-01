@@ -2058,3 +2058,21 @@ function mac_hide_desktop() {
     # to restore
     # defaults write com.apple.finder CreateDesktop TRUE; killall Finder
 }
+
+function upgrade_go() {
+    if [ -z "$1" ]; then
+        echored "specify golang version, e.g., 1.24.1"
+        return -1
+    fi
+    ver="$1"
+    exec="go$ver"
+    $exec download \
+        && $exec version \
+        && echo "Removing previous golang version: /usr/local/go" \
+        && root=$($exec env GOROOT) \
+        && echo "Installed at: $root" \
+        && echo "Removing previous golang version at /usr/local/go" \
+        && sudo rm -rf /usr/local/go \
+        && sudo mv $root /usr/local/go \
+        && echo "Finished"
+}
