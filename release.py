@@ -176,7 +176,7 @@ if __name__ == '__main__':
     if "beta" not in target and "miso" in wd:
         for (dir_path, dir_name, file_names) in walk("."):
             for fn in file_names:
-                if fn == 'README.md':
+                if fn in ['README.md', 'tools.md']:
                     with open(join(dir_path, fn), "r+") as f:
                         all = f.read()
                         m = re.compile("v\\d+\\.\\d+\\.\\d+")
