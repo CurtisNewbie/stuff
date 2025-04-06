@@ -15,5 +15,8 @@ bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
 bind P paste-buffer
 
 set -sg escape-time 0
+
+bind % split-window -h -c "#{pane_current_path}"
+
 ```
 
