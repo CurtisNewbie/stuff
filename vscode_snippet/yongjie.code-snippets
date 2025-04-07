@@ -72,4 +72,9 @@
     ],
     "description": "Generate rest api"
   },
+  "desc": {
+    "prefix": "desc",
+    "body": ["`desc:\"$1\"`"],
+    "description": "Generate api desc"
+  },
 }
