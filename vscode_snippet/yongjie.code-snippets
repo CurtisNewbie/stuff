@@ -56,5 +56,20 @@
     "prefix": "tick",
     "body": ["&#10004;"],
     "description": "insert tick unicode"
-  }
+  },
+  "api": {
+    "prefix": "api",
+    "body": [
+      "type $1Req struct {",
+      "}",
+      "",
+      "type $1Res struct {",
+      "}",
+      "",
+      "func $1(rail miso.Rail, db *gorm.DB, req $1Req) ($1Res, error) {",
+      "\treturn $1Res{}, nil",
+      "}",
+    ],
+    "description": "Generate rest api"
+  },
 }
