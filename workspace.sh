@@ -1224,6 +1224,8 @@ function tdump() {
     # dst $host
     # port $port
     # i interface, tcpdump -D
+    tips_tdump
+    echo ""
     sudo tcpdump -nnAS -s 0 -i any $@
 }
 export -f tdump
