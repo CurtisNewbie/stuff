@@ -2078,3 +2078,17 @@ function upgrade_go() {
         && sudo mv $root /usr/local/go \
         && echo "Finished"
 }
+
+function list_branch_author() {
+   git for-each-ref --format=' %(authorname) %09 %(refname)' --sort=authorname
+}
+
+function remove_prefix() {
+    v="${1#"$2"}"
+    echo $v
+}
+
+function remove_suffix() {
+    v="${1%"$2"}"
+    echo $v
+}
