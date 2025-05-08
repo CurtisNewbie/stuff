@@ -2096,10 +2096,24 @@ function remove_suffix() {
 }
 
 function sshkeygen() {
-    # -c yongj.zhuang@outlook.com
-    # -m PEM
-    # -m PKCS8
-    ssh-keygen -t rsa -b 4096 $@
+    ssh-keygen -t rsa -b 4096
 }
 
+function rsakeygen() {
+    priv_loc="keypair_private_pkcs8.pem"
+    priv_loc_tmp="${priv_loc}_tmp"
+    pub_loc="keypair_public_x509.key"
+
+    # https://blog.ndpar.com/2017/04/17/p1-p8/
+    # pkcs1: publick/private key format
+    # pkcs8: private key format
+    # x.509: public key format
+    # If priv_loc is somehow pkcs1, use following command to convert to pkcs8 if necessary
+    #   openssl pkcs8 -in $priv_loc -topk8 -out $priv_loc -nocrypt
+    openssl genrsa -out $priv_loc 4096 && echo "Generated private key: $priv_loc"
+    openssl rsa -in $priv_loc -pubout -out $pub_loc && echo "Extracted public key: $priv_loc"
+    # if grep -q "BEGIN RSA PRIVATE KEY" $priv_loc; then
+        openssl pkcs8 -in $priv_loc -topk8 -out $priv_loc_tmp -nocrypt && mv $priv_loc_tmp $priv_loc
+    # fi
+}
 
