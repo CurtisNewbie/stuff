@@ -2097,5 +2097,9 @@ function remove_suffix() {
 
 function sshkeygen() {
     # -c yongj.zhuang@outlook.com
-    ssh-keygen -t rsa -b 4096
+    # -m PEM
+    # -m PKCS8
+    ssh-keygen -t rsa -b 4096 $@
 }
+
+
