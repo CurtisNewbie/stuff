@@ -2094,3 +2094,8 @@ function remove_suffix() {
     v="${1%"$2"}"
     echo $v
 }
+
+function sshkeygen() {
+    # -c yongj.zhuang@outlook.com
+    ssh-keygen -t rsa -b 4096
+}
