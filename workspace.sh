@@ -1814,12 +1814,12 @@ function startapp() {
 
 function pprof_heap() {
     host_port="$1"
-    go tool pprof -http=: http://$host_port/debug/pprof/heap
+    go tool pprof -http=: http://$host_port/debug/pprof/heap?seconds=30
 }
 
 function pprof_profile() {
     host_port="$1"
-    go tool pprof -http=: http://$host_port/debug/pprof/profile
+    go tool pprof -http=: http://$host_port/debug/pprof/profile?seconds=30
 }
 
 function benchmark_pprof() {
