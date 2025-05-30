@@ -2122,3 +2122,7 @@ function rsakeygen() {
     # fi
 }
 
+function ggrep() {
+    git grep $1 $(git rev-list --all)
+}
+
