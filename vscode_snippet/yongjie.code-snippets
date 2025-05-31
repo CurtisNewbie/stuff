@@ -60,14 +60,14 @@
   "api": {
     "prefix": "api",
     "body": [
-      "type $1Req struct {",
+      "type Api$1Req struct {",
       "}",
       "",
-      "type $1Res struct {",
+      "type Api$1Res struct {",
       "}",
       "",
-      "func $1(rail miso.Rail, db *gorm.DB, req $1Req) ($1Res, error) {",
-      "\treturn $1Res{}, nil",
+      "func Api$1(rail miso.Rail, db *gorm.DB, req Api$1Req) (Api$1Res, error) {",
+      "\treturn Api$1Res{}, nil",
       "}",
     ],
     "description": "Generate rest api"
