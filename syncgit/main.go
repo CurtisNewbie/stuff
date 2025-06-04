@@ -14,8 +14,9 @@ var (
 )
 
 const (
-	color = "\033[1;32m"
-	reset = "\033[0m"
+	color    = "\033[1;32m"
+	reset    = "\033[0m"
+	maxRetry = 5
 )
 
 func main() {
@@ -58,7 +59,7 @@ func SyncRepo(root string, repo string, retry int) string {
 	outs := util.UnsafeByt2Str(out)
 	var result string
 	if err != nil {
-		if retry < 3 {
+		if retry < maxRetry {
 			return SyncRepo(root, repo, retry+1)
 		}
 		if outs != "" {
