@@ -36,7 +36,7 @@ func main() {
 
 	for i := range repos {
 		r := repos[i]
-		aw.SubmitAsync(func() (string, error) { return SyncRepo(root, r), nil })
+		aw.SubmitAsync(func() (string, error) { return SyncRepo(root, r, 0), nil })
 	}
 	fut := aw.Await()
 
@@ -46,7 +46,7 @@ func main() {
 	}
 }
 
-func SyncRepo(root string, repo string) string {
+func SyncRepo(root string, repo string, retry int) string {
 	start := time.Now()
 	main := "main"
 	if repo == "stuff" {
@@ -58,10 +58,13 @@ func SyncRepo(root string, repo string) string {
 	outs := util.UnsafeByt2Str(out)
 	var result string
 	if err != nil {
+		if retry < 3 {
+			return SyncRepo(root, repo, retry+1)
+		}
 		if outs != "" {
-			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v, %v", color, repo, reset, took, outs, err)
+			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v, %v, retry: %v", color, repo, reset, took, outs, err, retry)
 		} else {
-			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v", color, repo, reset, took, err)
+			result = fmt.Sprintf("Sync %s%s%s failed, took %s, %v: retry: %v", color, repo, reset, took, err, retry)
 		}
 	} else {
 		if outs != "" {
