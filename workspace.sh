@@ -1814,12 +1814,12 @@ function startapp() {
 
 function pprof_heap() {
     host_port="$1"
-    go tool pprof -http=: http://$host_port/debug/pprof/heap
+    go tool pprof -http=: http://$host_port/debug/pprof/heap?seconds=30
 }
 
 function pprof_profile() {
     host_port="$1"
-    go tool pprof -http=: http://$host_port/debug/pprof/profile
+    go tool pprof -http=: http://$host_port/debug/pprof/profile?seconds=30
 }
 
 function benchmark_pprof() {
@@ -2070,14 +2070,14 @@ function mac_hide_desktop() {
 
 function upgrade_go() {
     if [ -z "$1" ]; then
-        echored "specify golang version, e.g., 1.24.1"
+        echored "specify golang version, e.g., 1.24.1, 1.24.3"
         return -1
     fi
     ver="$1"
     exec="go$ver"
-    $exec download \
+    go install golang.org/dl/go$ver@latest \
+        && $exec download \
         && $exec version \
-        && echo "Removing previous golang version: /usr/local/go" \
         && root=$($exec env GOROOT) \
         && echo "Installed at: $root" \
         && echo "Removing previous golang version at /usr/local/go" \
