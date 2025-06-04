@@ -3,31 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/curtisnewbie/miso/util"
 )
 
 var (
-	repos = []string{
-		"stuff",
-		"vfm",
-		"mini-fstore",
-		"user-vault",
-		"event-pump",
-		"gatekeeper",
-		"logbot",
-		"miso",
-		"grapher",
-		"chill",
-		"moon",
-		"pocket",
-		"acct",
-		"tamper_script",
-		"smash",
-		"cvlet",
-		"moon-monorepo",
-	}
+	repos = []string{}
 )
 
 const (
@@ -41,6 +24,12 @@ func main() {
 		util.Printlnf("missing GIT_PATH environment")
 		return
 	}
+
+	envRepos, ok := os.LookupEnv("SYNC_REPOS")
+	if ok {
+		repos = append(repos, strings.Split(envRepos, ",")...)
+	}
+	util.Printlnf("Syncing repos: %+v", repos)
 
 	pool := util.NewAsyncPool(len(repos), len(repos))
 	aw := util.NewAwaitFutures[string](pool)

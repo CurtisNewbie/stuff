@@ -147,6 +147,8 @@ for env in $expected_env; do
   fi
 done
 
+export SYNC_REPOS="stuff,vfm,mini-fstore,user-vault,event-pump,gatekeeper,logbot,miso,grapher,chill,moon,pocket,acct,tamper_script,smash,cvlet,moon-monorepo"
+
 # ---------------------------------------------------------------
 
 # alias rm="rm -i"
