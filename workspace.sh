@@ -2128,3 +2128,10 @@ function ggrep() {
     git grep $1 $(git rev-list --all)
 }
 
+function git_rm_tail_tags() {
+    tags=$(git tag | tail);
+    printf "Removing tags:\n$tags\n\n"
+    for t in $tags;
+        do git tag -d $t && git push -d origin $t;
+    done
+}
