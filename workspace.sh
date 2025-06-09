@@ -979,6 +979,17 @@ function gxpatch() {
     git log --pretty=email --patch-with-stat --reverse --full-index --binary -- "$1" > "$2"
 }
 
+# Extract git history for commit
+function gxpatch_commit() {
+    out="commit.patch"
+    if [ -z "$1" ]; then
+        echored "please specify where the git history will be extracted"
+        return 1
+    fi
+
+    git format-patch -1 "$1" --stdout > "$out"
+}
+
 function gitgrep() {
     pat="$1"
     path=""
