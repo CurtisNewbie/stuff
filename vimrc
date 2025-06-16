@@ -57,3 +57,4 @@ Plug 'sheerun/vim-polyglot'
 " Initialize plugin system
 call plug#end()
 
+nnoremap -- :vsp<CR> <c-w>h :q<Enter>
