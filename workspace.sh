@@ -1928,7 +1928,7 @@ function redis_del_keys() {
         echo "Please specify key pattern"
         return 0
     fi
-    redis-cli -h "$host" -a "$password" keys "$pattern" | xargs -I {} bash -c "echo 'Deleting key {}' || devredis del {}"
+    redis-cli -h "$host" -a "$password" keys "$pattern" | xargs -I {} bash -c "echo 'Deleting key {}' && devredis del {}"
 }
 
 function unload_corplink() {
