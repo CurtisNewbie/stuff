@@ -159,7 +159,7 @@ alias bc="bc -l"
 alias gs="git status"
 alias gf="while ! git fetch; do sleep 0.3; done;"
 alias gp="git pull"
-alias gm="git merge"
+# alias gm="git merge"
 alias gl="git log"
 alias gds="git diff -p --staged --stat"
 alias gd="git diff -p --stat"
@@ -2145,4 +2145,9 @@ function git_rm_tail_tags() {
     for t in $tags;
         do git tag -d $t && git push -d origin $t;
     done
+}
+
+function gm() {
+    while ! git fetch; do sleep 0.3; done;
+    git merge
 }
