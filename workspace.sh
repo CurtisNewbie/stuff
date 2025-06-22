@@ -1756,11 +1756,10 @@ function startcluster() {
 }
 
 function stopcluster() {
-    pids=$(ps -ef | grep "/exe/main" | grep -v grep | awk '{ print $2}')
-    echo $pids
-    for p in $pids
+    l="event-pump vfm mini-fstore gatekeeper acct logbot user-vault"
+    for r in $l;
     do
-        kill -15 "$p"
+        stopapp "$r"
     done
 }
 
