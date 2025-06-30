@@ -1,7 +1,9 @@
 {
   "Json Tag": {
     "prefix": "jt",
-    "body": ["`json:\"$1\"`"],
+    "body": [
+      "`json:\"$1\"`"
+    ],
     "description": "Generate json tag"
   },
   "misoapi": {
@@ -54,7 +56,9 @@
   "md-tick": {
     "scope": "Markdown",
     "prefix": "tick",
-    "body": ["&#10004;"],
+    "body": [
+      "&#10004;"
+    ],
     "description": "insert tick unicode"
   },
   "api": {
@@ -74,7 +78,19 @@
   },
   "desc": {
     "prefix": "desc",
-    "body": ["`desc:\"$1\"`"],
+    "body": [
+      "`desc:\"$1\"`"
+    ],
     "description": "Generate api desc"
+  },
+  "prop": {
+    "prefix": "prop",
+    "body": [
+      "// misoconfig-prop: ",
+      "// misoconfig-alias: deprecated-prop",
+      "//  misoconfig-doc-only",
+      "Prop = \"\"",
+    ],
+    "description": "Generate misoconfig prop"
   },
 }
