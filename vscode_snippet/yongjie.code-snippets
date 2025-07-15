@@ -89,7 +89,6 @@
       "// misoconfig-prop: ",
       "// misoconfig-alias: deprecated-prop",
       "// misoconfig-doc-only",
-      "Prop = \"\"",
     ],
     "description": "Generate misoconfig prop"
   },
