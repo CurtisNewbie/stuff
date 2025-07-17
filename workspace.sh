@@ -1151,8 +1151,9 @@ function rmr() {
   ans=$REPLY
 
   if [[ $ans =~ [Yy] ]]; then
-      echogreen "Removing (rm -rvf) $1"
-      time rm -rvf "$1"
+      echogreen "Removing (rm -rf) $1"
+      time rm -rf "$1"
+      echogreen "Done"
   else
       echocyan "Aborted ..."
   fi
