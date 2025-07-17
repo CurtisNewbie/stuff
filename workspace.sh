@@ -1153,6 +1153,8 @@ function rmr() {
   if [[ $ans =~ [Yy] ]]; then
       echogreen "Removing (rm -rvf) $1"
       time rm -rvf "$1"
+  else
+      echocyan "Aborted ..."
   fi
 }
 
