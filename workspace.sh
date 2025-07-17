@@ -1150,12 +1150,10 @@ function rmr() {
   fi
   ans=$REPLY
 
-  if [[ $ans =~ [Nn] ]]; then
-    return 0
+  if [[ $ans =~ [Yy] ]]; then
+      echogreen "Removing (rm -rvf) $1"
+      time rm -rvf "$1"
   fi
-
-  echogreen "Removing (rm -rvf) $1"
-  time rm -rvf "$1"
 }
 
 function grepcode() {
