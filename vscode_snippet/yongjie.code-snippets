@@ -12,7 +12,6 @@
       "// $1",
       "//",
       "// \t - misoapi-http: ",
-      "// \t - misoapi-desc: $1",
       "// \t - misoapi-query: ",
       "// \t - misoapi-header: ",
       "// \t - misoapi-scope: ",
