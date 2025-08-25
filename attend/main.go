@@ -32,6 +32,7 @@ var (
 	DebugFlag  = flag.Bool("debug", false, "input file dir")
 	DirFlag    = flag.String("dir", "", "input file dir")
 	AfterFlag  = flag.String("after", "", "after date")
+	LinesFlag  = util.FlagStrSlice("lines", "extra lines")
 )
 
 type CachedTimeRange struct {
@@ -153,6 +154,9 @@ func main() {
 	leavePat := regexp.MustCompile(`.*(开始|结束)时间: *(\d{4}年\d{2}月\d{2}日) *(上午|下午).*`)
 
 	lines := make([]string, 0, 100)
+	if LinesFlag != nil {
+		lines = append(lines, *LinesFlag...)
+	}
 
 	for _, s := range fileContent {
 		sp := strings.Split(s, "\n")
