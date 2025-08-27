@@ -61,21 +61,31 @@ type TimeRange struct {
 func (t *TimeRange) Dur() time.Duration {
 	nstart0, _ := ParseTime(t.date + " 12:00:00")
 	nstart1, _ := ParseTime(t.date + " 13:30:00")
-	lstart, _ := ParseTime(t.date + " 18:30:00")
-	lend, _ := ParseTime(t.date + " 19:00:00")
-
 	var d time.Duration
 	if t.end.Before(nstart0) {
 		d = t.end.Sub(t.start)
 	} else if t.end.Before(nstart1) {
 		d = nstart0.Sub(t.start)
-	} else if !t.end.Before(lend) {
-		d = lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
-	} else if t.end.Before(lend) {
-		d = t.end.Sub(t.start) - (90 * time.Minute)
 	} else {
 		d = t.end.Sub(t.start) - (90 * time.Minute)
 	}
+
+	// for 1830-19:00
+	// nstart0, _ := ParseTime(t.date + " 12:00:00")
+	// nstart1, _ := ParseTime(t.date + " 13:30:00")
+	// lstart, _ := ParseTime(t.date + " 18:30:00")
+	// lend, _ := ParseTime(t.date + " 19:00:00")
+	// if t.end.Before(nstart0) {
+	// 	d = t.end.Sub(t.start)
+	// } else if t.end.Before(nstart1) {
+	// 	d = nstart0.Sub(t.start)
+	// } else if !t.end.Before(lend) {
+	// 	d = lstart.Sub(t.start) + t.end.Sub(lend) - (90 * time.Minute)
+	// } else if t.end.Before(lend) {
+	// 	d = t.end.Sub(t.start) - (90 * time.Minute)
+	// } else {
+	// 	d = t.end.Sub(t.start) - (90 * time.Minute)
+	// }
 
 	// util.Printlnf("start: %v, end: %v, d: %v", t.start, t.end, d)
 	if t.Leave {
