@@ -2152,3 +2152,21 @@ function gm() {
     while ! git fetch; do sleep 0.3; done;
     git merge
 }
+
+function mvlast() {
+    last=$(ls -t $1 | head -n 1)
+    to="$2"
+    if [ -z $to ]; then
+        to="."
+    fi
+    mv "$1/$last" $to
+}
+
+function cplast() {
+    last=$(ls -t $1 | head -n 1)
+    to="$2"
+    if [ -z $to ]; then
+        to="."
+    fi
+    cp "$1/$last" $to
+}
