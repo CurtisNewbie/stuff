@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/curtisnewbie/miso/encoding"
+	"github.com/curtisnewbie/miso/encoding/json"
 	"github.com/curtisnewbie/miso/util"
 )
 
@@ -67,7 +67,7 @@ func main() {
 			cf.Close()
 
 			if err == nil {
-				encoding.ParseJson(buf, &cache)
+				_ = json.ParseJson(buf, &cache)
 			}
 			if cache == nil {
 				cache = map[string]string{}
@@ -77,7 +77,7 @@ func main() {
 
 	now := time.Now()
 	today := FormatDate(now)
-	pool := util.NewAsyncPool(500, 10)
+	pool := util.NewAntsAsyncPool(20)
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
 	var aft time.Time = util.ToETime(now).AddDate(0, -3, 0).ToTime()
@@ -410,7 +410,7 @@ func main() {
 	cf, err := util.ReadWriteFile(cacheFile)
 	if err == nil {
 		defer cf.Close()
-		buf, err := encoding.WriteJson(cache)
+		buf, err := json.WriteJson(cache)
 		if err == nil {
 			_, err = cf.Write(buf)
 			if err != nil {
