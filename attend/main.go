@@ -288,7 +288,7 @@ func main() {
 			}
 		} else {
 			if leave {
-				dateMap[date] = DateTime{Leave: true}
+				dateMap[date] = DateTime{Leave: true, Times: []time.Time{parsedTime}}
 			} else {
 				dateMap[date] = DateTime{Times: []time.Time{parsedTime}}
 			}
