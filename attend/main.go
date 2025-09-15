@@ -298,6 +298,7 @@ func main() {
 	// fmt.Printf("dataMap: %+v\n", dateMap)
 	trs := make([]TimeRange, 0, len(dateMap)/2)
 	for k, dt := range dateMap {
+		// fmt.Printf("dt: %v\n", dt)
 		v := dt.Times
 		var st time.Time
 		var ed time.Time
