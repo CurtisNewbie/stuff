@@ -179,8 +179,8 @@ if __name__ == '__main__':
                 if fn in ['README.md', 'tools.md']:
                     with open(join(dir_path, fn), "r+") as f:
                         all = f.read()
-                        m = re.compile("v\\d+\\.\\d+\\.\\d+")
-                        all = m.sub(target, all)
+                        m = re.compile("(go get .*)(v\\d+\\.\\d+\\.\\d+)")
+                        all = re.sub(m, r"\1" + target, all)
                         f.truncate(0)
                         f.seek(0)
                         f.write(all)
