@@ -91,10 +91,15 @@ if __name__ == '__main__':
         last = current_tag()
         guessed = guess_next(last)
         print()
+        possible_options = []
+        possible_options.append("'" + guessed + "'")
+
         if "beta" not in guessed:
-            print(f"Last release is '{last}'. Are you planning to release '{guessed}' or '{guessed}-beta.1' ?")
+           possible_options.append("'" +  guessed + "-beta.1" + "'")
         else:
-            print(f"Last release is '{last}'. Are you planning to release '{guessed}' ?")
+           possible_options.append("'" + guessed[:guessed.rfind("-beta")] + "'")
+
+        print(f"Last release is '{last}'. Are you planning to release {" or ".join(possible_options)} ?")
         print()
         print(f"release {guessed}")
         print()
