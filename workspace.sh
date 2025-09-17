@@ -2172,5 +2172,5 @@ function cplast() {
 }
 
 function miso_patch() {
-    gopatch -p $GIT_PATH/miso/patch/$1 ./...
+    gopatch -p $GIT_PATH/miso/patch/$1.patch ./...
 }
