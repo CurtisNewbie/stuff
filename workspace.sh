@@ -1472,6 +1472,7 @@ function myddl() {
     text="CREATE TABLE \`$1\` (
     \`id\` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
 
+    \`trace_id\` varchar(32) NOT NULL DEFAULT '' COMMENT 'trace_id',
     \`created_at\` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'created at',
     \`created_by\` varchar(255) NOT NULL DEFAULT '' COMMENT 'created by',
     \`updated_at\` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated at',
