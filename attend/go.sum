@@ -1,7 +1,7 @@
 github.com/bmatcuk/doublestar/v4 v4.8.0 h1:DSXtrypQddoug1459viM9X9D3dp1Z7993fw36I2kNcQ=
 github.com/bmatcuk/doublestar/v4 v4.8.0/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=
-github.com/curtisnewbie/miso v0.2.17 h1:vSAcsAn52yUZG08HsdVeT5jNlpMG9OcPGq4RahRTmN0=
-github.com/curtisnewbie/miso v0.2.17/go.mod h1:FEQTJwWbfsrBLsHZz9jgKgPFac8nxOy+MxDA6MxbShk=
+github.com/curtisnewbie/miso v0.3.2-beta.2.0.20250928022225-fd5d96317354 h1:wwI7pGBjFNX3WokWAbRh3HCftoFfdbNhwT8E8n2lOBY=
+github.com/curtisnewbie/miso v0.3.2-beta.2.0.20250928022225-fd5d96317354/go.mod h1:Y1Dpzyp1TS0WI83kg1eDtZhws8TiBSDpEWYSfty7t+Y=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

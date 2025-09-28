@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -15,6 +14,9 @@ import (
 
 	"github.com/curtisnewbie/miso/encoding/json"
 	"github.com/curtisnewbie/miso/util"
+	"github.com/curtisnewbie/miso/util/cli"
+	"github.com/curtisnewbie/miso/util/flags"
+	"github.com/curtisnewbie/miso/util/strutil"
 )
 
 const (
@@ -24,15 +26,16 @@ const (
 	ANSIGreen  = "\033[1;32m"
 	ANSICyan   = "\033[1;36m"
 	ANSIYellow = "\033[1;93m"
-	ANSIReset  = util.ANSIReset
+	ANSIGray   = "\033[1;90m"
+	ANSIReset  = cli.ANSIReset
 )
 
 var (
-	ExtraDates = util.FlagStrSlice("extra", "extra date time records")
-	DebugFlag  = flag.Bool("debug", false, "input file dir")
-	DirFlag    = flag.String("dir", "", "input file dir")
-	AfterFlag  = flag.String("after", "", "after date")
-	LinesFlag  = util.FlagStrSlice("lines", "extra lines")
+	ExtraDates = flags.StrSlice("extra", "extra date time records", false)
+	DebugFlag  = flags.Bool("debug", false, "debug", false)
+	DirFlag    = flags.String("dir", "", "input file dir", true)
+	AfterFlag  = flags.String("after", "", "after date", false)
+	LinesFlag  = flags.StrSlice("lines", "extra lines", false)
 )
 
 type CachedTimeRange struct {
@@ -46,13 +49,7 @@ var (
 )
 
 func main() {
-	flag.Parse()
-
-	if *DirFlag == "" {
-		flag.PrintDefaults()
-		return
-	}
-	fmt.Println()
+	flags.Parse()
 
 	files, err := os.ReadDir(*DirFlag)
 	if err != nil {
@@ -80,7 +77,8 @@ func main() {
 	pool := util.NewAntsAsyncPool(20)
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
-	var aft time.Time = util.ToETime(now).AddDate(0, -3, 0).ToTime()
+	var aft time.Time = util.Now().StartOfMonth().Unwrap()
+
 	if *AfterFlag != "" {
 		v, err := ParseTime(*AfterFlag)
 		if err != nil {
@@ -162,47 +160,26 @@ func main() {
 		sp := strings.Split(s, "\n")
 		lines = append(lines, sp...)
 	}
-	if ExtraDates != nil {
-		// if *DebugFlag {
-		fmt.Printf("ExtraDates: %v\n", *ExtraDates)
-		// }
 
-		maybeTimeOnly := true
-		for _, ed := range *ExtraDates {
-			if _, err := ParseTime(ed); err == nil {
-				maybeTimeOnly = false
-				break
-			}
-
-			if _, err := ParseTime(today + " " + ed); err != nil {
-				maybeTimeOnly = false
-				break
-			}
+	parseExtra := func(ed string) {
+		if t, err := ParseTime(ed); err == nil {
+			lines = append(lines, "打卡时间: "+util.WrapTime(t).FormatStd())
 		}
-
-		if maybeTimeOnly {
-			start := now
-			n := 1
-			year, month, day := now.Date()
-			today2130 := time.Date(year, month, day, 21, 30, 0, 0, time.Local) // today at 21:30
-			if now.After(today2130) {                                          // if now is after 21:30, we start from tomorrow
-				start = start.AddDate(0, 0, 1)
-				n = 0
-			}
-
-			for _, ed := range *ExtraDates {
-				ex := "打卡时间: " + FormatDate(start) + " " + ed
-				lines = append(lines, ex)
-				n += 1
-				if n == 2 {
-					start = start.AddDate(0, 0, 1)
-					n = 0
-				}
-			}
-		} else {
-			for _, ed := range *ExtraDates {
-				lines = append(lines, "打卡时间: "+ed)
-			}
+		if t, err := ParseTime(today + " " + ed); err == nil {
+			lines = append(lines, "打卡时间: "+util.WrapTime(t).FormatStd())
+		}
+	}
+	if ExtraDates != nil {
+		fmt.Printf("ExtraDatesFlag: %+v\n", *ExtraDates)
+		for _, ed := range *ExtraDates {
+			parseExtra(ed)
+		}
+	}
+	if es, ok := os.LookupEnv("ATTENDGO_EXTRA"); ok {
+		sp := strutil.SplitStr(es, ",")
+		fmt.Printf("ExtraDatesEnv: %+v\n", sp)
+		for _, ed := range sp {
+			parseExtra(ed)
 		}
 	}
 
@@ -336,25 +313,62 @@ func main() {
 	total := float64(0)
 	subtotal := float64(0)
 
-	currMonth := ""
-	currMonthCnt := 0
+	statCurrMonth := ""
+	statCurrMonthCnt := 0
+
+	var hasPrevPrintedDate bool = false
+	var prevPrintedDate util.Time
 
 	for _, tr := range trs {
 		month := FormatMoth(tr.start)
-		if currMonth == "" {
-			currMonth = month
-		} else if currMonth != month {
-			diff := subtotal - float64(currMonthCnt*8)
+		if statCurrMonth == "" {
+			statCurrMonth = month
+		} else if statCurrMonth != month {
+			diff := subtotal - float64(statCurrMonthCnt*8)
 			start := ANSIGreen + "+"
 			if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 				start = ANSIRed
 			}
-			fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
-				start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
+			fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", statCurrMonth, HourMin(subtotal), subtotal, statCurrMonthCnt, statCurrMonthCnt*8,
+				start, HourMin(diff), diff, float64(subtotal)/float64(statCurrMonthCnt), ANSIReset)
 			fmt.Println()
-			currMonth = month
-			currMonthCnt = 0
+			statCurrMonth = month
+			statCurrMonthCnt = 0
 			subtotal = 0
+		}
+
+		trs := util.WrapTime(tr.start)
+		if !hasPrevPrintedDate {
+			prevPrintedDate = trs
+			hasPrevPrintedDate = true
+		} else {
+			if prevPrintedDate.FormatDate() != trs.AddDate(0, 0, -1).FormatDate() {
+				for prevPrintedDate.FormatDate() != trs.FormatDate() {
+					prevPrintedDate = prevPrintedDate.AddDate(0, 0, 1)
+					if prevPrintedDate.FormatDate() == trs.FormatDate() {
+						break
+					}
+					missingFlag := ""
+					startColor := ANSIGray
+					switch prevPrintedDate.Weekday() {
+					case time.Saturday, time.Sunday:
+						startColor = ANSIGreen
+					default:
+						missingFlag = strings.Repeat(" ", 62) + ANSIReset + "---     " + ANSIRed + "Missing"
+					}
+
+					println(strutil.NamedSprintf("${colorStart}${startDate} (${startWkDay})${missingFlag}${colorReset}",
+						map[string]any{
+							"startDate":   FormatDate(prevPrintedDate.Unwrap()),
+							"startWkDay":  FormatWkDay(prevPrintedDate.Unwrap()),
+							"colorStart":  startColor,
+							"colorReset":  ANSIReset,
+							"missingFlag": missingFlag,
+						}))
+				}
+			} else {
+				prevPrintedDate = trs
+			}
 		}
 
 		h := float64(tr.Dur()) / float64(time.Hour)
@@ -374,36 +388,36 @@ func main() {
 			extraTag = fmt.Sprintf("     ---     %vLeave\x1b[0m", ANSIYellow)
 			endHmsColorStart = ANSIYellow
 		}
-		dhms := util.PadSpace(-10, HourMin(diffh))
-		util.NamedPrintlnf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${extraTag}",
+		dhms := strutil.PadSpace(-10, HourMin(diffh))
+		println(strutil.NamedSprintf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${extraTag}",
 			map[string]any{
 				"startDate":        FormatDate(tr.start),
 				"startWkDay":       FormatWkDay(tr.start),
 				"startHms":         FormatHms(tr.start),
 				"endHms":           FormatHms(tr.end),
-				"hHourMin":         util.PadSpace(-10, HourMin(h)),
-				"h":                util.FmtFloat(h, -10, 6),
+				"hHourMin":         strutil.PadSpace(-10, HourMin(h)),
+				"h":                strutil.FmtFloat(h, -10, 6),
 				"colorStart":       start,
 				"diffhHourMin":     dhms,
 				"colorReset":       ANSIReset,
 				"extraTag":         extraTag,
 				"endHmsColorStart": endHmsColorStart,
-			})
+			}))
 		total += h
-		currMonthCnt += 1
+		statCurrMonthCnt += 1
 		subtotal += h
 	}
 
 	// subtotal for last month
 	{
-		diff := subtotal - float64(currMonthCnt*8)
+		diff := subtotal - float64(statCurrMonthCnt*8)
 		start := ANSIGreen + "+"
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
 		}
 
-		fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", currMonth, HourMin(subtotal), subtotal, currMonthCnt, currMonthCnt*8,
-			start, HourMin(diff), diff, float64(subtotal)/float64(currMonthCnt), ANSIReset)
+		fmt.Printf("\n%s subtotal: %s = %.2fh (for %d days, %d hours), diff: %s%s (%.6fh) [avg: %.6fh]%s\n", statCurrMonth, HourMin(subtotal), subtotal, statCurrMonthCnt, statCurrMonthCnt*8,
+			start, HourMin(diff), diff, float64(subtotal)/float64(statCurrMonthCnt), ANSIReset)
 	}
 	println("")
 

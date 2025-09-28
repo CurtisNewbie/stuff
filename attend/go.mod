@@ -2,7 +2,7 @@ module attend
 
 go 1.24.4
 
-require github.com/curtisnewbie/miso v0.2.17
+require github.com/curtisnewbie/miso v0.3.2-beta.2.0.20250928022225-fd5d96317354
 
 require (
 	github.com/bmatcuk/doublestar/v4 v4.8.0 // indirect
