@@ -352,7 +352,7 @@ func main() {
 					startColor := ANSIGray
 					switch prevPrintedDate.Weekday() {
 					case time.Saturday, time.Sunday:
-						startColor = ANSIGreen
+						startColor = ANSIGray
 					default:
 						missingFlag = strings.Repeat(" ", 62) + ANSIReset + "---     " + ANSIRed + "Missing"
 					}
