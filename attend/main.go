@@ -122,7 +122,7 @@ func main() {
 				cache[cacheKey] = s
 				cacheMu.Unlock()
 			} else {
-				fmt.Printf("ocr failed %v, %v\n", fpath, err)
+				fmt.Printf("ocr failed %v, out: %v, %v\n", fpath, s, err)
 			}
 			return s, err
 		})
