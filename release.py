@@ -99,7 +99,8 @@ if __name__ == '__main__':
         else:
            possible_options.append("'" + guessed[:guessed.rfind("-beta")] + "'")
 
-        print(f"Last release is '{last}'. Are you planning to release {" or ".join(possible_options)} ?")
+        opts = " or ".join(possible_options)
+        print(f"Last release is '{last}'. Are you planning to release {opts} ?")
         print()
         print(f"release {guessed}")
         print()
