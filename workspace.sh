@@ -1751,7 +1751,7 @@ function pushtag() {
 }
 
 function startcluster() {
-    l="event-pump vfm mini-fstore gatekeeper acct logbot user-vault"
+    l="event-pump vfm mini-fstore gatekeeper acct logbot user-vault drone"
     for r in $l;
     do
         startapp "$r"
