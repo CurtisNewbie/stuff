@@ -2026,7 +2026,7 @@ function applog() {
     else
         if [ "$1" = "event-pump" ]; then
             less -nR "$GIT_PATH/event-pump/logs/$1.log"
-        if [ "$1" = "drone" ]; then
+        elif [ "$1" = "drone" ]; then
             less -nR "$GIT_PATH/drone/logs/$1.log"
         else
             less -nR "$GIT_PATH/moon-monorepo/backend/$1/logs/$1.log"
