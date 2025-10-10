@@ -16,6 +16,7 @@ bind-key -T copy-mode-vi V send -X select-line
 bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
 
 bind-key t swap-window -t 0
+bind-key y swap-window -t 1
 
 bind P paste-buffer
 
