@@ -17,7 +17,7 @@ dockerfile="./Dockerfile_local"
     cd $GIT_PATH/moon-monorepo/backend/mini-fstore
 
     echo "Building Go app for platform $os/$arch to binary '$build'"
-    CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -o "$build" cmd/main.go
+    CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -o "$build" main.go
 
     ssh  "alphaboi@curtisnewbie.com" "rm -rv ${remote_build_path}*"
 
