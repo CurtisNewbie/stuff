@@ -2174,6 +2174,6 @@ function cplast() {
     cp "$1/$last" $to
 }
 
-function miso_patch() {
-    gopatch -p $GIT_PATH/miso/patch/$1.patch ./...
-}
+#function miso_patch() {
+#    gopatch -p $GIT_PATH/miso/patch/$1.patch ./...
+#}
