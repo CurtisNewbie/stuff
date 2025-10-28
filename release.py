@@ -185,7 +185,7 @@ if __name__ == '__main__':
                 if fn in ['README.md', 'tools.md']:
                     with open(join(dir_path, fn), "r+") as f:
                         all = f.read()
-                        m = re.compile("(go +(?:get|install) .*)(v\\d+\\.\\d+\\.\\d+)")
+                        m = re.compile("(go +(?:get|install) .*)(v\\d+\\.\\d+\\.\\d+(?:-beta\\.\\d+)?)")
                         all = re.sub(m, r"\1" + target, all)
                         f.truncate(0)
                         f.seek(0)
