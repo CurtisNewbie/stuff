@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go build -o attendgo . && installbin attendgo
+go build -o attend . && installbin attend
