@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -33,7 +34,7 @@ const (
 var (
 	ExtraDates = flags.StrSlice("extra", "extra date time records", false)
 	DebugFlag  = flags.Bool("debug", false, "debug", false)
-	DirFlag    = flags.String("dir", "", "input file dir", true)
+	DirFlag    = flags.String("dir", "", "input file dir", false)
 	AfterFlag  = flags.String("after", "", "after date", false)
 	LinesFlag  = flags.StrSlice("lines", "extra lines", false)
 )
@@ -50,6 +51,17 @@ var (
 
 func main() {
 	flags.Parse()
+
+	if *DirFlag == "" {
+		if es, ok := os.LookupEnv("ATTENDGO_DIR"); ok {
+			*DirFlag = es
+		}
+	}
+	if *DirFlag == "" {
+		fmt.Printf("Arg '%v' is required \n\n", "dir")
+		flag.Usage()
+		os.Exit(2)
+	}
 
 	files, err := os.ReadDir(*DirFlag)
 	if err != nil {
@@ -175,6 +187,7 @@ func main() {
 			parseExtra(ed)
 		}
 	}
+
 	if es, ok := os.LookupEnv("ATTENDGO_EXTRA"); ok {
 		sp := strutil.SplitStr(es, ",")
 		fmt.Printf("ExtraDatesEnv: %+v\n", sp)
