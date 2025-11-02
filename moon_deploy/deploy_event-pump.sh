@@ -19,7 +19,7 @@ set -e
     cd $GIT_PATH/event-pump
 
     # dashboard frontend
-    ( cd front/dashboard && ./build_moon.sh )
+    ( cd front/dashboard && echo "running build_moon.sh" && ./build_moon.sh )
 
     echo "Building Go app for platform $os/$arch to binary '$build'"
     CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -o "$build"
