@@ -1327,6 +1327,8 @@ function hmac() { python3 $STUFF/phmac.py $@; }
 
 function gobuildall() { go build ./...;  }
 
+function gobuildlinux() { CGO_ENABLED=0 GOOS="linux" GOARCH="amd64" go build -o $1 ;  }
+
 function buondua() { python3 $STUFF/buondua.py $@; }
 
 function gpick() { git cherry-pick $@ ; }
