@@ -4,10 +4,10 @@
 set -e
 
 ./deploy_event-pump.sh
-sleep 5
+sleep 10
 
 ./deploy_user-vault.sh
-sleep 3
+sleep 5
 
 ./deploy_gatekeeper.sh
 ./deploy_acct.sh
