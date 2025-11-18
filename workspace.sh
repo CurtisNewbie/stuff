@@ -1281,7 +1281,7 @@ export -f today
 function pport() { lsof -i ":$1"; }
 
 function pid_ports() {
-    lsof -i -P -p $1 | grep LISTEN
+    lsof -aPi -p $1 | grep LISTEN
 }
 
 function certinfo() { openssl x509 -noout -text -in "$1"; }
