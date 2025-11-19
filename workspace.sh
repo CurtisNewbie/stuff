@@ -2183,3 +2183,17 @@ function cplast() {
 #function miso_patch() {
 #    gopatch -p $GIT_PATH/miso/patch/$1.patch ./...
 #}
+#
+
+function llm() {
+    query="$1"
+    model="qwen3:1.7b"
+    curl http://localhost:11434/api/chat -s -d "{
+        \"model\": \"$model\",
+        \"stream\": false,
+        \"think\": false,
+        \"messages\": [
+            { \"role\": \"user\", \"content\": \"$query\" }
+        ]
+    }" | jq -r .message.content
+}
