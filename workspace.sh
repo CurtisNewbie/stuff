@@ -284,7 +284,7 @@ function ffind() {
         -not \( -path "**/dist/*" -prune \) \
         -not \( -path "**/logs/*" -prune \) \
         -not \( -path "**/log/*" -prune \) \
-        -not \( -path "**/__MACOSX/*" -prune \)
+        -not \( -path "**/__MACOSX/*" -prune \) -exec sh -c 'file="$1"; echo "$(ls -l "$file") | $(stat -f %SB "$file")"' _ {} \; | sort -k5,5nr
 }
 
 function rfind() {
