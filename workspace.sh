@@ -287,6 +287,17 @@ function ffind() {
         -not \( -path "**/__MACOSX/*" -prune \) -exec sh -c 'file="$1"; echo "$(ls -l "$file") | $(stat -f %SB "$file")"' _ {} \; | sort -k5,5nr
 }
 
+function pdffind() {
+    find . -type f -iname "*.pdf" \
+        -not \( -path "**/target/*" -prune \) \
+        -not \( -path "**/.*/*" -prune \) \
+        -not \( -path "**/node_modules/*" -prune \) \
+        -not \( -path "**/dist/*" -prune \) \
+        -not \( -path "**/logs/*" -prune \) \
+        -not \( -path "**/log/*" -prune \) \
+        -not \( -path "**/__MACOSX/*" -prune \) -exec sh -c 'file="$1"; pdfgrep -n -i "$2" "$file" && printf "____  $file\n\n"' _ {} $1 \;
+}
+
 function rfind() {
     if [ $(uname) == 'Darwin' ]; then
         find -E . -type f -regex "$1"
