@@ -1423,7 +1423,7 @@ function mergeto() {
         return 1
     fi
 
-    git merge "$GSWITCH_BACK"
+    git merge --no-ff "$GSWITCH_BACK"
     if [ $? -ne 0 ]; then
         git merge --abort
         gswb
