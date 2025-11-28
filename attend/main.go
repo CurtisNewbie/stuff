@@ -230,6 +230,14 @@ func main() {
 			s2 := res[2]
 			s3 := res[3]
 
+			s2 = strings.ReplaceAll(s2, "年", "-")
+			s2 = strings.ReplaceAll(s2, "月", "-")
+			s2 = strings.ReplaceAll(s2, "日", "")
+
+			if *DebugFlag {
+				fmt.Printf("s1: %v, s2: %v, s3: %v\n", s1, s2, s3)
+			}
+
 			if s1 == "结束" {
 				if s3 == "上午" {
 					ds = fmt.Sprintf("%s 12:00:00", s2)
@@ -253,28 +261,35 @@ func main() {
 			fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
 			continue
 		}
+		if *DebugFlag {
+			fmt.Printf("parsed time: %v, l: '%s', leave: %v\n", ds, l, leave)
+		}
 
 		if parsedTime.Before(aft) {
 			continue
 		}
 
 		date := FormatDate(parsedTime)
+		if *DebugFlag {
+			fmt.Printf("format date: %v, l: '%s'\n", date, l)
+		}
 		if prev, ok := dateMap[date]; ok {
+			duplicate := false
 			if leave {
 				prev.Leave = true
-				dateMap[date] = prev
-			} else {
-				duplicate := false
-				for _, v := range prev.Times {
-					if v.Equal(parsedTime) {
-						duplicate = true
-						break
+			}
+			for _, v := range prev.Times {
+				if v.Equal(parsedTime) {
+					if *DebugFlag {
+						fmt.Printf("duplicate: %v\n", parsedTime)
 					}
+					duplicate = true
+					break
 				}
-				if !duplicate {
-					prev.Times = append(prev.Times, parsedTime)
-					dateMap[date] = prev
-				}
+			}
+			if !duplicate {
+				prev.Times = append(prev.Times, parsedTime)
+				dateMap[date] = prev
 			}
 		} else {
 			if leave {

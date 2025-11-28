@@ -88,9 +88,9 @@ func (t *TimeRange) Dur() time.Duration {
 	// }
 
 	// util.Printlnf("start: %v, end: %v, d: %v", t.start, t.end, d)
-	if t.Leave {
-		d = d + (time.Hour * 4)
-	}
+	// if t.Leave {
+	// 	d = d + (time.Hour * 4)
+	// }
 	return d
 }
 
