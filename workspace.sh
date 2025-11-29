@@ -287,6 +287,10 @@ function ffind() {
         -not \( -path "**/__MACOSX/*" -prune \) -exec sh -c 'file="$1"; echo "$(ls -l "$file") | $(stat -f %SB "$file")"' _ {} \; | sort -k5,5nr
 }
 
+function ffind_log(){
+    ffind $1 > $1.txt
+}
+
 function pdffind() {
     find . -type f -iname "*.pdf" \
         -not \( -path "**/target/*" -prune \) \
