@@ -302,6 +302,11 @@ function pdffind() {
         -not \( -path "**/__MACOSX/*" -prune \) -exec sh -c 'file="$1"; pdfgrep -n -i "$2" "$file" && printf "____  $file\n\n"' _ {} $1 \;
 }
 
+function pdffind_log() {
+    pdffind $1 > $1.txt
+}
+
+
 function rfind() {
     if [ $(uname) == 'Darwin' ]; then
         find -E . -type f -regex "$1"
