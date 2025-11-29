@@ -303,7 +303,7 @@ function pdffind() {
 }
 
 function pdffind_log() {
-    pdffind $1 > $1.txt
+    pdffind $1 > "pdffind_$1.txt"
 }
 
 
