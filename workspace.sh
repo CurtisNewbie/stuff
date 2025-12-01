@@ -184,6 +184,7 @@ alias bc="bc -l"
 alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
 alias leetcode="cp $STUFF/leetcode/Solution.java . && code Solution.java"
 alias diff="diff -bur"
+alias misocli="misoconfig && misoapi"
 
 if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
     alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
@@ -2228,3 +2229,4 @@ function gbranch() {
     printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/remotes/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n'
 }
 export -f gbranch
+
