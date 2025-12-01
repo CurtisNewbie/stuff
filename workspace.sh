@@ -2226,7 +2226,7 @@ function llm() {
 
 
 function gbranch() {
-    printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/remotes/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n'
+    printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(objectname:short) %(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/remotes/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(objectname:short) %(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n'
 }
 export -f gbranch
 
