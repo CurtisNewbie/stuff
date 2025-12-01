@@ -164,7 +164,6 @@ alias gl="git log"
 alias gds="git diff -p --staged --stat"
 alias gd="git diff -p --stat"
 # alias gbranch="git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:80)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
-alias gbranch="printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/remotes/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n'"
 alias gshow="git show -p --stat"
 alias gpush="while ! git push; do sleep 0.3; done"
 alias gad="git add"
@@ -640,8 +639,13 @@ function gcheck() {
             #echocyan "debug: $1, 3, $gitdir"
 
             if [ ! -d "$gitdir" ]; then
+                # echo "not git repo $gitdir"
                 return 0
             fi
+
+            echo ""
+            echo "--- $(pwd)"
+            gbranch
 
             #echocyan "debug: $1, 4"
 
@@ -715,6 +719,7 @@ function gcheck() {
 
 # scan repo for uncommited changes, use --fetch to fetch each repo
 function repocheck () {
+    echo ""
     find . -maxdepth 2 -type d ! -name "*.git" | while read line; do
         abs_path="$(pwd)/${line:2}"
 
@@ -2217,3 +2222,9 @@ function llm() {
         ]
     }" | jq -r .message.content
 }
+
+
+function gbranch() {
+    printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n' && git for-each-ref --count=10 --sort=-committerdate refs/remotes/ --format='%(HEAD) %(align:35)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(color:green)%(authorname) %(committerdate:relative)%(color:reset)' && printf '\n'
+}
+export -f gbranch
