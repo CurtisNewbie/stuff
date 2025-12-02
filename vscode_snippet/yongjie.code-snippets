@@ -1,9 +1,7 @@
 {
   "Json Tag": {
     "prefix": "jt",
-    "body": [
-      "`json:\"$1\"`"
-    ],
+    "body": ["`json:\"$1\"`"],
     "description": "Generate json tag"
   },
   "misoapi": {
@@ -53,12 +51,14 @@
     "description": "Ng mat-form-field"
   },
   "md-tick": {
-    "scope": "Markdown",
     "prefix": "tick",
-    "body": [
-      "&#10004;"
-    ],
+    "body": ["&#10004;"],
     "description": "insert tick unicode"
+  },
+  "md-img": {
+    "prefix": "img",
+    "body": ["<img src=\"$1\" height=\"600px\" />"],
+    "description": "insert markdown image"
   },
   "api": {
     "prefix": "api",
@@ -77,13 +77,11 @@
   },
   "desc": {
     "prefix": "desc",
-    "body": [
-      "`desc:\"$1\"`"
-    ],
+    "body": ["`desc:\"$1\"`"],
     "description": "Generate api desc"
   },
   "prop": {
-    "prefix": "prop",
+    "prefix": "misoconfig-prop",
     "body": [
       "// misoconfig-prop: ",
       "// misoconfig-alias: deprecated-prop",
@@ -91,4 +89,27 @@
     ],
     "description": "Generate misoconfig prop"
   },
+  "section": {
+    "prefix": "misoconfig-section",
+    "body": [
+      "// misoconfig-section: ",
+      "const (",
+      "",
+      ")",
+      "",
+      "// misoconfig-default-start",
+      "",
+      "// misoconfig-default-end",
+    ],
+    "description": "Generate misoconfig prop section"
+  },
+  "def": {
+    "prefix": "misoconfig-default",
+    "body": [
+      "// misoconfig-default-start",
+      "",
+      "// misoconfig-default-end",
+    ],
+    "description": "Generate misoconfig default"
+  }
 }
