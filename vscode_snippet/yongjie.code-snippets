@@ -96,10 +96,6 @@
       "const (",
       "",
       ")",
-      "",
-      "// misoconfig-default-start",
-      "",
-      "// misoconfig-default-end",
     ],
     "description": "Generate misoconfig prop section"
   },
