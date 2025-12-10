@@ -1,7 +1,9 @@
 {
   "Json Tag": {
     "prefix": "jt",
-    "body": ["`json:\"$1\"`"],
+    "body": [
+      "`json:\"$1\"`"
+    ],
     "description": "Generate json tag"
   },
   "misoapi": {
@@ -52,12 +54,16 @@
   },
   "md-tick": {
     "prefix": "tick",
-    "body": ["&#10004;"],
+    "body": [
+      "&#10004;"
+    ],
     "description": "insert tick unicode"
   },
   "md-img": {
     "prefix": "img",
-    "body": ["<img src=\"$1\" height=\"600px\" />"],
+    "body": [
+      "<img src=\"$1\" height=\"600px\" />"
+    ],
     "description": "insert markdown image"
   },
   "api": {
@@ -69,6 +75,13 @@
       "type Api$1Res struct {",
       "}",
       "",
+      "// ",
+      "//",
+      "// \t - misoapi-http: ",
+      "// \t - misoapi-query: ",
+      "// \t - misoapi-header: ",
+      "// \t - misoapi-scope: ",
+      "// \t - misoapi-resource: ref()",
       "func Api$1(rail miso.Rail, db *gorm.DB, req Api$1Req) (Api$1Res, error) {",
       "\treturn Api$1Res{}, nil",
       "}",
@@ -77,7 +90,9 @@
   },
   "desc": {
     "prefix": "desc",
-    "body": ["`desc:\"$1\"`"],
+    "body": [
+      "`desc:\"$1\"`"
+    ],
     "description": "Generate api desc"
   },
   "prop": {
