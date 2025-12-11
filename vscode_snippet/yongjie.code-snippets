@@ -75,7 +75,7 @@
       "type Api$1Res struct {",
       "}",
       "",
-      "// ",
+      "// $1",
       "//",
       "// \t - misoapi-http: ",
       "// \t - misoapi-query: ",
