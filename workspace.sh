@@ -308,7 +308,7 @@ function pdffind_log() {
 
 function cutlastn() {
     n="$2"
-    echo "${1:0:$((${#v} - $n))}"
+    echo "${1:0:$((${#1} - $n))}"
 }
 export -f cutlastn
 
