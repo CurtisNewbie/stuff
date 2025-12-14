@@ -306,6 +306,17 @@ function pdffind_log() {
     pdffind $1 > "pdffind_$1.txt"
 }
 
+function cutlastn() {
+    n="$2"
+    echo "${1:0:$((${#v} - $n))}"
+}
+export -f cutlastn
+
+function pdf2imgs() {
+    dir="$(cutlastn $1 4)_extracted"
+    mkdir $dir
+    magick -quality 100 -density 200 -colorspace sRGB "$1" "$dir/output-%02d.jpg"
+}
 
 function rfind() {
     if [ $(uname) == 'Darwin' ]; then
