@@ -313,8 +313,9 @@ function cutlastn() {
 export -f cutlastn
 
 function pdf2imgs() {
-    dir="$(cutlastn $1 4)_extracted"
-    mkdir $dir
+    dir="$(cutlastn "$1" 4)_extracted"
+    echo "Creating $dir"
+    mkdir "$dir"
     magick -quality 100 -density 200 -colorspace sRGB "$1" "$dir/output-%02d.jpg"
 }
 
@@ -2241,3 +2242,16 @@ function gbranch() {
 }
 export -f gbranch
 
+function c() {
+    exp="$@"
+    if [ -z "$exp" ]; then
+        echored "Please enter your expression"
+        return 0
+    fi
+
+    r=$(bc -l -e "${exp/,/}")
+    echo "$exp"
+    echo "  = $r"
+}
+
+export -f c
