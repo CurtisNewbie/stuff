@@ -2249,7 +2249,7 @@ function c() {
         return 0
     fi
 
-    r=$(bc -l -e "${exp/,/}")
+    r=$(bc -l -e "${exp//,/}")
     echo "$exp"
     echo "  = $r"
 }
