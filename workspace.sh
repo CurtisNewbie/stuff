@@ -2252,6 +2252,7 @@ function c() {
     r=$(bc -l -e "${exp//,/}")
     echo "$exp"
     echo "  = $r"
+    echo "$r" | clipboard
 }
 
 export -f c
