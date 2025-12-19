@@ -123,8 +123,8 @@
     ],
     "description": "Generate misoconfig default"
   },
-  "mrail": {
-    "prefix": "mrail",
+  "rrail": {
+    "prefix": "rrail",
     "body": [
       "rail miso.Rail",
     ],
