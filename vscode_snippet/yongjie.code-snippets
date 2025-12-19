@@ -122,5 +122,19 @@
       "// misoconfig-default-end",
     ],
     "description": "Generate misoconfig default"
-  }
+  },
+  "mrail": {
+    "prefix": "mrail",
+    "body": [
+      "rail miso.Rail",
+    ],
+    "description": "Rail"
+  },
+  "raildb": {
+    "prefix": "drail",
+    "body": [
+      "rail miso.Rail, db *gorm.DB",
+    ],
+    "description": "Rail and DB"
+  },
 }
