@@ -2242,6 +2242,11 @@ function gbranch() {
 }
 export -f gbranch
 
+commafy ()
+{
+    printf "%#'.2f" $1
+}
+
 function c() {
     exp="$@"
     if [ -z "$exp" ]; then
@@ -2250,9 +2255,11 @@ function c() {
     fi
 
     r=$(bc -l -e "${exp//,/}")
+    cr=$(commafy $r)
     echo "$exp"
-    echo "  = $r"
-    echo "$r" | clipboard
+    echo "  = $cr ($r)"
+    echo "$cr" | clipboard
 }
 
 export -f c
+
