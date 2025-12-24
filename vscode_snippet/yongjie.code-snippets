@@ -137,4 +137,11 @@
     ],
     "description": "Rail and DB"
   },
+  "trl": {
+    "prefix": "trl",
+    "body": [
+      "{{trl('$1')}}",
+    ],
+    "description": "i18n.trl"
+  }
 }
