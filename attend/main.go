@@ -327,7 +327,6 @@ func main() {
 			estimated = true
 
 		} else if len(v) == 4 {
-			fmt.Printf("half day leave: %+v\n", v)
 
 			leave09, _ := ParseTime(k + " 09:00:00")
 			leave12, _ := ParseTime(k + " 12:00:00")
