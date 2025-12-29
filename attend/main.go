@@ -17,6 +17,7 @@ import (
 	"github.com/curtisnewbie/miso/util"
 	"github.com/curtisnewbie/miso/util/cli"
 	"github.com/curtisnewbie/miso/util/flags"
+	"github.com/curtisnewbie/miso/util/slutil"
 	"github.com/curtisnewbie/miso/util/strutil"
 )
 
@@ -207,7 +208,7 @@ func main() {
 
 		// leave from work
 		var leave bool = false
-		var ds string
+		var dsl []string
 		res := attPat.FindStringSubmatch(l)
 		if len(res) < 1 {
 			if strings.Contains(l, "打卡时间:") {
@@ -240,62 +241,65 @@ func main() {
 
 			if s1 == "结束" {
 				if s3 == "上午" {
-					ds = fmt.Sprintf("%s 12:00:00", s2)
+					dsl = append(dsl, fmt.Sprintf("%s 09:00:00", s2))
+					dsl = append(dsl, fmt.Sprintf("%s 12:00:00", s2))
 				} else {
-					ds = fmt.Sprintf("%s 18:30:00", s2)
+					dsl = append(dsl, fmt.Sprintf("%s 18:30:00", s2))
 				}
 			} else {
 				if s3 == "上午" {
-					ds = fmt.Sprintf("%s 09:00:00", s2)
+					dsl = append(dsl, fmt.Sprintf("%s 09:00:00", s2))
 				} else {
-					continue
+					dsl = append(dsl, fmt.Sprintf("%s 12:00:00", s2))
 				}
 			}
 			leave = true
 		} else {
-			ds = strings.TrimSpace(res[1])
+			dsl = append(dsl, strings.TrimSpace(res[1]))
 		}
 
-		parsedTime, err := ParseTime(ds)
-		if err != nil {
-			fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
-			continue
-		}
-		if *DebugFlag {
-			fmt.Printf("parsed time: %v, l: '%s', leave: %v\n", ds, l, leave)
-		}
-
-		if parsedTime.Before(aft) {
-			continue
-		}
-
-		date := FormatDate(parsedTime)
-		if *DebugFlag {
-			fmt.Printf("format date: %v, l: '%s'\n", date, l)
-		}
-		if prev, ok := dateMap[date]; ok {
-			duplicate := false
-			if leave {
-				prev.Leave = true
+		for _, ds := range dsl {
+			parsedTime, err := ParseTime(ds)
+			if err != nil {
+				fmt.Printf("error - failed to parse time: %v, %v, l: '%s'\n", ds, err, l)
+				continue
 			}
-			for _, v := range prev.Times {
-				if v.Equal(parsedTime) {
-					if *DebugFlag {
-						fmt.Printf("duplicate: %v\n", parsedTime)
-					}
-					duplicate = true
-					break
+			if *DebugFlag {
+				fmt.Printf("parsed time: %v, l: '%s', leave: %v\n", ds, l, leave)
+			}
+
+			if parsedTime.Before(aft) {
+				continue
+			}
+
+			date := FormatDate(parsedTime)
+			if *DebugFlag {
+				fmt.Printf("format date: %v, l: '%s'\n", date, l)
+			}
+			if prev, ok := dateMap[date]; ok {
+				duplicate := false
+				if leave {
+					prev.Leave = true
 				}
-			}
-			if !duplicate {
-				prev.Times = append(prev.Times, parsedTime)
-				dateMap[date] = prev
-			}
-		} else {
-			if leave {
-				dateMap[date] = DateTime{Leave: true, Times: []time.Time{parsedTime}}
+				for _, v := range prev.Times {
+					if v.Equal(parsedTime) {
+						if *DebugFlag {
+							fmt.Printf("duplicate: %v\n", parsedTime)
+						}
+						duplicate = true
+						break
+					}
+				}
+				if !duplicate {
+					prev.Times = append(prev.Times, parsedTime)
+					dateMap[date] = prev
+				}
 			} else {
-				dateMap[date] = DateTime{Times: []time.Time{parsedTime}}
+				dt := DateTime{Times: []time.Time{parsedTime}}
+				if leave {
+					dt.Leave = true
+				}
+				dateMap[date] = dt
 			}
 		}
 	}
@@ -321,6 +325,48 @@ func main() {
 				ed = now
 			}
 			estimated = true
+
+		} else if len(v) == 4 {
+			fmt.Printf("half day leave: %+v\n", v)
+
+			leave09, _ := ParseTime(k + " 09:00:00")
+			leave12, _ := ParseTime(k + " 12:00:00")
+			leave18, _ := ParseTime(k + " 18:30:00")
+
+			// half day leave, so there should be 4 times
+			// find the times for leave and drop them
+			// they are either 09-12 or 12-18:30
+			rmi, rmj := -1, -1
+			for i := range len(v) {
+				vi := v[i]
+				if vi.Equal(leave09) {
+					rmi = i
+				} else if vi.Equal(leave12) {
+					rmj = i
+				}
+			}
+			if rmi > -1 && rmj > -1 {
+				// leave 09:00 - 12:00
+				v = slutil.SliceRemove(v, rmi, rmj)
+			} else {
+				rmi, rmj = -1, -1
+				for i := range len(v) {
+					vi := v[i]
+					if vi.Equal(leave12) {
+						rmi = i
+					} else if vi.Equal(leave18) {
+						rmj = i
+					}
+				}
+				// leave 12:00 - 18:30
+				v = slutil.SliceRemove(v, rmi, rmj)
+			}
+
+			st = v[0]
+			ed = v[1]
+			if st.After(ed) {
+				st, ed = ed, st
+			}
 		} else {
 			st = v[0]
 			ed = v[1]
@@ -402,34 +448,42 @@ func main() {
 		h := float64(tr.Dur()) / float64(time.Hour)
 		diffh := h - 8
 		diff := float64(h*60) - float64(8*60)
-		start := ANSIGreen + "+"
+		start := ANSIGreen
+		positive := true
 		if diff < 0 && diff <= -1/precision { // e.g., -0.00001, is still 0
 			start = ANSIRed
+			positive = false
 		}
 
 		var extraTag string
 		var endHmsColorStart string
+		var startHmsColorStart string
 		if tr.guessed {
 			extraTag = fmt.Sprintf("     ---     %vEstimated\x1b[0m", ANSICyan)
 			endHmsColorStart = ANSICyan
 		} else if tr.Leave {
 			extraTag = fmt.Sprintf("     ---     %vLeave\x1b[0m", ANSIYellow)
-			endHmsColorStart = ANSIYellow
+			startHmsColorStart = ANSIYellow
 		}
-		dhms := strutil.PadSpace(-10, HourMin(diffh))
-		println(strutil.NamedSprintf("${startDate} (${startWkDay})  ${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${extraTag}",
+		diffhs := strings.TrimSpace(HourMin(diffh))
+		if positive {
+			diffhs = "+" + diffhs
+		}
+		dhms := strutil.PadSpace(-10, diffhs)
+		println(strutil.NamedSprintf("${startDate} (${startWkDay})  ${startHmsColorStart}${startHms} - ${endHmsColorStart}${endHms}\x1b[0m  ${hHourMin} | ${h} ${colorStart}${diffhHourMin}${colorReset}${extraTag}",
 			map[string]any{
-				"startDate":        FormatDate(tr.start),
-				"startWkDay":       FormatWkDay(tr.start),
-				"startHms":         FormatHms(tr.start),
-				"endHms":           FormatHms(tr.end),
-				"hHourMin":         strutil.PadSpace(-10, HourMin(h)),
-				"h":                strutil.FmtFloat(h, -10, 6),
-				"colorStart":       start,
-				"diffhHourMin":     dhms,
-				"colorReset":       ANSIReset,
-				"extraTag":         extraTag,
-				"endHmsColorStart": endHmsColorStart,
+				"startDate":          FormatDate(tr.start),
+				"startWkDay":         FormatWkDay(tr.start),
+				"startHms":           FormatHms(tr.start),
+				"endHms":             FormatHms(tr.end),
+				"hHourMin":           strutil.PadSpace(-10, HourMin(h)),
+				"h":                  strutil.FmtFloat(h, -10, 6),
+				"colorStart":         start,
+				"diffhHourMin":       dhms,
+				"colorReset":         ANSIReset,
+				"extraTag":           extraTag,
+				"startHmsColorStart": startHmsColorStart,
+				"endHmsColorStart":   endHmsColorStart,
 			}))
 		total += h
 		statCurrMonthCnt += 1

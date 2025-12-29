@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestOcrPhone(t *testing.T) {
 	s, err := Ocr("testdata/out.png")

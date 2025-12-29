@@ -61,6 +61,7 @@ type TimeRange struct {
 func (t *TimeRange) Dur() time.Duration {
 	nstart0, _ := ParseTime(t.date + " 12:00:00")
 	nstart1, _ := ParseTime(t.date + " 13:30:00")
+
 	var d time.Duration
 	if t.end.Before(nstart0) {
 		d = t.end.Sub(t.start)
@@ -68,6 +69,20 @@ func (t *TimeRange) Dur() time.Duration {
 		d = nstart0.Sub(t.start)
 	} else {
 		d = t.end.Sub(t.start) - (90 * time.Minute)
+	}
+
+	if t.Leave {
+		leaveStart0, _ := ParseTime(t.date + " 09:00:00")
+		leaveEnd0, _ := ParseTime(t.date + " 18:30:00")
+
+		// leave for whole day
+		if t.start.Equal(leaveStart0) && t.end.Equal(leaveEnd0) {
+			return d
+		}
+
+		// half day leave
+		d = t.end.Sub(t.start) + time.Hour*4
+		return d
 	}
 
 	// for 1830-19:00
@@ -90,7 +105,7 @@ func (t *TimeRange) Dur() time.Duration {
 	// util.Printlnf("start: %v, end: %v, d: %v", t.start, t.end, d)
 	// if t.Leave {
 	// 	d = d + (time.Hour * 4)
-	// }
+	// } {}
 	return d
 }
 
