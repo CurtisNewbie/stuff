@@ -2267,3 +2267,7 @@ function misodeps() {
     goda graph 'github.com/curtisnewbie/miso/...' | dot -Tpng -o deps.png
     open deps.png
 }
+
+function misodeptree() {
+    goda tree ./...:all
+}
