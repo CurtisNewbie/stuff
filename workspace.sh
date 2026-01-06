@@ -136,7 +136,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.4.8"
+miso_ver="v0.4.9"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
@@ -1757,6 +1757,10 @@ function upgrade() {
         && go fmt ./... \
         && go build -o /dev/null ./... \
         && echo "git commit -am \"Upgrade $project to $miso_ver\""
+
+    if [ "$project" == "miso" ]; then
+        misopatch && go mod tidy
+    fi
 
     cd "$wd"
     return 0
