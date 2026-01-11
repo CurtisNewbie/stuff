@@ -312,6 +312,7 @@ function cutlastn() {
 }
 export -f cutlastn
 
+# imgs2pdf: magick *.jpg out.pdf
 function pdf2imgs() {
     dir="$(cutlastn "$1" 4)_extracted"
     echo "Creating $dir"
