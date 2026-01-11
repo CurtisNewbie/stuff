@@ -2280,3 +2280,7 @@ function misodeps() {
 function misodeptree() {
     goda tree ./...:all
 }
+
+function modparser() {
+    python3.11 "$GIT_PATH/dependency-parser/mod_parser.py" .
+}
