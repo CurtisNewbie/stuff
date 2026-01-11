@@ -184,7 +184,7 @@ alias bc="bc -l"
 alias jd="(cd ~; java -jar $STUFF/jd-gui-1.6.6.jar)"
 alias leetcode="cp $STUFF/leetcode/Solution.java . && code Solution.java"
 alias diff="diff -bur"
-alias misocli="misoconfig && misoapi"
+alias misocli="misoconfig && misoapi -run"
 
 if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
     alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
