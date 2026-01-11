@@ -1708,6 +1708,10 @@ function upgrade_commit() {
         && go build -o /dev/null ./... \
         && git commit -am "Upgrade $project to $miso_ver"
 
+    if [ "$project" == "miso" ]; then
+        misopatch && go mod tidy
+    fi
+
     cd "$wd"
     return 0
 }
