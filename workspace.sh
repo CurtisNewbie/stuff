@@ -1705,13 +1705,10 @@ function upgrade_commit() {
 
     go get "github.com/curtisnewbie/$project@$miso_ver" \
         && go mod tidy \
+        && if [ "$project" == "miso" ]; then misopatch; fi \
         && go fmt ./... \
         && go build -o /dev/null ./... \
         && git commit -am "Upgrade $project to $miso_ver"
-
-    if [ "$project" == "miso" ]; then
-        misopatch && go mod tidy
-    fi
 
     cd "$wd"
     return 0
@@ -1758,14 +1755,11 @@ function upgrade() {
     echo "Upgrading $project to $miso_ver"
 
     go get "github.com/curtisnewbie/$project@$miso_ver" \
+        && if [ "$project" == "miso" ]; then misopatch; fi \
         && go mod tidy \
         && go fmt ./... \
         && go build -o /dev/null ./... \
         && echo "git commit -am \"Upgrade $project to $miso_ver\""
-
-    if [ "$project" == "miso" ]; then
-        misopatch && go mod tidy
-    fi
 
     cd "$wd"
     return 0
