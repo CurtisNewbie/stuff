@@ -1564,21 +1564,11 @@ function build() {
 }
 
 function initwork() {
-    go work init
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-    # echo "go 1.22" >> go.work
-    # echo "" >> go.work
-    echo "use ." >> go.work
-    echo "" >> go.work
-    echo "replace github.com/curtisnewbie/miso => $GIT_PATH/miso" >> go.work;
-    echo "" >> go.work
-    ls -l
+    go work init . "$GIT_PATH/miso"
 }
 export -f initwork
 
-function clean_local_work(){
+function cleanwork(){
     if [ -f go.work ]; then
         echogreen 'removed go.work'
         rm go.work
