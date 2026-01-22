@@ -1714,6 +1714,15 @@ function upgrade() {
     if [ $# -ge 2 ]; then
         project="$1"
         commit="$2"
+    elif [ "$commit" == "miso-agent" ]; then
+        project="$commit"
+        commit=""
+    elif [ "$commit" == "miso-dify" ]; then
+        project="$commit"
+        commit=""
+    elif [ "$commit" == "miso-tavily" ]; then
+        project="$commit"
+        commit=""
     fi
 
     if [ -f go.work ]; then rm go.work && echo "removed go.work"; fi
