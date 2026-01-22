@@ -136,10 +136,10 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.4.11"
-misoagent_ver="v0.0.7"
+miso_ver="v0.4.12"
+misoagent_ver="v0.0.8"
 misodify_ver="v0.1.8"
-misotavily_ver="bf5b540e2f3446d62c95222b22eb4ed9c268396a"
+misotavily_ver="v0.0.1"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
