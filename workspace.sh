@@ -137,6 +137,9 @@ export USER_EXEC=~/exec
 
 # upgrade miso version
 miso_ver="v0.4.11"
+misoagent_ver="v0.0.7"
+misodify_ver="v0.1.8"
+misotavily_ver="bf5b540e2f3446d62c95222b22eb4ed9c268396a"
 
 # github repo path: GIT_PATH
 # work repo path: WORK_REPO_PATH
@@ -1740,16 +1743,27 @@ function upgrade() {
         cd "$moddir"
     fi
 
-    [ ! -z "$commit" ] && miso_ver="$commit"
+    if [ -z "$commit" ] && [ "$project" == "miso" ]; then
+        commit="$miso_ver"
+    fi
+    if [ -z "$commit" ] && [ "$project" == "miso-agent" ]; then
+        commit="$misoagent_ver"
+    fi
+    if [ -z "$commit" ] && [ "$project" == "miso-dify" ]; then
+        commit="$misodify_ver"
+    fi
+    if [ -z "$commit" ] && [ "$project" == "miso-tavily" ]; then
+        commit="$misotavily_ver"
+    fi
 
-    echo "Upgrading $project to $miso_ver"
+    echo "Upgrading $project to $commit"
 
-    go get "github.com/curtisnewbie/$project@$miso_ver" \
+    go get "github.com/curtisnewbie/$project@$commit" \
         && if [ "$project" == "miso" ]; then misopatch; fi \
         && go mod tidy \
         && go fmt ./... \
         && go build -o /dev/null ./... \
-        && echo "git commit -am \"Upgrade $project to $miso_ver\""
+        && echo "git commit -am \"Upgrade $project to $commit\""
 
     cd "$wd"
     return 0
