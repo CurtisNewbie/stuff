@@ -1,0 +1,11 @@
+# Command: unpack
+# Description: Resume conversation
+# Category: session
+# Version: 1
+# Author: Yongjie
+
+description = "Resume conversation"
+
+prompt = """
+Read through PROGRESS.md, resume previous conversation, and continue your task if there is any.
+"""
