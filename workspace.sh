@@ -2291,3 +2291,7 @@ function misodeptree() {
 function modparser() {
     python3.11 "$GIT_PATH/dependency-parser/mod_parser.py" .
 }
+
+function ctodo() {
+    code "$GIT_PATH/todos"
+}
