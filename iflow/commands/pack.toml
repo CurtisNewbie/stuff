@@ -16,4 +16,6 @@ This summary should be thorough in capturing user's requests, intents, interests
 Make the summary as concise as possible but context rich.
 
 If the PROGRESS.md already exists, review the PROGRESS.md, remove outdated, irrelavant information and rewrite certain notes, such that the file size wouldn't grow indefinitely.
+
+If the AGENTS.md exists, read it.
 """
