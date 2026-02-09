@@ -14,3 +14,9 @@ AGENTS_TARGET_DIR="$HOME/.iflow/agents"
 mkdir -p "$AGENTS_TARGET_DIR"
 cp "$SOURCE_DIR/agents"/*.md "$AGENTS_TARGET_DIR/"
 echo "Synced .md files from $SOURCE_DIR/agents to $AGENTS_TARGET_DIR"
+
+# Sync skills
+SKILLS_TARGET_DIR="$HOME/.iflow/skills"
+mkdir -p "$SKILLS_TARGET_DIR"
+cp -r "$SOURCE_DIR/skills"/* "$SKILLS_TARGET_DIR/"
+echo "Synced skills files from $SOURCE_DIR/skills to $SKILLS_TARGET_DIR"
