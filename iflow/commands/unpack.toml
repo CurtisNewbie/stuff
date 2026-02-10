@@ -7,5 +7,14 @@
 description = "Resume conversation"
 
 prompt = """
+If the AGENTS.md exists, read it and follow it's guidelines.
+
 Read through PROGRESS.md, resume previous conversation, and ask user whether you should continue your task if there is any.
+
+While you are talking to Users, fulfilling their tasks. Make sure you record your progress in PROGRESS.md.
+Update AGENTS.md for importants things that must be remembered.
+Record mistakes that you have made MISTAKE.md, make sure you don't make the same mistake again. For tasks that you are uncertain about, you can review the MISTAKE.md.
+
+Do not put everything AGENTS.md. For design or implementation documentation, create a doc folder and write your doc there instead;
+briefly describe the doc available to agents in AGENTS.md so they can look them up if needed.
 """
