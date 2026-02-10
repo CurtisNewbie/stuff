@@ -271,21 +271,29 @@ def init_skill(skill_name, path):
 
 
 def main():
-    if len(sys.argv) < 4 or sys.argv[2] != '--path':
-        print("Usage: init_skill.py <skill-name> --path <path>")
+    if len(sys.argv) < 2:
+        print("Usage: init_skill.py <skill-name> [--path <path>]")
         print("\nSkill name requirements:")
         print("  - Hyphen-case identifier (e.g., 'data-analyzer')")
         print("  - Lowercase letters, digits, and hyphens only")
         print("  - Max 40 characters")
         print("  - Must match directory name exactly")
+        print("\nIf --path is not provided, skills are created at ~/.iflow/skills by default.")
         print("\nExamples:")
+        print("  init_skill.py my-new-skill")
         print("  init_skill.py my-new-skill --path skills/public")
         print("  init_skill.py my-api-helper --path skills/private")
         print("  init_skill.py custom-skill --path /custom/location")
         sys.exit(1)
 
     skill_name = sys.argv[1]
-    path = sys.argv[3]
+
+    # Parse optional --path argument
+    if len(sys.argv) >= 4 and sys.argv[2] == '--path':
+        path = sys.argv[3]
+    else:
+        # Default to ~/.iflow/skills
+        path = Path.home() / '.iflow' / 'skills'
 
     print(f"🚀 Initializing skill: {skill_name}")
     print(f"   Location: {path}")
