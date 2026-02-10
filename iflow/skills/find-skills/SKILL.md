@@ -25,9 +25,11 @@ The Skills CLI (`npx skills`) is the package manager for the open agent skills e
 **Key commands:**
 
 - `npx skills find [query]` - Search for skills interactively or by keyword
-- `npx skills add <package>` - Install a skill from GitHub or other sources
+- `npx skills add <package> -g` - Install a skill globally to `~/.iflow/skills`
 - `npx skills check` - Check for skill updates
 - `npx skills update` - Update all installed skills
+
+**Skill location:** Skills are installed globally to `~/.iflow/skills/` (user-level, accessible across all projects)
 
 **Browse skills at:** https://skills.sh/
 
@@ -77,20 +79,24 @@ Example response:
 I found a skill that might help! The "vercel-react-best-practices" skill provides React and Next.js performance optimization guidelines from Vercel Engineering.
 
 To install it:
-npx skills add vercel-labs/agent-skills@vercel-react-best-practices
+npx skills add vercel-labs/agent-skills@vercel-react-best-practices -g
+
+This will install the skill to ~/.iflow/skills/
 
 Learn more: https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
 ```
 
 ### Step 4: Offer to Install
 
-If the user wants to proceed, you can install the skill for them:
+If the user wants to proceed, install the skill for them:
 
 ```bash
 npx skills add <owner/repo@skill> -g -y
 ```
 
-The `-g` flag installs globally (user-level) and `-y` skips confirmation prompts.
+**Important:** Always use the `-g` flag to install skills globally. Skills are installed to `~/.iflow/skills/` (user-level), making them accessible across all projects and recognized by agents like iFlow CLI, Claude Code, etc.
+
+The `-y` flag skips confirmation prompts for non-interactive installation.
 
 ## Common Skill Categories
 
