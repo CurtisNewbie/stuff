@@ -3,12 +3,17 @@
 Skill Initializer - Creates a new skill from template
 
 Usage:
-    init_skill.py <skill-name> --path <path>
+    init_skill.py <skill-name> [--path <path>] [--no-scripts] [--no-references] [--no-assets]
+
+Optional flags:
+    --no-scripts      Skip creating the scripts/ directory
+    --no-references   Skip creating the references/ directory
+    --no-assets       Skip creating the assets/ directory
 
 Examples:
     init_skill.py my-new-skill --path skills/public
-    init_skill.py my-api-helper --path skills/private
-    init_skill.py custom-skill --path /custom/location
+    init_skill.py my-api-helper --path skills/private --no-assets
+    init_skill.py custom-skill --path /custom/location --no-scripts --no-references
 """
 
 import sys
@@ -191,13 +196,16 @@ def title_case_skill_name(skill_name):
     return ' '.join(word.capitalize() for word in skill_name.split('-'))
 
 
-def init_skill(skill_name, path):
+def init_skill(skill_name, path, create_scripts=True, create_references=True, create_assets=True):
     """
     Initialize a new skill directory with template SKILL.md.
 
     Args:
         skill_name: Name of the skill
         path: Path where the skill directory should be created
+        create_scripts: Whether to create the scripts/ directory
+        create_references: Whether to create the references/ directory
+        create_assets: Whether to create the assets/ directory
 
     Returns:
         Path to created skill directory, or None if error
@@ -235,27 +243,30 @@ def init_skill(skill_name, path):
 
     # Create resource directories with example files
     try:
-        # Create scripts/ directory with example script
-        scripts_dir = skill_dir / 'scripts'
-        scripts_dir.mkdir(exist_ok=True)
-        example_script = scripts_dir / 'example.py'
-        example_script.write_text(EXAMPLE_SCRIPT.format(skill_name=skill_name))
-        example_script.chmod(0o755)
-        print("✅ Created scripts/example.py")
+        if create_scripts:
+            # Create scripts/ directory with example script
+            scripts_dir = skill_dir / 'scripts'
+            scripts_dir.mkdir(exist_ok=True)
+            example_script = scripts_dir / 'example.py'
+            example_script.write_text(EXAMPLE_SCRIPT.format(skill_name=skill_name))
+            example_script.chmod(0o755)
+            print("✅ Created scripts/example.py")
 
-        # Create references/ directory with example reference doc
-        references_dir = skill_dir / 'references'
-        references_dir.mkdir(exist_ok=True)
-        example_reference = references_dir / 'api_reference.md'
-        example_reference.write_text(EXAMPLE_REFERENCE.format(skill_title=skill_title))
-        print("✅ Created references/api_reference.md")
+        if create_references:
+            # Create references/ directory with example reference doc
+            references_dir = skill_dir / 'references'
+            references_dir.mkdir(exist_ok=True)
+            example_reference = references_dir / 'api_reference.md'
+            example_reference.write_text(EXAMPLE_REFERENCE.format(skill_title=skill_title))
+            print("✅ Created references/api_reference.md")
 
-        # Create assets/ directory with example asset placeholder
-        assets_dir = skill_dir / 'assets'
-        assets_dir.mkdir(exist_ok=True)
-        example_asset = assets_dir / 'example_asset.txt'
-        example_asset.write_text(EXAMPLE_ASSET)
-        print("✅ Created assets/example_asset.txt")
+        if create_assets:
+            # Create assets/ directory with example asset placeholder
+            assets_dir = skill_dir / 'assets'
+            assets_dir.mkdir(exist_ok=True)
+            example_asset = assets_dir / 'example_asset.txt'
+            example_asset.write_text(EXAMPLE_ASSET)
+            print("✅ Created assets/example_asset.txt")
     except Exception as e:
         print(f"❌ Error creating resource directories: {e}")
         return None
@@ -272,34 +283,59 @@ def init_skill(skill_name, path):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: init_skill.py <skill-name> [--path <path>]")
+        print("Usage: init_skill.py <skill-name> [--path <path>] [--no-scripts] [--no-references] [--no-assets]")
         print("\nSkill name requirements:")
         print("  - Hyphen-case identifier (e.g., 'data-analyzer')")
         print("  - Lowercase letters, digits, and hyphens only")
         print("  - Max 40 characters")
         print("  - Must match directory name exactly")
+        print("\nOptional flags:")
+        print("  --no-scripts      Skip creating the scripts/ directory")
+        print("  --no-references   Skip creating the references/ directory")
+        print("  --no-assets       Skip creating the assets/ directory")
         print("\nIf --path is not provided, skills are created at ~/.iflow/skills by default.")
         print("\nExamples:")
         print("  init_skill.py my-new-skill")
         print("  init_skill.py my-new-skill --path skills/public")
-        print("  init_skill.py my-api-helper --path skills/private")
-        print("  init_skill.py custom-skill --path /custom/location")
+        print("  init_skill.py my-api-helper --path skills/private --no-assets")
+        print("  init_skill.py custom-skill --path /custom/location --no-scripts --no-references")
         sys.exit(1)
 
     skill_name = sys.argv[1]
 
-    # Parse optional --path argument
-    if len(sys.argv) >= 4 and sys.argv[2] == '--path':
-        path = sys.argv[3]
-    else:
-        # Default to ~/.iflow/skills
-        path = Path.home() / '.iflow' / 'skills'
+    # Parse optional arguments
+    path = Path.home() / '.iflow' / 'skills'
+    create_scripts = True
+    create_references = True
+    create_assets = True
+
+    i = 2
+    while i < len(sys.argv):
+        arg = sys.argv[i]
+        if arg == '--path' and i + 1 < len(sys.argv):
+            path = sys.argv[i + 1]
+            i += 2
+        elif arg == '--no-scripts':
+            create_scripts = False
+            i += 1
+        elif arg == '--no-references':
+            create_references = False
+            i += 1
+        elif arg == '--no-assets':
+            create_assets = False
+            i += 1
+        else:
+            print(f"❌ Error: Unknown argument: {arg}")
+            sys.exit(1)
 
     print(f"🚀 Initializing skill: {skill_name}")
     print(f"   Location: {path}")
+    print(f"   Create scripts/: {create_scripts}")
+    print(f"   Create references/: {create_references}")
+    print(f"   Create assets/: {create_assets}")
     print()
 
-    result = init_skill(skill_name, path)
+    result = init_skill(skill_name, path, create_scripts, create_references, create_assets)
 
     if result:
         sys.exit(0)

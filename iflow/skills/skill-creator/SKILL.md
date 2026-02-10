@@ -267,12 +267,22 @@ Usage:
 scripts/init_skill.py <skill-name> --path <output-directory>
 ```
 
+Optional flags to control which resource directories are created:
+
+```bash
+scripts/init_skill.py <skill-name> [--no-scripts] [--no-references] [--no-assets]
+```
+
+- `--no-scripts`: Skip creating the `scripts/` directory
+- `--no-references`: Skip creating the `references/` directory
+- `--no-assets`: Skip creating the `assets/` directory
+
 The script:
 
 - Creates the skill directory at the specified path
 - Generates a SKILL.md template with proper frontmatter and TODO placeholders
-- Creates example resource directories: `scripts/`, `references/`, and `assets/`
-- Adds example files in each directory that can be customized or deleted
+- Optionally creates resource directories: `scripts/`, `references/`, and `assets/` (controlled by flags)
+- Adds example files in each created directory that can be customized or deleted
 
 After initialization, customize or remove the generated SKILL.md and example files as needed.
 
