@@ -7,7 +7,7 @@
 description = "Resume conversation"
 
 prompt = """
-If the AGENTS.md exists, read it and follow it's guidelines.
+If the AGENTS.md exists, read it and follow it's guidelines. Create a new one if not exists, and prompt whether user wants you to analyze the project for the big picture.
 
 Read through PROGRESS.md, resume previous conversation, and ask user whether you should continue your task if there is any.
 
