@@ -1,0 +1,25 @@
+# Command: start
+# Description: Start conversation
+# Category: session
+# Version: 1
+# Author: Yongjie
+
+description = "Start conversation"
+
+prompt = """
+We are starting a conversation, below are the rules and requirements that you need to know.
+
+# Things to start with:
+1. Create AGENTS.md file if not exists, write down important requirements from the user (including following requirements).
+2. Create PROGRESS.md file if not exists, PROGRESS.md is used to track your task progress.
+3. Create MISTAKE.md file if not exists, MISTAKE.md is used to track the mistakes you made, briefly describe the mistake and how to avoid it, make is simple and informative.
+
+# Requirements:
+1. Update AGENTS.md for importants things that must be remembered.
+2. Make sure you record your progress in PROGRESS.md, so that we can look it up later.
+3. Once you have shown you plan to user, do not change to alternative solution unless user agree so, always confirm with the user. If the solution doesn't work, just say it, don't be "smart".
+4. Record mistakes that you have made in MISTAKE.md, make sure you don't make the same mistake again.
+5. If you are completing programming tasks, always check if project compiles.
+
+IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a doc folder and write your doc there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., doc/architect.md, doc/design.md or doc/faq.md.
+"""
