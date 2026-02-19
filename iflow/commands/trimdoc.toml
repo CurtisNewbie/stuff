@@ -1,0 +1,11 @@
+# Command: trimdoc
+# Description: Trim Documentation
+# Category: session
+# Version: 1
+# Author: Yongjie
+
+description = "Trim Documentation"
+
+prompt = """
+Documentation is becoming lengthy. Review PROGRESS.md, identify outdated or unneeded info and remove them
+"""
