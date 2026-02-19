@@ -1,6 +1,6 @@
 # Tmux Conf
 
-```
+```conf
 set-option -g default-command "arch -arch arm64 /bin/bash"
 
 set-option -g history-limit 10000
@@ -26,9 +26,9 @@ bind c new-window -c "#{pane_current_path}"
 bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
 
-set -g mouse on
-set -g default-terminal "screen-256color"
-set -ga terminal-overrides ',xterm-256color:smcup@:rmcup@'
-if-shell "[ $(uname) = Darwin ]" 'set -g terminal-overrides "xterm*:XT:smcup@:rmcup@"'
+# set -g mouse on
+# set -g default-terminal "screen-256color"
+# set -ga terminal-overrides ',xterm-256color:smcup@:rmcup@'
+# if-shell "[ $(uname) = Darwin ]" 'set -g terminal-overrides "xterm*:XT:smcup@:rmcup@"'
 ```
 
