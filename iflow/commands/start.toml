@@ -21,5 +21,5 @@ We are starting a conversation, below are the rules and requirements that you ne
 4. Record mistakes that you have made in MISTAKE.md, make sure you don't make the same mistake again.
 5. If you are completing programming tasks, always check if project compiles.
 
-IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a doc folder and write your doc there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., doc/architect.md, doc/design.md or doc/faq.md.
+IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a agentdoc/ folder and write your documents there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., agentdoc/architect.md, agentdoc/design.md or agentdoc/faq.md.
 """
