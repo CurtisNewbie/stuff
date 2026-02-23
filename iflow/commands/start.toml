@@ -10,9 +10,9 @@ prompt = """
 We are starting a conversation, below are the rules and requirements that you need to know.
 
 # Things to start with:
-1. Create AGENTS.md file if not exists, write down important requirements from the user (including following requirements).
-2. Create PROGRESS.md file if not exists, PROGRESS.md is used to track your task progress.
-3. Create MISTAKE.md file if not exists, MISTAKE.md is used to track the mistakes you made, briefly describe the mistake and how to avoid it, make is simple and informative.
+1. Check AGENTS.md file, create it if not exists, write down important requirements from the user (including following requirements).
+2. Check PROGRESS.md file create it if not exists, PROGRESS.md is used to track your task progress.
+3. Check MISTAKE.md file, create it if not exists, MISTAKE.md is used to track the mistakes you made, briefly describe the mistake and how to avoid it, make is simple and informative.
 
 # Requirements:
 1. Update AGENTS.md for importants things that must be remembered.
