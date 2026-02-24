@@ -19,11 +19,11 @@ PLANNING_FILES = ['task_plan.md', 'progress.md', 'findings.md']
 
 
 def get_project_dir(project_path: str) -> Path:
-    """Convert project path to OpenCode's storage path format."""
+    """Convert project path to planwithfiles's storage path format."""
     # Normalize to an absolute path to ensure a stable representation
     # .as_posix() handles '\' -> '/' conversion on Windows automatically
     resolved_str = Path(project_path).resolve().as_posix()
-    
+
     # Sanitize path: replace separators with '-', remove ':' (Windows drives)
     sanitized = resolved_str.replace('/', '-').replace(':', '')
 
@@ -32,22 +32,22 @@ def get_project_dir(project_path: str) -> Path:
         sanitized = '-' + sanitized
     sanitized_name = sanitized.replace('_', '-')
 
-    # 1. Check Legacy Location first (~/.opencode/sessions/...)
-    legacy_dir = Path.home() / '.opencode' / 'sessions' / sanitized_name
+    # 1. Check Legacy Location first (~/.planwithfiles/sessions/...)
+    legacy_dir = Path.home() / '.planwithfiles' / 'sessions' / sanitized_name
     if legacy_dir.is_dir():
         return legacy_dir
 
     # 2. Standard Layout
-    data_root_env = os.getenv('OPENCODE_DATA_DIR')
+    data_root_env = os.getenv('planwithfiles_DATA_DIR')
     if data_root_env:
         data_root = Path(data_root_env)
     else:
         # Respect XDG_DATA_HOME if set, otherwise use default
         xdg_root = os.getenv('XDG_DATA_HOME')
         if xdg_root:
-            data_root = Path(xdg_root) / 'opencode' / 'storage'
+            data_root = Path(xdg_root) / 'planwithfiles' / 'storage'
         else:
-            data_root = Path.home() / '.local' / 'share' / 'opencode' / 'storage'
+            data_root = Path.home() / '.local' / 'share' / 'planwithfiles' / 'storage'
 
     return data_root / 'session' / sanitized_name
 
@@ -254,7 +254,7 @@ def main():
             print(f"USER: {msg['content'][:300]}")
         else:
             if msg.get('content'):
-                print(f"OPENCODE: {msg['content'][:300]}")
+                print(f"planwithfiles: {msg['content'][:300]}")
             if msg.get('tools'):
                 print(f"  Tools: {', '.join(msg['tools'][:4])}")
 
