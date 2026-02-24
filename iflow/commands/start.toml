@@ -20,6 +20,7 @@ We are starting a conversation, below are the rules and requirements that you ne
 3. Once you have shown you plan to user, do not change to alternative solution unless user agree so, always confirm with the user. If the solution doesn't work, just say it, don't be "smart".
 4. Record mistakes that you have made in MISTAKE.md, make sure you don't make the same mistake again.
 5. If you are completing programming tasks, always check if project compiles.
+6. For java project, always add `@author yongj.zhuang` if the class is newly created.
 
 IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a agentdoc/ folder and write your documents there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., agentdoc/architect.md, agentdoc/design.md or agentdoc/faq.md.
 """
