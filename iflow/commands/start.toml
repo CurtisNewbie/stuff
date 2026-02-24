@@ -11,16 +11,13 @@ We are starting a conversation, below are the rules and requirements that you ne
 
 # Things to start with:
 1. Check AGENTS.md file, create it if not exists, write down important requirements from the user (including following requirements).
-2. Check PROGRESS.md file create it if not exists, PROGRESS.md is used to track your task progress.
-3. Check MISTAKE.md file, create it if not exists, MISTAKE.md is used to track the mistakes you made, briefly describe the mistake and how to avoid it, make is simple and informative.
 
 # Requirements:
-1. Update AGENTS.md for importants things that must be remembered.
-2. Make sure you record your progress in PROGRESS.md, so that we can look it up later.
+1. Use planning-with-files skill.
+2. Update AGENTS.md for importants things that must be remembered.
 3. Once you have shown you plan to user, do not change to alternative solution unless user agree so, always confirm with the user. If the solution doesn't work, just say it, don't be "smart".
-4. Record mistakes that you have made in MISTAKE.md, make sure you don't make the same mistake again.
-5. If you are completing programming tasks, always check if project compiles.
-6. For java project, always add `@author yongj.zhuang` if the class is newly created.
+4. If you are completing programming tasks, always check if project compiles if you have modified the code.
+5. For java project, always add `@author yongj.zhuang` if the class is newly created.
 
 IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a agentdoc/ folder and write your documents there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., agentdoc/architect.md, agentdoc/design.md or agentdoc/faq.md.
 """
