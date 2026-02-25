@@ -20,3 +20,5 @@ for skill_dir in "$SOURCE_DIR/skills"/*/; do
     fi
 done
 echo "Synced skills from $SOURCE_DIR/skills to $SKILLS_TARGET_DIR"
+
+cp CLAUDE.md "$HOME/.claude/"
