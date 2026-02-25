@@ -21,4 +21,10 @@ for skill_dir in "$SOURCE_DIR/skills"/*/; do
 done
 echo "Synced skills from $SOURCE_DIR/skills to $SKILLS_TARGET_DIR"
 
-cp OPENCODE.md "$HOME/.opencode/"
+# Sync AGENTS.md
+mkdir -p "$HOME/.config/opencode"
+cp AGENTS.md "$HOME/.config/opencode/"
+echo "Synced AGENTS.md to $HOME/.config/opencode/"
+
+cp AGENTS.md "$HOME/.opencode/"
+echo "Synced AGENTS.md to $HOME/.opencode/"
