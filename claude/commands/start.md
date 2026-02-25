@@ -1,12 +1,8 @@
-# Command: start
-# Description: Start conversation
-# Category: session
-# Version: 1
-# Author: Yongjie
+---
+name: start
+description: Start conversation
+---
 
-description = "Start conversation"
-
-prompt = """
 We are starting a conversation, below are the rules and requirements that you need to know.
 
 # Things to start with:
@@ -20,4 +16,3 @@ We are starting a conversation, below are the rules and requirements that you ne
 5. For java project, always add `@author yongj.zhuang` if the class is newly created.
 
 IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a agentdoc/ folder and write your documents there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., agentdoc/architect.md, agentdoc/design.md or agentdoc/faq.md.
-"""
