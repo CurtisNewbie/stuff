@@ -83,5 +83,14 @@
         }
       }
     }
+  },
+  "permission": {
+    "read": {
+      "$HOME/.opencode/opencode.json": "deny",
+      "*": "allow"
+    },
+    "edit": {
+      "*": "ask"
+    }
   }
 }
