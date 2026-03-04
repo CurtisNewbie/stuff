@@ -77,6 +77,8 @@
   "permission": {
     "read": {
       "$HOME/.opencode/opencode.json": "deny",
+      "$HOME/.claude": "deny",
+      "$HOME/.opencode/skills": "allow",
       "*": "allow"
     },
     "edit": {
@@ -84,5 +86,13 @@
       "*": "ask"
     }
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest"]
+  "plugin": ["@tarquinen/opencode-dcp@latest"],
+  "agent": {
+    "plan": {
+      "model": "anthropic/claude-opus-4-6",
+    },
+    "build": {
+      "model": "anthropic/claude-sonnet-4-6",
+    },
+  }
 }
