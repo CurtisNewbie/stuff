@@ -83,6 +83,7 @@
     },
     "edit": {
       "/tmp/*": "allow",
+      "/private/tmp/*": "allow",
       "*": "ask"
     }
   },
