@@ -76,14 +76,14 @@
   },
   "permission": {
     "read": {
-      "$HOME/.opencode/opencode.json": "deny",
-      "$HOME/.claude": "deny",
-      "$HOME/.opencode/skills": "allow",
+      "~/.opencode/opencode.json": "deny",
+      "~/.claude": "deny",
+      "~/.opencode/skills/**": "allow",
       "*": "allow"
     },
     "edit": {
-      "/tmp/*": "allow",
-      "/private/tmp/*": "allow",
+      "/tmp/**": "allow",
+      "/private/tmp/**": "allow",
       "*": "ask"
     }
   },
