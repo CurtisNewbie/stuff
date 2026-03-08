@@ -6,5 +6,3 @@
 5. For golang project, always use `go fmt ./...` for formatting.
 6. When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 7. Always response with Chinese unless I ask you to use another language specifically.
-
-IMPORTANT: Do not put everything inside AGENTS.md. For design or implementation documentation, create a agentdoc/ folder and write your documents there instead; briefly describe the doc available to agents in AGENTS.md so they can look them up if needed. E.g., agentdoc/architect.md, agentdoc/design.md or agentdoc/faq.md.
