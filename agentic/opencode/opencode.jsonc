@@ -12,8 +12,13 @@
         "qwen3.5-plus": {
           "name": "Qwen3.5 Plus",
           "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
           },
           "options": {
             "thinking": {
@@ -61,8 +66,13 @@
         "kimi-k2.5": {
           "name": "Kimi K2.5",
           "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
           },
           "options": {
             "thinking": {
@@ -78,16 +88,19 @@
     "read": {
       "~/.opencode/opencode.json": "deny",
       "~/.claude": "deny",
-      "~/.opencode/skills/**": "allow",
+      "~/.opencode/skills/*": "allow",
+      "~/go/pkg/mod/*": "allow",
       "*": "allow"
     },
     "edit": {
-      "/tmp/**": "allow",
+      "/tmp/*": "allow",
       "/private/tmp/**": "allow",
       "*": "ask"
     }
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest"],
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest"
+  ],
   "agent": {
     "plan": {
       "model": "anthropic/claude-opus-4-6",
