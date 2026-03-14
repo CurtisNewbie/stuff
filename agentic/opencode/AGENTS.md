@@ -5,4 +5,5 @@
 4. For java project, always add `@author yongj.zhuang` if the class is newly created.
 5. For golang project, always use `go fmt ./...` for formatting.
 6. When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
-7. Always response with Chinese unless I ask you to use another language specifically.
+7. Use playwright-cli skill to browse feishu documents.
+8. Always response with Chinese unless I ask you to use another language specifically.
