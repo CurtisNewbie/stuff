@@ -85,28 +85,22 @@
     }
   },
   "permission": {
-    "read": {
+    "external_directory": {
       "~/.opencode/opencode.json": "deny",
-      "~/.claude": "deny",
-      "~/.opencode/skills/*": "allow",
-      "~/go/pkg/mod/*": "allow",
+      "~/.opencode/opencode.jsonc": "deny",
+      "~/.claude/settings.json": "deny",
       "*": "allow"
     },
-    "edit": {
-      "/tmp/*": "allow",
-      "/private/tmp/**": "allow",
-      "*": "ask"
-    }
   },
   "plugin": [
-    "@tarquinen/opencode-dcp@latest"
+    // "@tarquinen/opencode-dcp@latest"
   ],
   "agent": {
-    "plan": {
-      "model": "anthropic/claude-opus-4-6",
-    },
-    "build": {
-      "model": "anthropic/claude-sonnet-4-6",
-    },
+    // "plan": {
+    //   "model": "anthropic/claude-opus-4-6",
+    // },
+    // "build": {
+    //   "model": "anthropic/claude-sonnet-4-6",
+    // },
   }
 }
