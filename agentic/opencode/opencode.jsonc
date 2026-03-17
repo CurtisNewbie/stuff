@@ -102,5 +102,6 @@
     // "build": {
     //   "model": "anthropic/claude-sonnet-4-6",
     // },
-  }
+  },
+  "autoupdate": false
 }
