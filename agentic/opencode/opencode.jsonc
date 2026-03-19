@@ -103,37 +103,6 @@
     "build": {
       "model": "anthropic/claude-sonnet-4-6",
     },
-    // oh-my-opencode: sisyphus (the main agent), prometheus (planner), oracle (architecture/debugging), librarian (docs/code search), explore (fast codebase grep),
-    "prometheus": {
-      "model": "anthropic/claude-opus-4-6"
-    },
-    "sisyphus": {
-      "model": "anthropic/claude-opus-4-6"
-    },
-    "oracle": {
-      "model": "anthropic/claude-sonnet-4-6"
-    },
-    "explore": {
-      "model": "anthropic/claude-sonnet-4-6"
-    },
-    "librarian": {
-      "model": "anthropic/claude-sonnet-4-6"
-    },
-    "categories": {
-      // actual works delegated to sonnet
-      "deep": {
-        "model": "anthropic/claude-sonnet-4-6"
-      },
-      "unspecified-low": {
-        "model": "anthropic/claude-sonnet-4-6"
-      },
-      "unspecified-high": {
-        "model": "anthropic/claude-sonnet-4-6"
-      },
-      "quick": {
-        "model": "anthropic/claude-sonnet-4-6"
-      },
-    }
   },
   "autoupdate": false
 }
