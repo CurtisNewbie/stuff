@@ -2,13 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     "prometheus": {
       "model": "anthropic/claude-opus-4-6"
     },
     "oracle": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     "librarian": {
       "model": "anthropic/claude-sonnet-4-6"
@@ -23,10 +23,10 @@
       "model": "anthropic/claude-sonnet-4-6"
     },
     "metis": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     "momus": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     "atlas": {
       "model": "anthropic/claude-sonnet-4-6"
@@ -35,6 +35,7 @@
       "model": "anthropic/claude-sonnet-4-6"
     }
   },
+  "disabled_agents": ["atlas", "hephaestus"],
   "categories": {
     "deep": {
       "model": "anthropic/claude-sonnet-4-6"
