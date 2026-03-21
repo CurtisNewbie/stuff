@@ -35,7 +35,7 @@
       "model": "anthropic/claude-sonnet-4-6"
     }
   },
-  "disabled_agents": ["atlas", "hephaestus"],
+  "disabled_agents": ["atlas", "hephaestus", "sisyphus", "prometheus", "oracle", "librarian", "explore", "metis", "momus", "sisyphus-junior"],
   "categories": {
     "deep": {
       "model": "anthropic/claude-sonnet-4-6"
