@@ -2295,3 +2295,11 @@ function modparser() {
 function ctodo() {
     code "$GIT_PATH/todos"
 }
+
+function occ() {
+    opencode --continue
+}
+
+function oc() {
+    opencode
+}
