@@ -93,7 +93,7 @@
     },
   },
   "plugin": [
-    // "@tarquinen/opencode-dcp@latest"
+    "@tarquinen/opencode-dcp@latest"
   ],
   "agent": {
     // opencode default plan and build mode agents
