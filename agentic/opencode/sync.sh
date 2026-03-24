@@ -10,7 +10,7 @@ cp "$SOURCE_DIR/commands"/*.md "$COMMANDS_TARGET_DIR/" 2>/dev/null || true
 echo "Synced commands from $SOURCE_DIR/commands to $COMMANDS_TARGET_DIR"
 
 # Sync skills
-SKILLS_TARGET_DIR="$HOME/.agent/skills"
+SKILLS_TARGET_DIR="$HOME/.agents/skills"
 mkdir -p "$SKILLS_TARGET_DIR"
 for skill_dir in "$SOURCE_DIR/skills"/*/; do
     if [ -d "$skill_dir" ]; then
