@@ -31,7 +31,6 @@ Good:
 ```
 ### Section A
 Some content here.
-
 ### Section B
 More content here.
 ```
