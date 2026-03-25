@@ -85,6 +85,16 @@
     }
   },
   "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "*secrets/*": "deny",
+      "*credential*": "deny",
+      "*.pem": "deny",
+      "*.key": "deny"
+    },
     "external_directory": {
       "~/.opencode/opencode.json": "deny",
       "~/.opencode/opencode.jsonc": "deny",
