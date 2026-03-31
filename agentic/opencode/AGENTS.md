@@ -4,6 +4,7 @@
 2. If you are completing programming tasks, always check if project compiles if you have modified the code.
 3. When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 4. Always response with Chinese unless I ask you to use another language specifically.
+5. Use superpowers if appropriate.
 
 # Compact Instructions
 
