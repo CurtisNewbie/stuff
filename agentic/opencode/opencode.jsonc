@@ -103,8 +103,8 @@
     },
   },
   "plugin": [
-    "@tarquinen/opencode-dcp@latest",
-    "superpowers@git+https://github.com/obra/superpowers.git"
+    // "@tarquinen/opencode-dcp@latest",
+    // "superpowers@git+https://github.com/obra/superpowers.git"
   ],
   "agent": {
     // opencode default plan and build mode agents

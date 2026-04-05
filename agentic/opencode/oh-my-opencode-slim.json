@@ -1,0 +1,54 @@
+{
+  "preset": "openai",
+  "presets": {
+    "openai": {
+      "orchestrator": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*"
+        ]
+      },
+      "oracle": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "high",
+        "skills": [
+          "simplify"
+        ],
+        "mcps": []
+      },
+      "librarian": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "low",
+        "skills": [],
+        "mcps": [
+          "websearch",
+          "context7",
+          "grep_app"
+        ]
+      },
+      "explorer": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
+      },
+      "designer": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "medium",
+        "skills": [
+          "agent-browser"
+        ],
+        "mcps": []
+      },
+      "fixer": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
+      }
+    }
+  }
+}
