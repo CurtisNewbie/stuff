@@ -6,83 +6,73 @@
       "name": "Model Studio Coding Plan",
       "options": {
         "baseURL": "https://coding.dashscope.aliyuncs.com/apps/anthropic/v1",
-        "apiKey": "YOUR_API_KEY"
+        "apiKey": "YOUR_API_KEY",
       },
       "models": {
         "qwen3.5-plus": {
           "name": "Qwen3.5 Plus",
           "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
+            "input": ["text", "image"],
+            "output": ["text"],
           },
           "options": {
             "thinking": {
               "type": "enabled",
-              "budgetTokens": 1024
-            }
-          }
+              "budgetTokens": 1024,
+            },
+          },
         },
         "qwen3-max-2026-01-23": {
-          "name": "Qwen3 Max 2026-01-23"
+          "name": "Qwen3 Max 2026-01-23",
         },
         "qwen3-coder-next": {
-          "name": "Qwen3 Coder Next"
+          "name": "Qwen3 Coder Next",
         },
         "qwen3-coder-plus": {
-          "name": "Qwen3 Coder Plus"
+          "name": "Qwen3 Coder Plus",
         },
         "MiniMax-M2.5": {
           "name": "MiniMax M2.5",
           "options": {
             "thinking": {
               "type": "enabled",
-              "budgetTokens": 1024
-            }
-          }
+              "budgetTokens": 1024,
+            },
+          },
         },
         "glm-5": {
           "name": "GLM-5",
           "options": {
             "thinking": {
               "type": "enabled",
-              "budgetTokens": 1024
-            }
-          }
+              "budgetTokens": 1024,
+            },
+          },
         },
         "glm-4.7": {
           "name": "GLM-4.7",
           "options": {
             "thinking": {
               "type": "enabled",
-              "budgetTokens": 1024
-            }
-          }
+              "budgetTokens": 1024,
+            },
+          },
         },
         "kimi-k2.5": {
           "name": "Kimi K2.5",
           "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
+            "input": ["text", "image"],
+            "output": ["text"],
           },
           "options": {
             "thinking": {
               "type": "enabled",
-              "budgetTokens": 1024
-            }
-          }
-        }
-      }
-    }
+              "budgetTokens": 1024,
+            },
+          },
+        },
+      },
+    },
   },
   "permission": {
     "read": {
@@ -93,13 +83,13 @@
       "*secrets/*": "deny",
       "*credential*": "deny",
       "*.pem": "deny",
-      "*.key": "deny"
+      "*.key": "deny",
     },
     "external_directory": {
       "~/.opencode/opencode.json": "deny",
       "~/.opencode/opencode.jsonc": "deny",
       "~/.claude/settings.json": "deny",
-      "*": "allow"
+      "*": "allow",
     },
   },
   "plugin": [
@@ -115,5 +105,14 @@
       "model": "anthropic/claude-sonnet-4-6",
     },
   },
-  "autoupdate": false
+  "autoupdate": false,
+  "mcp": {
+    "WebSearch": {
+      "type": "remote",
+      "url": "https://dashscope.aliyuncs.com/api/v1/mcps/WebSearch/mcp",
+      "headers": {
+        "Authorization": "Bearer ",
+      },
+    },
+  },
 }
