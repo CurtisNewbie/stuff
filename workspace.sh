@@ -1998,8 +1998,10 @@ function redis_del_keys() {
 function unload_corplink() {
   # sudo launchctl list | grep corplink
   sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.service.plist
-  sudo launchctl unload -w /Library/LaunchDaemons/com.volcengine.corplink.systemextension.plist
-  sudo launchctl unload -w ~/Library/LaunchAgents/CorpLink.plist
+}
+
+function oct() {
+    bash "$STUFF/agentic/opencode/create-opencode-folder.sh"
 }
 
 function load_corplink() {
