@@ -103,3 +103,162 @@ lark-cli auth login --recommend
 **Official documentation**: https://github.com/larksuite/cli
 
 **Note**: If you don't need to interact with Feishu/Lark, you can skip this configuration.
+
+---
+
+## 浏览器自动化 (agent-browser)
+
+让 AI agent 可以操控浏览器，完成网页交互、表单填写、截图、数据抓取等任务。
+
+### 安装步骤
+
+```bash
+# 安装 CLI
+npm install -g agent-browser
+
+# 下载 Chrome（首次使用）
+agent-browser install
+
+# 安装 Skill
+npx skills add agent-browser -g -y
+```
+
+### 触发场景
+
+- 打开网站、点击按钮、填写表单
+- 截图、抓取页面数据
+- 测试 Web 应用
+- 自动化登录和会话管理
+
+---
+
+## PDF 处理 (pdf)
+
+提供 PDF 文件的全套处理能力：提取文字/表格、创建新 PDF、合并/拆分文档、填写表单。
+
+### 依赖安装
+
+```bash
+# Python 库
+pip install pypdf pdfplumber reportlab
+
+# 命令行工具（macOS）
+brew install poppler qpdf
+
+# OCR 支持（可选）
+pip install pytesseract pdf2image
+```
+
+### 触发场景
+
+- 提取 PDF 文字或表格内容
+- 合并、拆分、旋转 PDF
+- 创建新 PDF 文档
+- 填写 PDF 表单
+
+---
+
+## Word 文档处理 (docx)
+
+创建、编辑、分析 .docx 文件，支持追踪修改（Redlining）、批注、格式保留和文字提取。
+
+### 依赖安装
+
+```bash
+# 文字提取
+brew install pandoc
+
+# 创建新文档
+npm install -g docx
+
+# PDF 转换和图片预览
+brew install libreoffice poppler
+```
+
+### 触发场景
+
+- 从 Markdown 创建 Word 文档
+- 编辑现有文档（含追踪修改）
+- 提取文档内容
+- 法律/合同文档审阅（Redlining 工作流）
+
+---
+
+## 去 AI 味写作 (humanizer)
+
+识别并消除文本中的 AI 写作特征，使内容更自然、更像人类写作。基于 Wikipedia「AI 写作特征」指南。
+
+**无需安装**，直接触发 skill 即可使用。
+
+### 触发场景
+
+- 编辑或审阅文本，使其听起来更自然
+- 去除 AI 常见词汇（pivotal、vibrant、delve 等）
+- 消除过度使用的破折号、三段式结构、空洞结尾
+- 为文章注入真实的个性和观点
+
+---
+
+## 提示词工程 (prompt-engineering-patterns)
+
+掌握高级提示词技术，提升 LLM 在生产环境中的性能、可靠性和可控性。
+
+**无需安装**，直接触发 skill 即可使用。
+
+### 触发场景
+
+- 设计复杂的生产级提示词
+- 实现 Chain-of-Thought、Few-Shot 等推理模式
+- 使用 Pydantic 强制结构化输出
+- 优化提示词性能和一致性
+- 调试输出不稳定的提示词
+
+---
+
+## 创建自定义 Skill (skill-creator)
+
+将专业知识、工作流或工具集成封装为可复用的 Skill，扩展 AI agent 的能力。
+
+**无需安装**，直接触发 skill 即可使用。
+
+### 触发场景
+
+- 创建新的 skill 包
+- 更新或迭代现有 skill
+- 将重复性工作流封装为可分发的 .skill 文件
+
+### 快速开始
+
+```bash
+# 初始化新 skill
+python ~/.agents/skills/skill-creator/scripts/init_skill.py <skill-name> --path <output-dir>
+
+# 打包发布
+python ~/.agents/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder>
+```
+
+---
+
+## 发现更多 Skills (find-skills)
+
+搜索和安装来自开放 agent skills 生态的 skill 包。
+
+**无需安装**，直接触发 skill 即可使用。
+
+### 触发场景
+
+- 询问「有没有能做 X 的 skill？」
+- 寻找特定领域的工具或工作流
+- 扩展 agent 能力
+
+### 手动搜索
+
+```bash
+# 搜索 skill
+npx skills find <关键词>
+
+# 安装 skill（全局）
+npx skills add <owner/repo@skill> -g -y
+```
+
+**浏览所有 skills**：https://skills.sh/
