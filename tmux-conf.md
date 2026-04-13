@@ -26,6 +26,10 @@ bind c new-window -c "#{pane_current_path}"
 bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
 
+# Layout: move current pane to left (main), stack others on right, widen left to 60%
+# Usage: Ctrl+b Shift+L  (select the pane you want on the left first)
+bind L run-shell "tmux swap-pane -s . -t 0 && tmux select-layout main-vertical && tmux resize-pane -t 0 -x 60%"
+
 # set -g mouse on
 # set -g default-terminal "screen-256color"
 # set -ga terminal-overrides ',xterm-256color:smcup@:rmcup@'
