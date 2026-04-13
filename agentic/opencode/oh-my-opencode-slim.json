@@ -48,6 +48,22 @@
         "variant": "low",
         "skills": [],
         "mcps": []
+      },
+      "council": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "skills": [],
+        "mcps": []
+      },
+      "council-master": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "skills": [],
+        "mcps": []
+      },
+      "councillor": {
+        "model": "bailian-coding-plan/glm-4.7",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
       }
     }
   }
