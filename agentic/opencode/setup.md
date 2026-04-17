@@ -262,3 +262,153 @@ npx skills add <owner/repo@skill> -g -y
 ```
 
 **浏览所有 skills**：https://skills.sh/
+
+---
+
+## RTK - Token 优化工具 (rtk)
+
+RTK (Rust Token Killer) 是一个高性能 CLI 代理工具，可将 LLM 的 token 消耗降低 60-90%。它通过过滤和压缩命令输出，在常见开发命令上实现显著的 token 节省。
+
+### 安装步骤
+
+**方法 1: 快速安装（推荐）**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**方法 2: 手动下载二进制文件**
+
+```bash
+# macOS ARM64 (Apple Silicon)
+curl -L -o rtk.tar.gz https://github.com/rtk-ai/rtk/releases/latest/download/rtk-aarch64-apple-darwin.tar.gz
+tar -xzf rtk.tar.gz
+chmod +x rtk
+sudo mv rtk /usr/local/bin/
+
+# macOS Intel
+curl -L -o rtk.tar.gz https://github.com/rtk-ai/rtk/releases/latest/download/rtk-x86_64-apple-darwin.tar.gz
+tar -xzf rtk.tar.gz
+chmod +x rtk
+sudo mv rtk /usr/local/bin/
+
+# Linux ARM64
+curl -L -o rtk.tar.gz https://github.com/rtk-ai/rtk/releases/latest/download/rtk-aarch64-unknown-linux-gnu.tar.gz
+tar -xzf rtk.tar.gz
+chmod +x rtk
+sudo mv rtk /usr/local/bin/
+
+# Linux x86_64
+curl -L -o rtk.tar.gz https://github.com/rtk-ai/rtk/releases/latest/download/rtk-x86_64-unknown-linux-musl.tar.gz
+tar -xzf rtk.tar.gz
+chmod +x rtk
+sudo mv rtk /usr/local/bin/
+```
+
+**方法 3: 使用 Cargo**
+
+```bash
+cargo install --git https://github.com/rtk-ai/rtk
+```
+
+### 初始化 OpenCode 集成
+
+```bash
+# 为 OpenCode 安装 RTK hook
+rtk init -g --opencode
+
+# 重启 OpenCode
+```
+
+### 验证安装
+
+```bash
+rtk --version    # 检查版本
+rtk gain         # 查看 token 节省统计
+```
+
+### 工作原理
+
+RTK 通过 TypeScript 插件拦截 OpenCode 的 `tool.execute.before` 事件，自动将 shell 命令重写为 RTK 等价命令：
+
+```
+git status      → rtk git status
+cargo test      → rtk cargo test
+ls -la          → rtk ls -la
+```
+
+OpenCode 看不到重写过程，只是获得压缩后的输出，实现透明的 token 优化。
+
+### 支持的命令类别
+
+RTK 支持 100+ 常用开发命令，主要类别包括：
+
+- **文件操作**: `ls`, `cat`, `find`, `grep` (-70-80% tokens)
+- **Git 操作**: `git status`, `git log`, `git diff`, `git commit` (-70-90% tokens)
+- **测试运行器**: `pytest`, `cargo test`, `go test`, `vitest` (-90% tokens)
+- **构建工具**: `cargo build`, `npm`, `make` (-70-90% tokens)
+- **语言服务器**: `tsc`, `mypy` (-80-83% tokens)
+- **代码检查**: `eslint`, `ruff`, `golangci-lint`, `biome` (-80-85% tokens)
+- **包管理器**: `pip`, `cargo install`, `pnpm list` (-75-80% tokens)
+- **容器**: `docker ps`, `docker logs`, `kubectl pods` (-80% tokens)
+- **AWS**: `aws sts`, `aws ec2`, `aws lambda` (结构化输出)
+
+### 使用示例
+
+```bash
+# 查看节省统计
+rtk gain                    # 摘要统计
+rtk gain --graph            # ASCII 图表（最近 30 天）
+rtk gain --history          # 最近命令历史
+rtk gain --daily            # 按天分解
+
+# 发现节省机会
+rtk discover                # 查找错过的节省机会
+rtk discover --all --since 7 # 所有项目，最近 7 天
+
+# 直接使用 RTK 命令
+rtk ls .                    # Token 优化的目录树
+rtk read file.rs            # 智能文件读取
+rtk grep "pattern" .        # 分组搜索结果
+rtk git status              # 紧凑状态
+rtk cargo test              # 紧凑测试输出
+```
+
+### 典型节省效果
+
+在一个 30 分钟的会话中，RTK 可以实现：
+
+| 操作类别 | 频率 | 标准 token | RTK token | 节省 |
+|---------|------|-----------|----------|------|
+| `ls` / `tree` | 10x | 2,000 | 400 | -80% |
+| `cat` / `read` | 20x | 40,000 | 12,000 | -70% |
+| `grep` / `rg` | 8x | 16,000 | 3,200 | -80% |
+| `git status` | 10x | 3,000 | 600 | -80% |
+| `git diff` | 5x | 10,000 | 2,500 | -75% |
+| `git log` | 5x | 2,500 | 500 | -80% |
+| `cargo test` / `npm test` | 5x | 25,000 | 2,500 | -90% |
+| **总计** | | **~118,000** | **~23,900** | **-80%** |
+
+### 配置文件
+
+`~/.config/rtk/config.toml` (macOS: `~/Library/Application Support/rtk/config.toml`):
+
+```toml
+[hooks]
+exclude_commands = ["curl", "playwright"]  # 跳过这些命令的重写
+
+[tee]
+enabled = true          # 失败时保存原始输出（默认：true）
+mode = "failures"       # "failures", "always", 或 "never"
+```
+
+### 卸载
+
+```bash
+rtk init -g --uninstall     # 移除 hook、RTK.md、settings.json 条目
+cargo uninstall rtk          # 移除二进制文件（如果通过 cargo 安装）
+sudo rm /usr/local/bin/rtk   # 手动移除二进制文件（如果手动安装）
+```
+
+**官方文档**: https://github.com/rtk-ai/rtk
+**用户指南**: https://www.rtk-ai.app/guide
