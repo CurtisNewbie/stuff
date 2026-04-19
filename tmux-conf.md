@@ -34,5 +34,7 @@ bind L run-shell "tmux swap-pane -s . -t 0 && tmux select-layout main-vertical &
 # set -g default-terminal "screen-256color"
 # set -ga terminal-overrides ',xterm-256color:smcup@:rmcup@'
 # if-shell "[ $(uname) = Darwin ]" 'set -g terminal-overrides "xterm*:XT:smcup@:rmcup@"'
+
+bind-key t command-prompt -p "Swap with index:" "swap-window -t %1"
 ```
 
