@@ -26,5 +26,5 @@ mkdir -p "$HOME/.config/opencode"
 cp AGENTS.md "$HOME/.config/opencode/"
 echo "Synced AGENTS.md to $HOME/.config/opencode/"
 
-cp AGENTS.md "$HOME/.opencode/"
-echo "Synced AGENTS.md to $HOME/.opencode/"
+# cp AGENTS.md "$HOME/.opencode/"
+# echo "Synced AGENTS.md to $HOME/.opencode/"
