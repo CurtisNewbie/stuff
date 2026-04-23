@@ -2311,10 +2311,12 @@ function _oc_free_port() {
 }
 
 function occ() {
-    opencode --continue --port "$(_oc_free_port)"
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode --continue --port $port
 }
 
 function oc() {
-    opencode --port "$(_oc_free_port)"
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode --port $port
 }
 
