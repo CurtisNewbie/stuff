@@ -2001,13 +2001,14 @@ function unload_corplink() {
 }
 
 function oct() {
+    port="$(_oc_free_port)"
     TIMESTAMP=$(date +%y%m%d-%H%M%S)
     RANDOM_SUFFIX=$(head -c 5 /dev/urandom | base32 | tr -d '=' | tr '[:upper:]' '[:lower:]')
     FOLDER_NAME="${TIMESTAMP}-${RANDOM_SUFFIX}"
 
     mkdir -p "/tmp/${FOLDER_NAME}"
     cd "/tmp/${FOLDER_NAME}" || return 1
-    opencode
+    OPENCODE_PORT="$port" opencode --port $port
 }
 
 function load_corplink() {
