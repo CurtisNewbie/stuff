@@ -2306,11 +2306,15 @@ function ctodo() {
     code "$GIT_PATH/todos"
 }
 
+function _oc_free_port() {
+    python3 -c "import socket; s=socket.socket(); s.bind(('',0)); print(s.getsockname()[1]); s.close()"
+}
+
 function occ() {
-    opencode --continue --port 4096
+    opencode --continue --port "$(_oc_free_port)"
 }
 
 function oc() {
-    opencode --port 4096
+    opencode --port "$(_oc_free_port)"
 }
 
