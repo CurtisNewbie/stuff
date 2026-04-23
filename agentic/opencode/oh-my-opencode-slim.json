@@ -1,4 +1,9 @@
 {
+  "multiplexer": {
+    "type": "tmux",
+    "layout": "main-vertical",
+    "main_pane_size": 60
+  },
   "preset": "openai",
   "presets": {
     "openai": {
