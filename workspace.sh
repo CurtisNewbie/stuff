@@ -2307,10 +2307,10 @@ function ctodo() {
 }
 
 function occ() {
-    opencode --continue
+    opencode --continue --port 4096
 }
 
 function oc() {
-    opencode
+    opencode --port 4096
 }
 
