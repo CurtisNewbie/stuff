@@ -13,7 +13,8 @@
           "*"
         ],
         "mcps": [
-          "*"
+          "context7",
+          "grep_app"
         ]
       },
       "oracle": {
