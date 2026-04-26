@@ -2001,13 +2001,14 @@ function unload_corplink() {
 }
 
 function oct() {
+    port="$(_oc_free_port)"
     TIMESTAMP=$(date +%y%m%d-%H%M%S)
     RANDOM_SUFFIX=$(head -c 5 /dev/urandom | base32 | tr -d '=' | tr '[:upper:]' '[:lower:]')
     FOLDER_NAME="${TIMESTAMP}-${RANDOM_SUFFIX}"
 
     mkdir -p "/tmp/${FOLDER_NAME}"
     cd "/tmp/${FOLDER_NAME}" || return 1
-    opencode
+    OPENCODE_PORT="$port" opencode --port $port
 }
 
 function load_corplink() {
@@ -2306,11 +2307,17 @@ function ctodo() {
     code "$GIT_PATH/todos"
 }
 
+function _oc_free_port() {
+    python3 -c "import socket; s=socket.socket(); s.bind(('',0)); print(s.getsockname()[1]); s.close()"
+}
+
 function occ() {
-    opencode --continue
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode --continue --port $port
 }
 
 function oc() {
-    opencode
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode --port $port
 }
 
