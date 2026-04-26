@@ -8,7 +8,7 @@
   "presets": {
     "openai": {
       "orchestrator": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.6",
         "skills": [
           "*"
         ],
@@ -17,7 +17,7 @@
         ]
       },
       "oracle": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/deepseek-v4-pro",
         "variant": "high",
         "skills": [
           "simplify"
@@ -25,7 +25,7 @@
         "mcps": []
       },
       "librarian": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/deepseek-v4-flash",
         "variant": "low",
         "skills": [],
         "mcps": [
@@ -35,13 +35,13 @@
         ]
       },
       "explorer": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/deepseek-v4-flash",
         "variant": "low",
         "skills": [],
         "mcps": []
       },
       "designer": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "variant": "medium",
         "skills": [
           "agent-browser"
@@ -49,23 +49,23 @@
         "mcps": []
       },
       "fixer": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/deepseek-v4-flash",
         "variant": "low",
         "skills": [],
         "mcps": []
       },
       "council": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [],
         "mcps": []
       },
       "council-master": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [],
         "mcps": []
       },
       "councillor": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "variant": "low",
         "skills": [],
         "mcps": []
