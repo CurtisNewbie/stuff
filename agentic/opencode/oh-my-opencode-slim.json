@@ -8,65 +8,59 @@
   "presets": {
     "openai": {
       "orchestrator": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/glm-5",
         "skills": [
           "*"
         ],
         "mcps": [
-          "*"
+          "context7",
+          "grep_app"
         ]
       },
       "oracle": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "high",
+        "model": "opencode-go/deepseek-v4-pro",
         "skills": [
           "simplify"
         ],
         "mcps": []
       },
       "librarian": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "low",
+        "model": "opencode-go/deepseek-v4-flash",
         "skills": [],
         "mcps": [
-          "websearch",
           "context7",
           "grep_app"
         ]
       },
       "explorer": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "low",
+        "model": "opencode-go/deepseek-v4-flash",
         "skills": [],
         "mcps": []
       },
       "designer": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "medium",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [
           "agent-browser"
         ],
         "mcps": []
       },
       "fixer": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "low",
+        "model": "opencode-go/deepseek-v4-flash",
         "skills": [],
         "mcps": []
       },
       "council": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [],
         "mcps": []
       },
       "council-master": {
-        "model": "bailian-coding-plan/glm-4.7",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [],
         "mcps": []
       },
       "councillor": {
-        "model": "bailian-coding-plan/glm-4.7",
-        "variant": "low",
+        "model": "opencode-go/kimi-k2.5",
         "skills": [],
         "mcps": []
       }

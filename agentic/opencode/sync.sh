@@ -23,8 +23,8 @@ echo "Synced skills from $SOURCE_DIR/skills to $SKILLS_TARGET_DIR"
 
 # Sync AGENTS.md
 mkdir -p "$HOME/.config/opencode"
-cp AGENTS.md "$HOME/.config/opencode/"
-echo "Synced AGENTS.md to $HOME/.config/opencode/"
+cp AGENTS_curr.md "$HOME/.config/opencode/AGENTS.md"
+echo "Synced AGENTS_curr.md to $HOME/.config/opencode/AGENTS.md"
 
 # cp AGENTS.md "$HOME/.opencode/"
 # echo "Synced AGENTS.md to $HOME/.opencode/"
