@@ -1,8 +1,9 @@
 # User Requirements
 
-1. Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
-2. When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
-3. Always write 飞书/Lark Documents with Chinese unless I ask you to use another language specifically.
+1. Orchestrator should focus on orchestration, for code writing & implementation, delegate to specialist agent instead.
+2. Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
+3. When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
+4. Always write 飞书/Lark Documents with Chinese unless I ask you to use another language specifically.
 
 # Behavioral Guidelines
 

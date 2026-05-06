@@ -47,25 +47,28 @@ ocx init --global
 ocx add kdco/notify --from https://registry.kdco.dev
 ```
 
-安装结果（2 个组件）：
+安装结果（2 个组件：`kdco/notify` + `kdco-primitives`）：
 
 ```
 .opencode/plugins/
 ├── notify.ts              # 主插件入口，export default NotifyPlugin
 ├── notify/                # notify 内部模块
 │   ├── backend.ts         # 通知后端，cmux 优先 + node-notifier 回退
-│   ├── cmux.ts            # cmux CLI 通知支持
-│   ├── get-project-id.ts
-│   ├── index.ts
-│   ├── log-warn.ts
-│   ├── mutex.ts
-│   ├── shell.ts
-│   ├── temp.ts
-│   ├── terminal-detect.ts
-│   ├── types.ts
-│   └── with-timeout.ts
-└── kdco-primitives/       # 公共类型依赖
-    └── types.ts
+│   ├── cmux.ts            # cmux CLI 通知 + Session 状态管理
+│   ├── status.ts          # Session 状态转换逻辑
+│   └── title.ts           # 终端标题栏 OSC 序列处理
+├── kdco-primitives/       # 公共基础库
+│   ├── index.ts           # 统一导出
+│   ├── types.ts           # 类型定义
+│   ├── shell.ts           # Shell 转义工具
+│   ├── mutex.ts           # 互斥锁
+│   ├── with-timeout.ts    # 超时控制
+│   ├── terminal-detect.ts # 终端检测
+│   ├── get-project-id.ts  # 项目 ID 获取
+│   ├── log-warn.ts        # 警告日志
+│   └── temp.ts            # 临时目录
+└── worktree/              # cmux workspace 检测（kdco-primitives 未包含，需手动补齐）
+    └── terminal.ts
 ```
 
 运行时依赖（自动注入到 `.opencode/package.json`）：
@@ -191,6 +194,8 @@ OpenCode 加载顺序：
 2. `opencode.json`（项目 npm 插件）
 3. `~/.config/opencode/plugins/`（全局本地插件）
 4. `.opencode/plugins/`（项目本地插件）← OCX 组件安装到这里
+
+> **注意：** `ocx add -g`（全局安装）会将文件写入 `~/.config/opencode/.opencode/plugins/`，但 OpenCode 的全局本地插件路径是 `~/.config/opencode/plugins/`（无 `.opencode/` 前缀）。全局安装后需手动同步到正确路径，或直接使用项目级安装。
 
 ---
 
