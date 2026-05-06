@@ -5,13 +5,13 @@
       "model": "anthropic/claude-sonnet-4-6"
     },
     "prometheus": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     "oracle": {
       "model": "anthropic/claude-sonnet-4-6"
     },
     "librarian": {
-      "model": "anthropic/claude-haiku-4-5"
+      "model": "anthropic/deepseek-v4-flash"
     },
     "explore": {
       "model": "anthropic/claude-haiku-4-5"
@@ -62,7 +62,7 @@
     }
   },
   "tmux": {
-    "enabled": true,
+    "enabled": false,
     "layout": "main-vertical",
     "main_pane_size": 60,
     "main_pane_min_width": 120,
