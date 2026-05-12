@@ -5,7 +5,7 @@
 set -euo pipefail
 
 DB="$HOME/.local/share/opencode/opencode.db"
-DAYS=7
+DAYS=3
 DRY_RUN=false
 
 # 解析参数

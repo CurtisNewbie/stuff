@@ -104,6 +104,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 export CGO_ENABLED=1
 export LANG=en_US.UTF-8
+export IGNOREEOF=10
 
 # for brew's executables
 [ -d "/usr/local/opt/ruby/bin" ] && export PATH="/usr/local/opt/ruby/bin:$PATH"
@@ -2321,3 +2322,6 @@ function oc() {
     OPENCODE_PORT="$port" opencode --port $port
 }
 
+function stayawake() {
+    caffeinate -d -i -m -s
+}
