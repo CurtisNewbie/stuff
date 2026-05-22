@@ -1574,6 +1574,11 @@ function initwork() {
 }
 export -f initwork
 
+function cleanup_opencode() {
+    bash "$STUFF/agentic/opencode/cleanup.sh" "$@"
+}
+export -f cleanup_opencode
+
 function cleanwork(){
     if [ -f go.work ]; then
         echogreen 'removed go.work'
