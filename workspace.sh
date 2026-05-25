@@ -2330,3 +2330,7 @@ function oc() {
 function stayawake() {
     caffeinate -d -i -m -s
 }
+
+function dumpddl() {
+  $STUFF/mysqldumpddl.sh $@
+}
