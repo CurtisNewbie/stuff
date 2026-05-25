@@ -33,9 +33,13 @@ CMD="mysqldump -h '$HOST' -P '$PORT' -u '$USER' -p'$PASS' \
  --set-gtid-purged=OFF \
   --routines=false \
   '$DB'"
+DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
+HEADER="-- $DATETIME"
+
 if [[ -n "$OUTPUT" ]]; then
-  eval "$CMD" > "$OUTPUT"
+  { echo "$HEADER"; eval "$CMD" | sed 's/ AUTO_INCREMENT=[0-9]*//g'; } > "$OUTPUT"
   echo "DDL written to $OUTPUT"
 else
-  eval "$CMD"
+  echo "$HEADER"
+  eval "$CMD" | sed 's/ AUTO_INCREMENT=[0-9]*//g'
 fi
