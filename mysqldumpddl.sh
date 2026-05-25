@@ -6,12 +6,12 @@ usage() {
   exit 1
 }
 
-HOST="$1"
-USER="$2"
-PASS="$3"
-DB="$4"
-PORT="$5"
-OUTPUT="$6"
+HOST="${HOST:-localhost}"
+USER="${USER:-root}"
+PASS="${PASS:-}"
+DB="${DB:-}"
+PORT="${PORT:-3306}"
+OUTPUT="${OUTPUT:-}"
 
 while getopts "h:u:p:d:P:o:" opt; do
   case $opt in
