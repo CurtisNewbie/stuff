@@ -30,16 +30,21 @@ CMD="mysqldump -h '$HOST' -P '$PORT' -u '$USER' -p'$PASS' \
   --no-data \
   --skip-triggers \
   --compact \
- --set-gtid-purged=OFF \
+  --set-gtid-purged=OFF \
   --routines=false \
   '$DB'"
 DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
 HEADER="-- $DATETIME"
 
+process() {
+  sed 's/ AUTO_INCREMENT=[0-9]*//g' \
+  | sed "s/CREATE TABLE \`/CREATE TABLE \`${DB}\`.\`/g"
+}
+
 if [[ -n "$OUTPUT" ]]; then
-  { echo "$HEADER"; eval "$CMD" | sed 's/ AUTO_INCREMENT=[0-9]*//g'; } > "$OUTPUT"
+  { echo "$HEADER"; eval "$CMD" | process; } > "$OUTPUT"
   echo "DDL written to $OUTPUT"
 else
   echo "$HEADER"
-  eval "$CMD" | sed 's/ AUTO_INCREMENT=[0-9]*//g'
+  eval "$CMD" | process
 fi
