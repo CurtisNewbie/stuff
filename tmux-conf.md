@@ -4,7 +4,7 @@
 set-option -g default-command "arch -arch arm64 /bin/bash"
 
 set-option -g history-limit 10000
-set -g default-terminal "screen-256color"
+set -g default-terminal "tmux-256color"
 set-option -g renumber-windows on
 set-window-option -g mode-keys vi
 set-option -g status-interval 1
