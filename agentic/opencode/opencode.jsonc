@@ -125,6 +125,7 @@
     "WebSearch": {
       "type": "remote",
       "url": "https://dashscope.aliyuncs.com/api/v1/mcps/WebSearch/mcp",
+      "enabled": false,
       "headers": {
         "Authorization": "Bearer ",
       },
