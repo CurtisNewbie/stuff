@@ -37,7 +37,16 @@ bind L run-shell "tmux swap-pane -s . -t 0 && tmux select-layout main-vertical &
 
 bind-key t command-prompt -p "Swap with index:" "swap-window -t %1"
 
-set -g window-active-style 'fg=terminal,bg=terminal'
-set -g window-style 'fg=colour247,bg=colour236'
+# dim bg color of pane not selected
+# set -g window-active-style 'fg=terminal,bg=terminal'
+# set -g window-style 'fg=colour247,bg=colour236'
+
+# Remove the bg-based lines, replace with:
+set -g pane-active-border-style 'fg=colour51,bold'
+set -g pane-border-style 'fg=colour238'
+
+set -g pane-border-status top
+set -g pane-border-format " #{pane_index} #{pane_title} "
+
 ```
 
