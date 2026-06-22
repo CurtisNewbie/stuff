@@ -133,6 +133,12 @@ MM/DD 进度：
 
 **前置条件：** `chromedb` 已安装并在 PATH + Chrome 已登录飞书项目
 
+如果 `chromedb` 未安装，先运行：
+
+```bash
+pip install chromedb
+```
+
 **用法：**
 
 ```bash
