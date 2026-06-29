@@ -449,6 +449,84 @@ npx skills add https://github.com/github/awesome-copilot --skill excalidraw-diag
 
 ---
 
+## LLM Wiki 知识库 (karpathy-llm-wiki)
+
+将文档、网页、论文等原始资料编译为结构化 wiki 知识页面，支持带引用的知识查询。与 RAG 的区别：在 ingest 阶段就合成知识，形成可复利的 markdown 页面，而非每次查询时检索原始片段。
+
+### 安装步骤
+
+```bash
+npx add-skill Astro-Han/karpathy-llm-wiki
+```
+
+### 工作原理
+
+```
+your-project/
+├── raw/        ← 不可变的原始资料
+└── wiki/
+    ├── topic/  ← LLM 维护的知识页面
+    ├── index.md
+    └── log.md  ← 追加式操作日志
+```
+
+三个核心操作：
+
+| 操作 | 说明 |
+|---|---|
+| **Ingest** | 拉取原始资料到 `raw/`，编译/更新 `wiki/` 知识页面 |
+| **Query** | 搜索 wiki，返回带引用的答案 |
+| **Lint** | 检查索引完整性、断链、过期交叉引用，自动修复 |
+
+### 触发场景
+
+- 构建个人/团队知识库（网页、论文、PDF、笔记）
+- 需要基于自己合成知识库的带引用回答
+- 构建有界、可维护的知识库（替代 RAG）
+
+**源码**：https://github.com/Astro-Han/karpathy-llm-wiki
+
+---
+
+## 消息延迟队列 (open-queue)
+
+OpenCode 插件，在模型运行中途将后续消息放入队列，等模型完成后按序发送，避免打断当前执行上下文。
+
+### 安装步骤
+
+```bash
+bun x @0xsero/open-queue
+# 或
+npx @0xsero/open-queue
+```
+
+自动写入 `opencode.json` 并注册 `/queue` 命令。
+
+### 使用方式
+
+```
+/queue hold       # 开启队列模式
+/queue immediate  # 恢复正常模式（冲刷队列）
+/queue status     # 查看当前模式
+```
+
+也可通过环境变量默认开启：
+
+```bash
+OPENCODE_MESSAGE_QUEUE_MODE=hold opencode
+```
+
+### 触发场景
+
+- 模型执行长任务时，想追加补充说明而不打断它
+- 发现遗漏信息，希望等当前任务完成后再处理
+
+**注意**：hold 模式下消息在 UI 中会短暂显示为已发送后重发，属于视觉问题，模型只收到一次。
+
+**源码**：https://github.com/0xSero/open-queue
+
+---
+
 ## 代码知识图谱 (codegraph)
 
 为 agent 提供预索引的代码知识图谱，减少 grep/read 工具调用，降低 token 消耗。
