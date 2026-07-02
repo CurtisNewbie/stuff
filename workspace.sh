@@ -154,7 +154,6 @@ for env in $expected_env; do
 done
 
 export SYNC_REPOS="stuff,vfm,mini-fstore,user-vault,event-pump,gatekeeper,logbot,miso,grapher,chill,moon,pocket,acct,tamper_script,smash,cvlet,moon-monorepo"
-OPENCODE_MESSAGE_QUEUE_MODE="hold"
 
 # ---------------------------------------------------------------
 
@@ -2321,12 +2320,12 @@ function _oc_free_port() {
 
 function occ() {
     port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode --continue --port $port
+    OPENCODE_MESSAGE_QUEUE_MODE=hold OPENCODE_PORT="$port" opencode --continue --port $port
 }
 
 function oc() {
     port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode --port $port
+    OPENCODE_MESSAGE_QUEUE_MODE=hold OPENCODE_PORT="$port" opencode --port $port
 }
 
 function stayawake() {
