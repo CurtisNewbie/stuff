@@ -139,7 +139,7 @@ export LOC_BIN="/usr/local/bin"
 export USER_EXEC=~/exec
 
 # upgrade miso version
-miso_ver="v0.4.13-beta.2"
+miso_ver="74b62d7dc88c7a89bdc5bdea54c9b6d8b1a00bc6"
 misoagent_ver="v0.0.10"
 misodify_ver="v0.1.8"
 misotavily_ver="v0.0.1"
