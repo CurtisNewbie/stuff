@@ -563,3 +563,18 @@ codegraph init -i
 索引通过文件监听自动同步，无需手动运行 `codegraph sync`。
 
 **官方文档**: https://github.com/colbymchenry/codegraph
+
+---
+
+## Matt Pocock 工程 Skills 包 (mattpocock/skills)
+
+面向真实工程实践的 skill 合集（TDD、领域建模、代码审查、架构改善等），Stars 154k。
+
+**安装前先询问用户是否需要**，该包有自己的初始化流程，属于有观点的工程框架，不适合所有项目。
+
+```bash
+npx skills@latest add mattpocock/skills
+# 安装后在 agent 中运行：/setup-matt-pocock-skills
+```
+
+**官方仓库**: https://github.com/mattpocock/skills
