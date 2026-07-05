@@ -6,6 +6,7 @@
         "model": "opencode-go/deepseek-v4-pro",
         "skills": ["*"],
         "mcps": ["context7", "grep_app"]
+        "variant": "high"
       },
       "oracle": {
         "model": "opencode-go/glm-5.1",
