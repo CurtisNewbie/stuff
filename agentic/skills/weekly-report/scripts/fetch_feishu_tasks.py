@@ -194,6 +194,45 @@ def get_project_key(work_item_id: int, project_simple: str, cookies: dict) -> st
     return workitem.get("project_key") or workitem.get("owned_project", {}).get("project_key", "")
 
 
+def _extract_project_key_from_page(url: str, cookies: dict) -> str:
+    """从飞书项目页面 HTML 中提取 project_key（页面会在 JS 中内嵌配置）。"""
+    import re as _re
+    cookie_str = "; ".join(f"{k}={v}" for k, v in cookies.items())
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Cookie": cookie_str,
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            "Referer": "https://project.feishu.cn/",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"[warn] 无法获取页面 {url}: {e}", file=sys.stderr)
+        return ""
+    m = _re.search(r'"project_key"\s*:\s*"([a-f0-9]{15,})"', body)
+    return m.group(1) if m else ""
+
+
+def resolve_project_key(project_simple: str, cookies: dict, page_url: str = "") -> str:
+    """解析 project_key：先查环境变量，再从页面 HTML 提取，最后回落到 URL namespace。"""
+    env_key = os.environ.get("FEISHU_PROJECT_KEY")
+    if env_key:
+        return env_key
+
+    if page_url:
+        print(f"[info] FEISHU_PROJECT_KEY 未设置，尝试从页面自动提取 project_key...", file=sys.stderr)
+        pk = _extract_project_key_from_page(page_url, cookies)
+        if pk:
+            print(f"[info] 自动提取 project_key: {pk}", file=sys.stderr)
+            return pk
+
+    print(f"[info] 无法自动解析 project_key，使用 URL namespace: {project_simple}", file=sys.stderr)
+    return project_simple
+
+
 def get_week_range(week_start_str: str | None = None) -> tuple[datetime.date, datetime.date]:
     """返回周一到周日的日期范围。默认为当前周。"""
     if week_start_str:
@@ -227,8 +266,8 @@ def discover_urls_from_gantt(gantt_url: str, cookies: dict, week_start: datetime
     csrf = cookies.get("meego_csrf_token", "")
     cookie_str = "; ".join(f"{k}={v}" for k, v in cookies.items())
 
-    # 优先用环境变量；否则用 simple_name（Open API 支持两者互用）
-    project_id = os.environ.get("FEISHU_PROJECT_KEY") or project_simple
+    # 优先用环境变量；否则自动发现 project_key
+    project_id = resolve_project_key(project_simple, cookies, page_url=gantt_url)
 
     start_ts = int(datetime.datetime.combine(week_start, datetime.time.min).timestamp())
     end_ts = int(datetime.datetime.combine(week_end, datetime.time.max).timestamp())
@@ -362,8 +401,7 @@ def main():
         print(f"[info] 获取 project_key...", file=sys.stderr)
         project_key = get_project_key(extract_work_item_id(urls[0]), project_simple, cookies)
         if not project_key:
-            print("ERROR: 无法获取 project_key", file=sys.stderr)
-            sys.exit(1)
+            project_key = resolve_project_key(project_simple, cookies)
         print(f"[info] project_key: {project_key}", file=sys.stderr)
 
     work_item_ids = [extract_work_item_id(u) for u in urls]
