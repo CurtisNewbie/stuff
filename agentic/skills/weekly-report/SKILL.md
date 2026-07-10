@@ -101,9 +101,17 @@ python3 scripts/fetch_feishu_tasks.py --gantt "https://project.feishu.cn/xxx/use
 
 参考 `references/template.md` 中的示例格式。
 
-### Step 5：生成重点项目进展更新
+### Step 5：更新重点事项跟踪表
 
-对于 **重点事项** 跟踪表，每周需同步更新「关键进展（截止MMDD）」列。
+对于 **重点事项跟踪表**，每周需同步更新「关键进展（截止MMDD）」列。
+
+**先读取跟踪表内容（如设置了 `FEISHU_TRACKER_WIKI_URL` 环境变量）：**
+
+```bash
+lark-cli docs +fetch --doc "$FEISHU_TRACKER_WIKI_URL" --format pretty
+```
+
+读取后，筛选 **AI 分类**下属于当前用户的行，为每一行生成本周关键进展更新。若用户未提供跟踪表 URL 且环境变量未设置，跳过此步或询问用户。
 
 **格式：**
 ```
@@ -131,13 +139,9 @@ MM/DD 进度：
 
 从飞书项目自动发现或手动指定需求，提取后端开发任务数据（标题、描述、子任务、工时）。
 
-**前置条件：** `chromedb` 已安装并在 PATH + Chrome 已登录飞书项目
+**前置条件：** `chromedb` 已在 PATH + Chrome 已登录飞书项目
 
-如果 `chromedb` 未安装，先运行：
-
-```bash
-pip install chromedb
-```
+`chromedb` 是 Go 编译的 CLI 工具，通常已安装在 `~/go/bin/chromedb`，无需额外安装。
 
 **用法：**
 
