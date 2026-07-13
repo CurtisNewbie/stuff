@@ -2335,3 +2335,22 @@ function stayawake() {
 function dumpddl() {
   $STUFF/mysqldumpddl.sh $@
 }
+
+fork_to_gitlab() {
+  if [[ -z "$1" || -z "$2" ]]; then
+    echo "Usage: fork_to_gitlab <github_url> <gitlab_url>"
+    echo "  github_url  e.g. https://github.com/owner/repo"
+    echo "  gitlab_url  e.g. git@gitlab.company.com:you/repo.git"
+    return 1
+  fi
+
+  local github_url="$1"
+  local gitlab_url="$2"
+  local tmp_dir
+  tmp_dir=$(mktemp -d)
+
+  git clone --mirror "$github_url" "$tmp_dir"
+  git -C "$tmp_dir" push --mirror "$gitlab_url"
+
+  rm -rf "$tmp_dir"
+}
