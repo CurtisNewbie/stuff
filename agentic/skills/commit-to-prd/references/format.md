@@ -56,6 +56,11 @@ AgentLoop 框架，增加 OutputCheck 输出校验回调功能
 ## Tips
 
 - **Avoid implementation jargon in 背景/价值** — keep those paragraphs readable by a PM or tech lead unfamiliar with the codebase.
-- **解决方案 can be technical** — API names, data flow, configuration fields are all fine here.
+- **解决方案：公开接口可以提及，内部实现不要出现** — 可以出现的：配置字段名、公开 API 名称、用户可感知的行为和开关。不应出现的：内部变量名、内部函数名、数据结构类型名、框架内部调用链。
+
+  ❌ 过于代码化：`traceAcc 的 snapshot() 在错误检查之前调用，确保即使图执行中止也能返回已收集的追踪记录，错误路径同时由返回零值 TaskOutput{} 改为返回携带部分数据的 result。`
+
+  ✅ 描述功能行为：`框架在任务执行中途出错时仍会保留已采集的追踪记录，随错误结果一并返回，确保调用方不丢失部分执行数据。`
+
 - **One feature per PRD** — if commits span multiple unrelated changes, split into separate PRDs or ask the user which to focus on.
 - **Don't pad** — if a paragraph has nothing meaningful to say, merge it with an adjacent one rather than writing filler.

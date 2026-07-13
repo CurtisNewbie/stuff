@@ -19,7 +19,7 @@ If no input is given, run `git log --oneline -10` to show recent commits and ask
 ## Workflow
 
 1. **Gather changes** — read commits via `git log -p`, `git show <hash>`, or `git diff <base>..<head>`. Read enough to understand what changed and why.
-2. **Analyze** — identify: what the feature does, what problem it solves, how it solves it, and the value it delivers.
+2. **Analyze** — identify: what the feature does, what problem it solves, how it solves it, and the value it delivers. Focus on **functional behavior and user-facing impact**, not code mechanics.
 3. **Generate** — produce a title and description following the format in `references/format.md`.
 4. **Output** — print the result directly in the chat (no file unless asked).
 
