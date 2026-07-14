@@ -20,8 +20,9 @@ If no input is given, run `git log --oneline -10` to show recent commits and ask
 
 1. **Gather changes** — read commits via `git log -p`, `git show <hash>`, or `git diff <base>..<head>`. Read enough to understand what changed and why.
 2. **Analyze** — identify: what the feature does, what problem it solves, how it solves it, and the value it delivers. Focus on **functional behavior and user-facing impact**, not code mechanics.
-3. **Generate** — produce a title and description following the format in `references/format.md`.
-4. **Output** — print the result directly in the chat (no file unless asked).
+3. **Generate** — produce a title, a 需求目标（量化指标）(one sentence, ≤50 字), and a description following the format in `references/format.md`.
+4. **Humanize** — load and apply the `humanizer` skill to the generated title, 需求目标, and description. Remove AI writing patterns (inflated language, rule of three, em dash overuse, vague attributions, promotional tone, etc.) and make the text sound natural.
+5. **Output** — print the result directly in the chat (no file unless asked).
 
 ## Language
 

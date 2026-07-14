@@ -15,6 +15,18 @@ Examples:
 
 ---
 
+## 需求目标（量化指标）
+
+一句话，**50字以内**。说明本需求希望达成的可量化结果或改善指标。
+
+格式：`{动作} {对象}，将 {指标} 从 {现状} 提升/降低至 {目标}`，若无明确数字则描述可验证的行为目标。
+
+Examples:
+- `支持 OutputCheck 输出校验回调，将 Agent 输出格式错误率从人工兜底降至框架自动修正，减少业务层后处理逻辑。`
+- `优化 Token 刷新机制，消除并发刷新导致的重复请求，将无效 refresh 调用降至 0。`
+
+---
+
 ## Description
 
 Four paragraphs in order. Each paragraph is 2–4 sentences.
@@ -38,6 +50,11 @@ What is the outcome for users, developers, or the system? Frame in terms of reli
 **Title**
 ```
 AgentLoop 框架，增加 OutputCheck 输出校验回调功能
+```
+
+**需求目标（量化指标）**
+```
+支持 OutputCheck 输出校验回调，将 Agent 输出格式错误兜底从业务层转移至框架自动修正，减少后处理逻辑。
 ```
 
 **Description**
