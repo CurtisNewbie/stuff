@@ -159,6 +159,7 @@ export SYNC_REPOS="stuff,vfm,mini-fstore,user-vault,event-pump,gatekeeper,logbot
 
 # alias rm="rm -i"
 alias reset_alarm="sfltool resetbtm"
+alias mute_alarm="sfltool resetbtm"
 alias mk="minikube"
 alias kb="kubectl"
 alias bc="bc -l"

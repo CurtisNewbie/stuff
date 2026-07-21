@@ -9,8 +9,8 @@
     NODE_OPTIONS=--openssl-legacy-provider ng build --prod
 
     # Package dist as single archive (faster than scp -r of many files)
-    tar czf dist.tar.gz -C dist/moon .
+    COPYFILE_DISABLE=1 tar czf dist.tar.gz -C dist/moon .
     scp dist.tar.gz "${remote}:${remote_path}"
-    ssh "${remote}" "cd ${remote_path} && tar xzf dist.tar.gz && rm dist.tar.gz"
+    ssh "${remote}" "cd ${remote_path} && tar xzf dist.tar.gz 2>/tmp/tar_stderr.\$\$ && rm dist.tar.gz; grep -v 'LIBARCHIVE.xattr' /tmp/tar_stderr.\$\$ >&2; rm -f /tmp/tar_stderr.\$\$"
     rm dist.tar.gz
 )
