@@ -1316,6 +1316,9 @@ export -f dumpinsert
 function ttables() { python3 $STUFF/ttables.py $@; }
 export -f ttables
 
+function format_dify_retrieval() { python3 $STUFF/format_dify_retrieval.py "$@"; }
+export -f format_dify_retrieval
+
 function quotejoin() { out=$(python3 $STUFF/quotejoin.py $@); echo "$out"; echo "$out" | clipboard; }
 export -f quotejoin
 
