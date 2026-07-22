@@ -105,6 +105,7 @@ export MAVEN_OPTS="-Xmx1000m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 export CGO_ENABLED=1
 export LANG=en_US.UTF-8
 export IGNOREEOF=10
+export DIFY_PROD_HOST="${DIFY_PROD_HOST:-}"
 
 # for brew's executables
 [ -d "/usr/local/opt/ruby/bin" ] && export PATH="/usr/local/opt/ruby/bin:$PATH"

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -33,12 +34,28 @@ def write_clipboard(text: str) -> None:
 def format_resources(data: dict) -> str:
     resources = data.get("resources", [])
     blocks = []
+    dify_prod_host = os.environ.get("DIFY_PROD_HOST", "").rstrip("/")
 
     for item in resources:
         title = item.get("datasetName", "")
         score = item.get("score", "")
+        dataset_id = item.get("datasetId", "")
+        document_id = item.get("documentId", "")
         content = item.get("content", "")
-        blocks.append(f"标题: {title}\n相关度: {score}\n内容: {content}")
+        document_path = f"/datasets/{dataset_id}/documents/{document_id}"
+        full_path = f"{dify_prod_host}{document_path}" if dify_prod_host else ""
+        indented_content = "\n".join(f"    {line}" for line in content.splitlines())
+        lines = [
+            f"标题: {title}\n"
+            f"相关度: {score}\n"
+            f"Dify文档Id: {document_id}\n"
+        ]
+        if full_path:
+            lines.append(f"完整路径: {full_path}\n")
+        else:
+            lines.append(f"相对路径: {document_path}\n")
+        lines.append(f"内容:\n{indented_content}")
+        blocks.append("".join(lines))
 
     return "\n\n".join(blocks)
 
