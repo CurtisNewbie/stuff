@@ -73,6 +73,59 @@ Push system notifications when AI tasks complete, encounter errors, or require p
 
 ---
 
+## Git Worktree Plugin (kdco/worktree)
+
+Create isolated git worktrees for side tasks, then open a new OpenCode session directly inside that worktree.
+
+**Important**:
+- Install globally through OCX
+- Plugin does **not** create a worktree when OpenCode starts
+- Worktree is created only when `worktree_create(...)` tool is called
+
+### Installation Steps
+
+```bash
+# Initialize OCX global config
+ocx init --global
+
+# Install plugin from KDCO registry
+ocx add kdco/worktree --from https://registry.kdco.dev --global
+```
+
+### How to Launch
+
+```bash
+# Restart after installation, then launch via OCX
+ocx opencode
+```
+
+### Main Tools
+
+- `worktree_create(branch, baseBranch?)` - create worktree, sync configured files, then open a new OpenCode session in new terminal/tab/window
+- `worktree_delete(reason)` - mark current worktree for cleanup; actual removal happens when session becomes idle
+
+### Config Notes
+
+- Plugin file is installed under `~/.config/opencode/plugins/worktree.ts`
+- Per-project config is auto-created on first use: `.opencode/worktree.jsonc`
+- Default worktree root: `~/.local/share/opencode/worktree/<project-id>/<branch>`
+
+### Typical Flow
+
+1. Start OpenCode with `ocx opencode`
+2. Call `worktree_create("feature/foo")`
+3. Work in new isolated session
+4. Call `worktree_delete("done")` when finished
+
+### Caveats
+
+- `worktree_delete(...)` is deferred cleanup, not immediate delete
+- Plugin auto-commits a snapshot before removing worktree
+
+**Source**: https://github.com/kdcokenny/opencode-worktree
+
+---
+
 ## Feishu/Lark Document Support (lark-cli)
 
 If you need to read, write, or edit Feishu/Lark documents, messages, calendars, etc., you can configure the Feishu official CLI tool and skills.
