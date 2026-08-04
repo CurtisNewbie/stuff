@@ -2325,12 +2325,12 @@ function _oc_free_port() {
 
 function occ() {
     port="$(_oc_free_port)"
-    OPENCODE_MESSAGE_QUEUE_MODE=hold OPENCODE_PORT="$port" opencode --continue --port $port
+    OPENCODE_PORT="$port" opencode --continue --port $port
 }
 
 function oc() {
     port="$(_oc_free_port)"
-    OPENCODE_MESSAGE_QUEUE_MODE=hold OPENCODE_PORT="$port" opencode --port $port
+    OPENCODE_PORT="$port" opencode --port $port
 }
 
 function stayawake() {
