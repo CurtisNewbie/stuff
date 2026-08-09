@@ -630,6 +630,30 @@ codegraph init -i
 ```bash
 npx skills@latest add mattpocock/skills
 # 安装后在 agent 中运行：/setup-matt-pocock-skills
+
+# 安装单个 skill（如 handoff 交接文档 skill）
+npx skills add github.com/mattpocock/skills/tree/main/skills/productivity/handoff -g
 ```
+
+**官方仓库**: https://github.com/mattpocock/skills
+
+---
+
+## 计划质询 (grill-me / grilling)
+
+来自 mattpocock/skills 生产力包的对话式计划质询工具，用于在动手构建前对计划/设计进行压力测试。
+
+**已随 oh-my-opencode-slim 预设安装**（`~/.agents/skills/`），无需额外安装。
+
+### Skill 说明
+
+- `grilling` — 底层质询原语：逐条追问设计树的每个分支，一次只问一个问题并等待反馈，每个问题附带推荐答案；能通过查代码库回答的问题先查代码库。直到双方达成共识才执行计划
+- `grill-me` — 面向用户的触发封装（执行 `/grilling` 会话），不可被模型自动调用
+
+### 触发场景
+
+- 构建前检验计划/设计是否有漏洞
+- 使用 "grill" 相关表述时触发质询
+- 需要逐个决策点深入推演，而非泛泛讨论
 
 **官方仓库**: https://github.com/mattpocock/skills
