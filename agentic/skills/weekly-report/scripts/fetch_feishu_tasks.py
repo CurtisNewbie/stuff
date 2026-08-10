@@ -18,6 +18,7 @@
   - macOS Keychain 中有 Chrome Safe Storage 密钥
 
 输出：JSON，每个需求包含：
+  - url: 输入的 story URL
   - title: 需求标题
   - work_item_id: 需求 ID
   - tasks: 后端开发任务列表（名称、估分、状态、排期）
@@ -414,6 +415,7 @@ def main():
     for i, (url, wid) in enumerate(zip(urls, work_item_ids)):
         print(f"[{i+1}/{len(urls)}] 拉取需求 {wid}...", file=sys.stderr)
         story = fetch_story(wid, project_key, cookies)
+        story["url"] = url
 
         # gantt 模式：只保留有后端任务且排期结束在目标周内的需求
         if gantt_url and week_start_iso and week_end_iso:
