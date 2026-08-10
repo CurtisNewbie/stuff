@@ -16,6 +16,9 @@ This document records the setup and usage knowledge for the opencode configurati
 - plugin/ - plugin-related configuration
 - oh-my-opencode-slim.json - oh-my-opencode-slim configuration preset
 
+**Theme Preference**:
+- Preferred OpenCode theme: Everforest
+
 ---
 
 ## Oh My OpenCode Slim Installation
