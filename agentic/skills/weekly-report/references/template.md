@@ -5,7 +5,7 @@
 周报内容填入团队飞书周报表格，每行对应一个需求/事项，只需填两列：
 
 - **重点项目**：项目名 + 项目级 context（整体进展、关键指标、风险）
-- **任务描述**：`（进度%）` + PRD/需求链接 + What/Why/When/How
+- **任务描述**：`（进度%）` + PRD/需求链接 + 产出/参考链接（如有）+ What/Why/When/How
 
 ---
 
@@ -19,6 +19,7 @@
 【任务描述列】
 （进度%）
 - PRD链接：[可点击的 PRD/需求链接]；无链接时填：PRD链接：未提供
+- 产出/参考链接：[任务内 wiki/docs/Apifox/看板/代码仓库等链接及用途；无则省略]
 - What：[本质上做了什么能力？解决了什么核心问题？]
 - Why：[为什么要做这件事？业务背景或技术驱动因素？]
 - When：[关键里程碑 / 完成时间 / 当前进展节点]
@@ -78,7 +79,7 @@ Git 证据核查 SOP：先阅读本人 commit message，判断工作意图；mes
 
 ```
 飞书任务链接：
-- [任务ID-1]：[需求A 标题]
+- [任务ID-1]：补充接口说明 https://wiki.example.com/project/api
 - [任务ID-2]：[需求B 标题]
 
 用户补充项目级 context：
@@ -96,6 +97,7 @@ Git 证据核查 SOP：先阅读本人 commit message，判断工作意图；mes
 【任务描述列 - 行1（对应需求A）】
 （100%）
 - PRD链接：[需求A](https://project.feishu.cn/xxx/story/detail/XXXX)
+- 产出/参考链接：[wiki 接口文档](https://wiki.example.com/project/api)（用途：补充接口说明）
 - What：[本质上做了什么能力？解决了什么核心问题？]
 - Why：[业务背景或技术驱动因素——为什么要做这件事？]
 - When：MM/DD–MM/DD 完成开发与调试。

@@ -20,8 +20,9 @@
 输出：JSON，每个需求包含：
   - url: 输入的 story URL
   - title: 需求标题
+  - description_links: 需求描述中的 URL
   - work_item_id: 需求 ID
-  - tasks: 后端开发任务列表（名称、估分、状态、排期）
+  - tasks: 后端开发任务列表（名称、链接、估分、状态、排期）
   - total_points: 总估分（人天）
 """
 
@@ -37,6 +38,36 @@ import os
 
 API_URL = "https://project.feishu.cn/goapi/v5/workitem/v1/demand_fetch"
 CHROME_PROFILE = "Default"  # used by get_chrome_cookies
+URL_PATTERN = re.compile(r"https?://[^\s<>\u200b]+", re.IGNORECASE)
+URL_TRAILING_PUNCTUATION = ".,;:!?:'\"`，。！？；：、"
+URL_TRAILING_CLOSERS = {
+    ")": "(",
+    "]": "[",
+    "}": "{",
+    "）": "（",
+    "】": "【",
+    "》": "《",
+    "」": "「",
+    "』": "『",
+}
+
+
+def extract_urls(text: str) -> list[str]:
+    """提取文本中的 HTTP(S) URL，去除常见包裹标点并去重。"""
+    urls = []
+    seen = set()
+    for raw_url in URL_PATTERN.findall(text or ""):
+        url = raw_url.rstrip(URL_TRAILING_PUNCTUATION)
+        while url and url[-1] in URL_TRAILING_CLOSERS:
+            opener = URL_TRAILING_CLOSERS[url[-1]]
+            if url.count(url[-1]) > url.count(opener):
+                url = url[:-1]
+            else:
+                break
+        if url and url not in seen:
+            seen.add(url)
+            urls.append(url)
+    return urls
 
 
 def get_chrome_cookies(domain_filter: str) -> dict:
@@ -133,6 +164,7 @@ def fetch_story(work_item_id: int, project_key: str, cookies: dict) -> dict:
         rt = desc_entry.get("uiValue", {}).get("richText", {})
         if not rt.get("isEmpty", True):
             description = rt.get("docText", "").strip()
+    description_links = extract_urls(description)
 
     # 找后端开发节点
     workflow = next((b["value"] for b in biz if b["key"] == "workflow_layout"), {})
@@ -140,7 +172,7 @@ def fetch_story(work_item_id: int, project_key: str, cookies: dict) -> dict:
     be_node = next((n for n in nodes if n.get("name") == "后端开发"), None)
     if not be_node:
         return {"title": title, "description": description, "work_item_id": work_item_id,
-                "error": "未找到后端开发节点", "tasks": [], "total_points": 0}
+                "description_links": description_links, "error": "未找到后端开发节点", "tasks": [], "total_points": 0}
 
     be_uuid = be_node["uuid"]
 
@@ -164,6 +196,7 @@ def fetch_story(work_item_id: int, project_key: str, cookies: dict) -> dict:
         end_ts = sched.get("estimate_finish_time")
         tasks.append({
             "name": t.get("name", ""),
+            "links": extract_urls(t.get("name", "")),
             "status": t.get("work_item_status", {}).get("state_key", ""),
             "points": t.get("points") or 0,
             "assignee": (t.get("assignee") or [{}])[0].get("nickname", ""),
@@ -175,6 +208,7 @@ def fetch_story(work_item_id: int, project_key: str, cookies: dict) -> dict:
     return {
         "title": title,
         "description": description,
+        "description_links": description_links,
         "work_item_id": work_item_id,
         "tasks": tasks,
         "total_points": total_points,
