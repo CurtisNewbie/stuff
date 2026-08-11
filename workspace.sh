@@ -2359,3 +2359,7 @@ fork_to_gitlab() {
 
   rm -rf "$tmp_dir"
 }
+
+function topcpu() {
+  $STUFF/topcpu.sh
+}
