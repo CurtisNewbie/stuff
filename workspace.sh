@@ -565,9 +565,9 @@ function mdeploy() {
 
 function minst() {
     if [ $# -gt 0 ]; then
-        mvn install -N && mvn clean install -T 1C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -DskipTests -pl "$@"
+        mvn install -N && mvn clean install -T 1C -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -DskipTests -pl "$@"
     else
-        mvn clean install -T 1C -o -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -DskipTests
+        mvn clean install -T 1C -Dmaven.test.skip=true -DadditionalJOption=-Xdoclint:none -DskipTests
     fi
 }
 
