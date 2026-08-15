@@ -14,38 +14,30 @@ Canonical skeleton for the final report. Default structure; deviate only with ex
 ```
 # <Domain/Repo> Design Research Report    (title in report language)
 
-## 1. Intro                                  scope statement
-## 2. Core Entities & Purposes               entity map
-## 3. Entity Relationships                   relationships + design intent
-## 4. Core Design Ideas                      what the authors were thinking
-## 5. Core Entities in Detail                persistent data structures (one section per entity)
-## 6. Core Workflows                         workflows + data flow + worked example
-## 7. State Machine Summary                  (only when several exist)
+## 1. Core Entities & Purposes               entity map
+## 2. Entity Relationships                   relationships + design intent
+## 3. Core Design Ideas                      what the authors were thinking
+## 4. Core Entities in Detail                persistent data structures (one section per entity)
+## 5. Core Workflows                         workflows + data flow + worked example
+## 6. State Machine Summary                  (only when several exist)
 ```
 
 **Heading translation for Chinese reports** (when the user requests Chinese):
 
 | English | 中文 |
 |---|---|
-| 1. Intro | 1. 范围说明 |
-| 2. Core Entities & Purposes | 2. 核心实体与用途总表 |
-| 3. Entity Relationships | 3. 实体关系 |
-| 4. Core Design Ideas | 4. 核心设计思想 |
-| 5. Core Entities in Detail | 5. 核心实体详解 |
-| 6. Core Workflows | 6. 核心工作流 |
-| 7. State Machine Summary | 7. 状态机汇总 |
+| 1. Core Entities & Purposes | 1. 核心实体与用途总表 |
+| 2. Entity Relationships | 2. 实体关系 |
+| 3. Core Design Ideas | 3. 核心设计思想 |
+| 4. Core Entities in Detail | 4. 核心实体详解 |
+| 5. Core Workflows | 5. 核心工作流 |
+| 6. State Machine Summary | 6. 状态机汇总 |
 
-**Whole-repo mode**: repeat §5 and §6 once per deep-dived domain (each under a domain index in §2); non-deep-dived domains get one-liners in §2.
+**Whole-repo mode**: repeat §4 and §5 once per deep-dived domain (each under a domain index in §1); non-deep-dived domains get one-liners in §1.
 
 ## Section-by-section guidance
 
-### 1. Intro — scope statement
-
-- Repos analyzed (name + link), tech stack (one line, e.g. "Python Flask + Vue/Vite, built on the Frappe framework").
-- **Coverage boundary**: what this report covers, what it does not (e.g. "Covers: expense claims, employee advances, advance offsetting, posting. Not covered: budget allocation, approval-flow configuration, AI receipt recognition"). Mandatory.
-- **Schema primer (one short paragraph)**: where table definitions live in this stack and how to read them, so the reader can navigate the cited files themselves (e.g. "表结构在 `../doctype/` 里, 字段定义在 `expense_claim_type.json`"). One paragraph, no more.
-
-### 2. Core Entities & Purposes
+### 1. Core Entities & Purposes
 
 Table of all entities in scope: `Entity | Purpose`, one plain-language line each (from entity inventory). Example:
 
@@ -57,7 +49,7 @@ Table of all entities in scope: `Entity | Purpose`, one plain-language line each
 
 Optionally add a "design takeaways" quote-box, 1-3 lines, when it genuinely helps the reader (e.g. "借鉴方向: 报销字段建模、借款→冲销生命周期、费用类型体系"). Never author-facing advice ("worth copying") — the report explains the system, it doesn't coach the author. **Consistency rule** (if the quote-box is present): every claim in it must hold against the detail sections — if one entity is an exception (e.g. one of four gates is a real approval flow while the others are submit-time checks), state the exception; no overgeneralization.
 
-### 3. Entity Relationships
+### 2. Entity Relationships
 
 Real relationship semantics, grouped by type — not a code/trigger map:
 
@@ -65,9 +57,9 @@ Real relationship semantics, grouped by type — not a code/trigger map:
 2. **References** — every reference link annotated with what it means (e.g. Budget.account → Account: which expense category this budget constrains; a budget on a tree-group expands to all descendants = shared quota). A bare `A.b → C` mapping with no meaning annotation is not done. Include dynamically injected references.
 3. **Matching relationships (read-only)** — the links that matter at validation/report time: which entities are compared on what key, all read-only (e.g. GL Entry matched to Budget on the (dimension, account) key = "already spent"; prefix-sum of distribution rows = "how much should be spent by now").
 
-Keep trigger points and query flows OUT of this section — they belong to §6 workflows. Then 1-3 plain paragraphs on what the relationships imply (e.g. "budget and consumption have no balance table — spending is never written back to the budget").
+Keep trigger points and query flows OUT of this section — they belong to §5 workflows. Then 1-3 plain paragraphs on what the relationships imply (e.g. "budget and consumption have no balance table — spending is never written back to the budget").
 
-### 4. Core Design Ideas (the "what were they thinking" section)
+### 3. Core Design Ideas (the "what were they thinking" section)
 
 2-5 short paragraphs capturing the system's core ideas. Derive from what is surprising, repeated, or carefully designed. If the code contradicts a naive expectation, that contrast is usually the insight.
 
@@ -80,9 +72,9 @@ If you can't find deep insights, state the design's basic structure plainly — 
 
 If the domain has a clear conceptual layering, show it as a small diagram — it is often the single most clarifying picture (e.g. voucher layer vs one general-ledger table: "报销单 / 付款单 / JE 全部写进唯一一张 GL Entry 表"; or an event ledger that is the source of truth for write-backs). Each insight paragraph must carry ≥2 code-grounded evidence points.
 
-### 5. Core Entities in Detail (persistent data structures)
+### 4. Core Entities in Detail (persistent data structures)
 
-One subsection per core entity (spine-path entities only; peripheral entities get one-liners in section 2). Each subsection:
+One subsection per core entity (spine-path entities only; peripheral entities get one-liners in section 1). Each subsection:
 
 - **Domain model in one line** at the top of the section, before the per-entity subsections: the whole thing in one plain sentence, e.g. "Budget = company × cost object × account × time window → one total; Budget Distribution = time slices of that total, summing to it". Reader gets the mental model first, detail after. If this one-liner is hard to write, the report isn't ready yet.
 - **One sentence**: what it is, what it represents, and **why it exists** (what problem it solves). Must be understandable to a reader who has never seen this domain — if an everyday analogy helps, use it (e.g. "an annual salary budget is 12 monthly slices — you manage month by month, not by year-to-date"). If "why it exists" needs more than one sentence, expand it — this is where the report earns its keep.
@@ -91,9 +83,9 @@ One subsection per core entity (spine-path entities only; peripheral entities ge
 - **Who writes it**: note which fields humans fill vs which the system writes back (e.g. "only the request fields are human-filled; after payment all amounts are system write-backs").
 - **Schema path citation** at the end of each entity section: `Schema: frappe__hrms/hrms/hr/doctype/expense_claim/expense_claim.json`.
 
-Skip framework boilerplate columns once they're explained (e.g. Frappe's `parent/parenttype/parentfield/idx` — mention in one sentence, then never repeat). Deprecated/dead entities (migration-only references) never appear anywhere in the report — not here, not in the coverage boundary. Legacy-but-live structures get one short paragraph only if they affect behavior the reader must know (e.g. an old validator that still runs); no field tables for them.
+Skip framework boilerplate columns once they're explained (e.g. Frappe's `parent/parenttype/parentfield/idx` — mention in one sentence, then never repeat). Deprecated/dead entities (migration-only references) never appear anywhere in the report. Legacy-but-live structures get one short paragraph only if they affect behavior the reader must know (e.g. an old validator that still runs); no field tables for them.
 
-### 6. Core Workflows (workflows + data flow + worked example)
+### 5. Core Workflows (workflows + data flow + worked example)
 
 The spine workflow, as a step-by-step walkthrough with:
 
@@ -122,9 +114,9 @@ The spine workflow, as a step-by-step walkthrough with:
 
   Cover the normal path **plus one interesting branch** (cut-down approval / multi-currency / partial offset / cancellation). If the domain has journal entries, show them (debit/credit per line). Verify all arithmetic with a script. Presentation: the header states at most "数字已用脚本验证 / numbers script-verified" — no script paths, no run commands, no work/ references in the report; formulas appear as plain math (120,000 ÷ 12 = 10,000), not code syntax (flt(...)).
 
-### 7. State Machine Summary
+### 6. State Machine Summary
 
-Only if several state machines exist and weren't fully covered in §6. Otherwise skip.
+Only if several state machines exist and weren't fully covered in §5. Otherwise skip.
 
 ## Style rules
 

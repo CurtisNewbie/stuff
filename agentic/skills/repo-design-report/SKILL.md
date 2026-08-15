@@ -14,7 +14,6 @@ Guide the agent to analyze a source code repo (whole or part) and write a readab
 - **Cold-reader principle.** The target reader is a developer who has never touched this codebase and may not know the domain — the report must be self-contained and understandable in one cold pass. Test every section against: "can someone who cannot open the code follow this?" If a term, identifier, or mechanic needs code knowledge to follow, gloss it, explain it, or cut it. The ultimate test: a cold reader could reimplement the design from the report alone.
 - **No fabrication.** Every entity, field, and workflow claim must be verified against the code. Anything not confirmed from source is marked `⚠️ UNVERIFIED` — never invented.
 - **Logic-first narrative; citations are evidence, not content.** Workflow steps are described as design logic — what happens, when, why, in what order, in business terms. Function names are how you verified the logic during research, not what the reader needs: verification is a research-process gate, not report content. Produce an evidence appendix (trigger point → function mapping, labeled "验证依据 / evidence — 不必读") only when the user explicitly asks for auditability; otherwise omit it. Per entity: cite the schema definition file path. No line numbers (they rot). The reading path is not a code walkthrough: no function internals, SQL constructs (subqueries, exists), iteration/dimension mechanics, or file-scoped implementation detail in prose — say what happens and why in business terms; a sentence that needs code knowledge to parse goes to the appendix or gets rewritten.
-- **Coverage boundary stated.** The report explicitly says what was and wasn't covered.
 - **Language.** Match the language of the user's request (Chinese request → Chinese report, English request → English report). The skill instructions themselves are always English; only the produced report follows the request language.
 
 ## Inputs
@@ -27,7 +26,7 @@ Guide the agent to analyze a source code repo (whole or part) and write a readab
 ## Modes
 
 - **Domain deep-dive (default)** — analyze one domain to full depth, like the Frappe expense-claim reference report.
-- **Whole-repo survey** — map all major domains first, then deep-dive one domain and summarize the rest, or deep-dive several (ask the user which). Multi-domain assembly: each deep-dived domain gets its own detail + workflow sections under a domain index in §2; non-deep-dived domains get one-liners in §2.
+- **Whole-repo survey** — map all major domains first, then deep-dive one domain and summarize the rest, or deep-dive several (ask the user which). Multi-domain assembly: each deep-dived domain gets its own detail + workflow sections under a domain index in §1; non-deep-dived domains get one-liners in §1.
 
 If the user's intent is not obvious, ask which mode.
 
@@ -58,7 +57,7 @@ Create the output dir `<out>/` for the final report. Optional `<out>/work/` for 
 4. Note **design intent**: why this entity exists, what it represents, what it implies about the system's design (e.g. "the advance request has no exchange-rate field — the rate exists only on the payment entry, because the rate becomes a fact at the moment of payment").
 5. Optionally save as a field-table draft (work/entity-<name>.md) when persistence helps.
 
-Peripheral entities: one-line purpose only — no field tables (core-path rule). Deprecated/dead entities (only migration/back-compat references, no live path): omit entirely — never mention them anywhere, not even in the coverage boundary (only exception: one sentence of old-vs-new contrast in a design insight that explains the current structure's shape). Legacy-but-live code paths: one paragraph max, only when they change what the reader would reimplement (see analysis-playbook.md §2).
+Peripheral entities: one-line purpose only — no field tables (core-path rule). Deprecated/dead entities (only migration/back-compat references, no live path): omit entirely — never mention them anywhere (only exception: one sentence of old-vs-new contrast in a design insight that explains the current structure's shape). Legacy-but-live code paths: one paragraph max, only when they change what the reader would reimplement (see analysis-playbook.md §2).
 
 ### 5. Workflow tracing
 
@@ -73,7 +72,7 @@ For the spine workflow, trace step by step: trigger → function(s) → validati
 
 Follow `references/report-template.md` (canonical skeleton). Deviate from the template only with explicit justification. The three mandatory sections from the principles are: entities + relationships + design intent, persistent data structures, and core workflows with examples.
 
-If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — **canonical sections only**: anything the reference covers *within the template's §1-§7 sections* that the report doesn't must either be covered or explicitly justified as dropped. Reference content outside the canonical skeleton (e.g. patterns/next-steps appendices) is not binding — extra sections in the reference do not create obligations, never copy them just for format consistency. The reference sets a quality bar, not an outline contract.
+If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — **canonical sections only**: anything the reference covers *within the template's §1-§6 sections* that the report doesn't must either be covered or explicitly justified as dropped. Reference content outside the canonical skeleton (e.g. intro/scope, patterns/next-steps appendices) is not binding — extra sections in the reference do not create obligations, never copy them just for format consistency. The reference sets a quality bar, not an outline contract.
 
 No author-facing meta advice in domain sections: 借鉴方向 / "patterns worth copying" / lessons-for-the-author boxes are dropped entirely — the report explains the system, it doesn't coach the author.
 
@@ -83,10 +82,9 @@ No author-facing meta advice in domain sections: 借鉴方向 / "patterns worth 
 - Every workflow step was verified against a real function during research (spot-check existence in source).
 - Formulas re-derived from code, arithmetic script-checked.
 - Unverified items carry `⚠️ UNVERIFIED`.
-- Coverage boundary present (in §1 Intro).
 - The worked example is present, and its arithmetic was verified by running a script (python or equivalent) — no script run, no example, not done.
 - Every entity in scope has either a field table or an explicit peripheral one-liner — no orphans.
-- Mandatory sections (entity map, entity detail, workflows, coverage boundary) all present — no silent deviations.
+- Mandatory sections (entity map, entity relationships, entity detail, workflows, state machines) all present — no silent deviations.
 - Every design-insight paragraph cites its supporting evidence (≥2 code-grounded points).
 - Prose is plain language: short sentences, no buzzwords or filler, every domain term explained once at first use; every acronym expanded as "full name (acronym)" at first use — no bare acronym in the reading path before its expansion.
 - Humanizer pass done: all prose paragraphs (never tables/code/numbers) were processed with the humanizer skill, and each of its changes was reviewed — fluff cuts kept, any change that weakens technical precision or alters a domain term's meaning reverted.
