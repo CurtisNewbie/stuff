@@ -149,7 +149,7 @@ List what's not covered and natural next deep-dives (the Frappe report ends with
 - Every entity section cites its schema file path; every workflow step was verified against a real function during research.
 - Worked example numbers must be internally consistent (script-checked).
 - No marketing/AI-flavored prose. Straight-forward terms.
-- **Humanize prose:** after drafting, optionally run the humanizer skill on prose paragraphs only (never tables/code/numbers) — works for both Chinese and English reports. Then review each of its changes: keep edits that cut fluff, revert any that weaken technical precision or change a domain term's meaning.
+- **Humanize prose (mandatory):** after drafting, run the humanizer skill on prose paragraphs only (never tables/code/numbers) — works for both Chinese and English reports. Then review each of its changes: keep edits that cut fluff, revert any that weaken technical precision or change a domain term's meaning.
 - Deviations from this template must be stated explicitly at the top of the report.
 
 ## Mini examples

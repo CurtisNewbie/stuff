@@ -87,6 +87,7 @@ If a reference report was provided (user-supplied or the built-in example): befo
 - Mandatory sections (entity map, entity detail, workflows, coverage boundary) all present — no silent deviations.
 - Every design-insight paragraph cites its supporting evidence (≥2 code-grounded points).
 - Prose is plain language: short sentences, no buzzwords or filler, every domain term explained once at first use; every acronym expanded as "full name (acronym)" at first use — no bare acronym in the reading path before its expansion.
+- Humanizer pass done: all prose paragraphs (never tables/code/numbers) were processed with the humanizer skill, and each of its changes was reviewed — fluff cuts kept, any change that weakens technical precision or alters a domain term's meaning reverted.
 - Every summary/quote-box claim is consistent with the detail sections — exceptions stated, no overgeneralization.
 - No code walkthrough in the reading path: unglossed identifiers, function names with file references, SQL constructs, and iteration/mechanics detail appear only in the evidence appendix — prose that needs code knowledge to parse is a rewrite.
 - Cold-reader pass done: the final draft was read top-to-bottom as a reader who cannot open the code; anything requiring code knowledge to follow was glossed, explained, or removed.
