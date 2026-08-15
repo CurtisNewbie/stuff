@@ -21,8 +21,6 @@ Canonical skeleton for the final report. Default structure; deviate only with ex
 ## 5. Core Entities in Detail                persistent data structures (one section per entity)
 ## 6. Core Workflows                         workflows + data flow + worked example
 ## 7. State Machine Summary                  (only when several exist)
-## 8. Reusable Design Patterns               what's worth copying
-## 9. Not Covered / Next Steps               boundary + future deep-dives
 ```
 
 **Heading translation for Chinese reports** (when the user requests Chinese):
@@ -36,10 +34,8 @@ Canonical skeleton for the final report. Default structure; deviate only with ex
 | 5. Core Entities in Detail | 5. 核心实体详解 |
 | 6. Core Workflows | 6. 核心工作流 |
 | 7. State Machine Summary | 7. 状态机汇总 |
-| 8. Reusable Design Patterns | 8. 可复用设计要点 |
-| 9. Not Covered / Next Steps | 9. 未覆盖 / 后续方向 |
 
-**Whole-repo mode**: repeat §5 and §6 once per deep-dived domain (each under a domain index in §2); non-deep-dived domains get one-liners in §2 and stub entries in §9.
+**Whole-repo mode**: repeat §5 and §6 once per deep-dived domain (each under a domain index in §2); non-deep-dived domains get one-liners in §2.
 
 ## Section-by-section guidance
 
@@ -59,7 +55,7 @@ Table of all entities in scope: `Entity | Purpose`, one plain-language line each
 | employee_advance | Employee loan/advance, incl. sanctioned amount |
 | expense_claim_advance | Expense-to-advance offsetting (writing off loans against claims) |
 
-Add a "design takeaways" quote-box — not optional, the skill's purpose is reimplementation; keep it to 1-3 lines (e.g. "借鉴方向: 报销字段建模、借款→冲销生命周期、费用类型体系、多级审批 + 会计入账的数据结构"). **Consistency rule**: every claim in the quote-box must hold against the detail sections — if one entity is an exception (e.g. one of four gates is a real approval flow while the others are submit-time checks), state the exception; no overgeneralization.
+Optionally add a "design takeaways" quote-box, 1-3 lines, when it genuinely helps the reader (e.g. "借鉴方向: 报销字段建模、借款→冲销生命周期、费用类型体系"). Never author-facing advice ("worth copying") — the report explains the system, it doesn't coach the author. **Consistency rule** (if the quote-box is present): every claim in it must hold against the detail sections — if one entity is an exception (e.g. one of four gates is a real approval flow while the others are submit-time checks), state the exception; no overgeneralization.
 
 ### 3. Entity Relationships
 
@@ -129,14 +125,6 @@ The spine workflow, as a step-by-step walkthrough with:
 ### 7. State Machine Summary
 
 Only if several state machines exist and weren't fully covered in §6. Otherwise skip.
-
-### 8. Reusable Design Patterns
-
-Bullet list of patterns worth copying: field modeling choices, lifecycle design, write-back patterns, idempotency tricks, etc. Keep each to one sentence.
-
-### 9. Not Covered / Next Steps
-
-List what's not covered and natural next deep-dives (the Frappe report ends with exactly this: budget allocation / spend control / document templates / approval flows / AI receipt recognition).
 
 ## Style rules
 

@@ -5,7 +5,7 @@ description: Produce a design research report of a source code repository (whole
 
 # repo-design-report
 
-Guide the agent to analyze a source code repo (whole or part) and write a readable design research report. Quality bar: a domain deep-dive report on Frappe/HRMS/ERPNext expense reimbursement — entity map with one-line purposes, ASCII entity-relationship diagram, per-table field breakdowns with plain-language meanings, state machines, a worked numeric workflow example with journal entries, design insights, and stub sections for future deep-dives. If the user provides their own reference report, match or beat that one instead.
+Guide the agent to analyze a source code repo (whole or part) and write a readable design research report. Quality bar: a domain deep-dive report on Frappe/HRMS/ERPNext expense reimbursement — entity map with one-line purposes, ASCII entity-relationship diagram, per-table field breakdowns with plain-language meanings, state machines, a worked numeric workflow example with journal entries, and design insights. If the user provides their own reference report, match or beat that one instead.
 
 ## Principles (non-negotiable)
 
@@ -27,7 +27,7 @@ Guide the agent to analyze a source code repo (whole or part) and write a readab
 ## Modes
 
 - **Domain deep-dive (default)** — analyze one domain to full depth, like the Frappe expense-claim reference report.
-- **Whole-repo survey** — map all major domains first, then deep-dive one domain and summarize the rest, or deep-dive several (ask the user which). Multi-domain assembly: each deep-dived domain gets its own detail + workflow sections under a domain index in §2; non-deep-dived domains get one-liners in §2 and stub entries in §9.
+- **Whole-repo survey** — map all major domains first, then deep-dive one domain and summarize the rest, or deep-dive several (ask the user which). Multi-domain assembly: each deep-dived domain gets its own detail + workflow sections under a domain index in §2; non-deep-dived domains get one-liners in §2.
 
 If the user's intent is not obvious, ask which mode.
 
@@ -75,13 +75,15 @@ Follow `references/report-template.md` (canonical skeleton). Deviate from the te
 
 If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — anything the reference covers that the report doesn't must either be covered or explicitly justified as dropped.
 
+No author-facing meta advice in domain sections: 借鉴方向 / "patterns worth copying" / lessons-for-the-author boxes are dropped entirely — the report explains the system, it doesn't coach the author.
+
 ### 7. Verify (gate — do not output before passing)
 
 - Every field in the report exists in the cited schema file (re-read and spot-check).
 - Every workflow step was verified against a real function during research (spot-check existence in source).
 - Formulas re-derived from code, arithmetic script-checked.
 - Unverified items carry `⚠️ UNVERIFIED`.
-- Coverage boundary present.
+- Coverage boundary present (in §1 Intro).
 - The worked example is present, and its arithmetic was verified by running a script (python or equivalent) — no script run, no example, not done.
 - Every entity in scope has either a field table or an explicit peripheral one-liner — no orphans.
 - Mandatory sections (entity map, entity detail, workflows, coverage boundary) all present — no silent deviations.
