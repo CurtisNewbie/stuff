@@ -1561,12 +1561,19 @@ function basic_auth() {
 function fmt() {
     if [ -f "go.mod" ]; then
         go fmt ./...
-        echo "Formatted $(pwd)"
+        echo "Formatted $(pwd) (go)"
+    fi
+    if [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ] || ls *.py >/dev/null 2>&1; then
+        ruff format .
+        echo "Formatted $(pwd) (python)"
     fi
     for d in $(ls);
     do
         if [ -f "$d/go.mod" ]; then
-            (cd $d && go fmt ./... && echo "Formatted $d")
+            (cd $d && go fmt ./... && echo "Formatted $d (go)")
+        fi
+        if [ -f "$d/pyproject.toml" ] || [ -f "$d/setup.py" ] || [ -f "$d/requirements.txt" ] || ls "$d"/*.py >/dev/null 2>&1; then
+            (cd $d && ruff format . && echo "Formatted $d (python)")
         fi
     done
 }
