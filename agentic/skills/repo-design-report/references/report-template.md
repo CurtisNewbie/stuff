@@ -103,7 +103,7 @@ The spine workflow, as a step-by-step walkthrough with:
 
 - **One-line closed-loop summary at the top** — the reader gets the whole flow before the detail (e.g. "标准的「申请 → 审批(可砍价) → 核销借款 → 支付 → 入账」闭环").
 - Each step described in **business terms**: what happens, when, why, in what order, what it reads/writes — no function names in the narrative. Trigger points are stated in plain language (e.g. "the check runs when a purchase request is submitted, when a submitted PO's lines change, and as a backstop when GL entries are posted — all read-only, never writing the budget").
-- **Evidence appendix**: at the end of the workflow section, one compact table mapping each trigger point to its function(s) (file + name), labeled "验证依据 / evidence — 不必读". Function names appear only here — except when the name itself is the fact (e.g. "the legacy validator runs unconditionally" — keep the fact, name optional).
+- **Evidence appendix (optional)**: only when the user asks for auditability — at the end of the workflow section, one compact table mapping each trigger point to its function(s) (file + name), labeled "验证依据 / evidence — 不必读". Default: omit; verification happens during research, not in the report. Function names stay out of the narrative — except when the name itself is the fact (e.g. "the legacy validator runs unconditionally" — keep the fact, name optional).
 - **State machines**: submit states, approval states, derived states with their derivation rules. A compact diagram works:
   ```
   docstatus:  Draft(0) --submit--> Submitted(1) --cancel--> Cancelled(2)
@@ -124,7 +124,7 @@ The spine workflow, as a step-by-step walkthrough with:
     Cashier pays 726 → is_paid → status Paid
   ```
 
-  Cover the normal path **plus one interesting branch** (cut-down approval / multi-currency / partial offset / cancellation). If the domain has journal entries, show them (debit/credit per line). Verify all arithmetic with a script.
+  Cover the normal path **plus one interesting branch** (cut-down approval / multi-currency / partial offset / cancellation). If the domain has journal entries, show them (debit/credit per line). Verify all arithmetic with a script. Presentation: the header states at most "数字已用脚本验证 / numbers script-verified" — no script paths, no run commands, no work/ references in the report; formulas appear as plain math (120,000 ÷ 12 = 10,000), not code syntax (flt(...)).
 
 ### 7. State Machine Summary
 
@@ -142,11 +142,11 @@ List what's not covered and natural next deep-dives (the Frappe report ends with
 
 - **Plain language, concrete rules.** Short sentences, one idea per sentence. Everyday words over fancy ones whenever they mean the same thing. A sentence that needs a dictionary is a rewrite.
 - **Explain every domain term once, at first use, in the simplest way** (e.g. "核销 = 用报销冲抵借款", "offsetting = writing off an advance against a claim"). After that, reuse the term — no re-explaining, no quoting it.
-- **Code identifiers in the reading path get glossed or removed.** If a field name / API term must appear (e.g. `base_grand_total`, `Dynamic Link`, `per_billed`), give its plain meaning inline at first use; if it adds nothing, drop it. Unglossed identifiers in the narrative are not done — identifiers are welcome only in the evidence appendix.
+- **Code identifiers in the reading path get glossed or removed.** If a field name / API term must appear (e.g. `base_grand_total`, `Dynamic Link`, `per_billed`), give its plain meaning inline at first use; if it adds nothing, drop it. Unglossed identifiers in the narrative are not done — identifiers are welcome only in the evidence appendix. Same for implementation mechanics: function internals, SQL constructs (subqueries/exists), iteration and dimension handling, file-scoped detail — narrate the business behavior or move it to an evidence appendix, when one exists. A sentence that reads like a code walkthrough is a rewrite.
 - **No buzzwords or filler.** Banned in reports: leverage, robust, seamless, streamline, empower, comprehensive, cutting-edge, granular, "it is important to note", "in order to", 赋能, 抓手, 闭环 (unless it is the actual domain term), 打通, 体系化. If a word adds nothing, cut it.
 - **The worked example is the explanation.** When a concept is hard to describe in words, show it in the example instead of adding more adjectives.
 - **Tables** for fields, **ASCII diagrams** for relationships, **code blocks** for formulas/state machines/workflow steps.
-- Every entity section cites its schema file path; every workflow step names its function.
+- Every entity section cites its schema file path; every workflow step was verified against a real function during research.
 - Worked example numbers must be internally consistent (script-checked).
 - No marketing/AI-flavored prose. Straight-forward terms.
 - **Humanize prose:** after drafting, optionally run the humanizer skill on prose paragraphs only (never tables/code/numbers) — works for both Chinese and English reports. Then review each of its changes: keep edits that cut fluff, revert any that weaken technical precision or change a domain term's meaning.

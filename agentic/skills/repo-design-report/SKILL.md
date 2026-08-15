@@ -10,9 +10,10 @@ Guide the agent to analyze a source code repo (whole or part) and write a readab
 ## Principles (non-negotiable)
 
 - **Plain language, reader first.** Straight-forward terms; if a concept is hard, give a concrete example. Understanding is the goal, not exhaustive coverage. Do not overcomplicate.
+- **No unexplained acronyms.** Every acronym is expanded at first use as "full name (acronym)" — e.g. 物料申请（MR, Material Request）、采购订单（PO, Purchase Order）— before any bare use. Domain jargon the code uses (MR, PO, GL) is the worst offender; never assume the reader knows it. After expansion, reusing the acronym is fine.
 - **Cold-reader principle.** The target reader is a developer who has never touched this codebase and may not know the domain — the report must be self-contained and understandable in one cold pass. Test every section against: "can someone who cannot open the code follow this?" If a term, identifier, or mechanic needs code knowledge to follow, gloss it, explain it, or cut it. The ultimate test: a cold reader could reimplement the design from the report alone.
 - **No fabrication.** Every entity, field, and workflow claim must be verified against the code. Anything not confirmed from source is marked `⚠️ UNVERIFIED` — never invented.
-- **Logic-first narrative; citations are evidence, not content.** Workflow steps are described as design logic — what happens, when, why, in what order, in business terms. Function names are how you verified the logic, not what the reader needs: park them in one evidence appendix table at the end of the workflow section (labeled "验证依据, 不必读"). Per entity: cite the schema definition file path. No line numbers (they rot).
+- **Logic-first narrative; citations are evidence, not content.** Workflow steps are described as design logic — what happens, when, why, in what order, in business terms. Function names are how you verified the logic during research, not what the reader needs: verification is a research-process gate, not report content. Produce an evidence appendix (trigger point → function mapping, labeled "验证依据 / evidence — 不必读") only when the user explicitly asks for auditability; otherwise omit it. Per entity: cite the schema definition file path. No line numbers (they rot). The reading path is not a code walkthrough: no function internals, SQL constructs (subqueries, exists), iteration/dimension mechanics, or file-scoped implementation detail in prose — say what happens and why in business terms; a sentence that needs code knowledge to parse goes to the appendix or gets rewritten.
 - **Coverage boundary stated.** The report explicitly says what was and wasn't covered.
 - **Language.** Match the language of the user's request (Chinese request → Chinese report, English request → English report). The skill instructions themselves are always English; only the produced report follows the request language.
 
@@ -40,13 +41,13 @@ If the user's intent is not obvious, ask which mode.
 
 ### 2. Setup
 
-Create the output dir: `<out>/` for the final report, `<out>/work/` for draft artifacts. State where things will go before producing anything.
+Create the output dir `<out>/` for the final report. Optional `<out>/work/` for draft artifacts — use it only when a long session risks context loss or the user asks for intermediate records; do not persist drafts for their own sake.
 
-### 3. Discovery (drafts → `work/`)
+### 3. Discovery (optional drafts → `work/`)
 
 1. **Framework orientation** — tech stack, and where schema definitions live (analysis-playbook.md §1).
-2. **Domain map** — candidate domains with entry points (work/domain-map.md).
-3. **Entity inventory** — every entity/table in scope, one-line purpose each (work/entities.md). This becomes the purpose overview table in the report.
+2. **Domain map** — candidate domains with entry points (optionally save to work/domain-map.md).
+3. **Entity inventory** — every entity/table in scope, one-line purpose each (optionally save to work/entities.md). This becomes the purpose overview table in the report.
 4. **Spine workflow** — the domain's main business flow traced end-to-end (e.g. expense: request → approval (approver may cut amounts) → advance offset → payment → posting). Entities the spine touches = core entities. Everything else is peripheral.
 
 ### 4. Deep-dive per core entity
@@ -55,18 +56,18 @@ Create the output dir: `<out>/` for the final report, `<out>/work/` for draft ar
 2. Extract fields + meanings: name, type, required/read-only, what it means, **who writes it** (human / system write-back), formula if any.
 3. Note relationships: reference fields, parent-child subtables, mapping tables.
 4. Note **design intent**: why this entity exists, what it represents, what it implies about the system's design (e.g. "the advance request has no exchange-rate field — the rate exists only on the payment entry, because the rate becomes a fact at the moment of payment").
-5. Save as a field-table draft (work/entity-<name>.md).
+5. Optionally save as a field-table draft (work/entity-<name>.md) when persistence helps.
 
 Peripheral entities: one-line purpose only — no field tables (core-path rule). Deprecated/dead entities (only migration/back-compat references, no live path): omit entirely — never mention them anywhere, not even in the coverage boundary (only exception: one sentence of old-vs-new contrast in a design insight that explains the current structure's shape). Legacy-but-live code paths: one paragraph max, only when they change what the reader would reimplement (see analysis-playbook.md §2).
 
 ### 5. Workflow tracing
 
-For the spine workflow, trace step by step: trigger → function(s) → validations → data writes (which table, which fields) → state transitions → side effects (work/workflow-<domain>.md). Extract:
+For the spine workflow, trace step by step: trigger → function(s) → validations → data writes (which table, which fields) → state transitions → side effects (optionally save to work/workflow-<domain>.md). Extract:
 
 - **State machines** — submit states, approval states, derived display states, with transition rules (e.g. `docstatus: Draft(0) → Submitted(1) → Cancelled(2)`).
 - **Formulas** — exact computations from code (totals, tax, exchange gain/loss), with the function that computes them.
 - **Write-back flows** — which entity writes which fields on other entities when (e.g. expense claim submit → employee_advance.claimed_amount += allocated).
-- **Worked example (mandatory)** — a realistic scenario run through the whole workflow with concrete numbers at every step: inputs → computed values → resulting row writes → journal entries if the domain is accounting. Verify the arithmetic with a script (e.g. python) — never hand-calculate.
+- **Worked example (mandatory)** — a realistic scenario run through the whole workflow with concrete numbers at every step: inputs → computed values → resulting row writes → journal entries if the domain is accounting. Verify the arithmetic with a script (e.g. python) — never hand-calculate. Presentation: the header says at most "数字已用脚本验证" — never cite the script's path or run command, never reference work/ files; formulas in the example are plain math (120,000 ÷ 12 = 10,000), not code syntax (flt(...)).
 
 ### 6. Assemble the final report
 
@@ -77,23 +78,23 @@ If a reference report was provided (user-supplied or the built-in example): befo
 ### 7. Verify (gate — do not output before passing)
 
 - Every field in the report exists in the cited schema file (re-read and spot-check).
-- Every workflow step names a real function.
+- Every workflow step was verified against a real function during research (spot-check existence in source).
 - Formulas re-derived from code, arithmetic script-checked.
 - Unverified items carry `⚠️ UNVERIFIED`.
 - Coverage boundary present.
-- The worked example is present, and its arithmetic script is saved in `work/` — no script, no example, not done.
+- The worked example is present, and its arithmetic was verified by running a script (python or equivalent) — no script run, no example, not done.
 - Every entity in scope has either a field table or an explicit peripheral one-liner — no orphans.
 - Mandatory sections (entity map, entity detail, workflows, coverage boundary) all present — no silent deviations.
 - Every design-insight paragraph cites its supporting evidence (≥2 code-grounded points).
-- Prose is plain language: short sentences, no buzzwords or filler, every domain term explained once at first use.
+- Prose is plain language: short sentences, no buzzwords or filler, every domain term explained once at first use; every acronym expanded as "full name (acronym)" at first use — no bare acronym in the reading path before its expansion.
 - Every summary/quote-box claim is consistent with the detail sections — exceptions stated, no overgeneralization.
-- No unglossed code identifiers in the reading path (identifiers only in the evidence appendix are fine).
+- No code walkthrough in the reading path: unglossed identifiers, function names with file references, SQL constructs, and iteration/mechanics detail appear only in the evidence appendix — prose that needs code knowledge to parse is a rewrite.
 - Cold-reader pass done: the final draft was read top-to-bottom as a reader who cannot open the code; anything requiring code knowledge to follow was glossed, explained, or removed.
 
 ### 8. Output
 
 - Final report: `<out>/<domain>-design-report.md` (or `<repo>-design-report.md` for whole-repo). The final report is the single consolidated, self-contained deliverable.
-- Drafts stay in `<out>/work/` — they are work products, not deliverables; don't polish them. Reusable for future reports on the same repo (the reference report's stub sections — budget allocation / spend control / approval flows — are exactly this: next deep-dives).
+- If created, drafts stay in `<out>/work/` — work products, not deliverables; don't polish them.
 - Publish to Feishu only if the user explicitly asks (e.g. via lark-cli).
 
 ## References
