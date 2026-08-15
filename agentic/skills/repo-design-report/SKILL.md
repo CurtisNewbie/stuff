@@ -22,7 +22,7 @@ Guide the agent to analyze a source code repo (whole or part) and write a readab
 - **Repo path** — local directory, or a clone URL (clone to a temp dir first).
 - **Optional: domain/focus hint** — e.g. "expense reimbursement", "billing", "auth", "the payment flow".
 - **Optional: output dir** — default: `<repo>-design-report/` next to the repo (ask only if ambiguous).
-- **Optional: reference report** — path or URL to a sample design report the output should match or beat (e.g. the user's own research report on a similar system). If none is given, the quality bar described in the Overview applies.
+- **Optional: reference report** — path or URL to a sample design report the output should match or beat in quality (e.g. the user's own research report on a similar system). It sets a quality bar, not an outline contract — see §6 for what the diff rule covers. If none is given, the quality bar described in the Overview applies.
 
 ## Modes
 
@@ -73,7 +73,7 @@ For the spine workflow, trace step by step: trigger → function(s) → validati
 
 Follow `references/report-template.md` (canonical skeleton). Deviate from the template only with explicit justification. The three mandatory sections from the principles are: entities + relationships + design intent, persistent data structures, and core workflows with examples.
 
-If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — anything the reference covers that the report doesn't must either be covered or explicitly justified as dropped.
+If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — **canonical sections only**: anything the reference covers *within the template's §1-§7 sections* that the report doesn't must either be covered or explicitly justified as dropped. Reference content outside the canonical skeleton (e.g. patterns/next-steps appendices) is not binding — extra sections in the reference do not create obligations, never copy them just for format consistency. The reference sets a quality bar, not an outline contract.
 
 No author-facing meta advice in domain sections: 借鉴方向 / "patterns worth copying" / lessons-for-the-author boxes are dropped entirely — the report explains the system, it doesn't coach the author.
 
