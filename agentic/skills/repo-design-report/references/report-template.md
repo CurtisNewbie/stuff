@@ -1,149 +1,158 @@
-# Report Template — repo-design-report
+# 报告模板：repo-design-report
 
-Canonical skeleton for the final report. Default structure; deviate only with explicit justification. **Write the report in the language of the user's request** — the skeleton below is shown in English; when the report language is Chinese, translate headings and content accordingly (see the heading translation table in §2).
+最终报告的标准骨架。默认结构；偏离必须有明确理由。**报告使用用户请求的语言撰写**；下方骨架以中文展示；当报告语言为英文时，标题与内容相应翻译（见下文标题翻译表）。
 
-## Table of Contents
+**叙述风格固定为数据模型优先（表驱动）**：先给表的全貌，再讲关系，再逐表拆字段，再讲工作流（工作流 = 表操作序列），设计洞察收尾。完整样张见 `references/sample-report.md`，组装前先读它。
 
-1. [Skeleton](#skeleton)
-2. [Section-by-section guidance](#section-by-section-guidance)
-3. [Style rules](#style-rules)
-4. [Mini examples](#mini-examples)
-
-## Skeleton
+## 骨架
 
 ```
-# <Domain/Repo> Design Research Report    (title in report language)
+# <领域/仓库> 设计研究报告    （标题用报告语言）
 
-## 1. Core Entities & Purposes               entity map
-## 2. Entity Relationships                   relationships + design intent
-## 3. Core Design Ideas                      what the authors were thinking
-## 4. Core Entities in Detail                persistent data structures (one section per entity)
-## 5. Core Workflows                         workflows + data flow + worked example
-## 6. State Machine Summary                  (only when several exist)
+## 1. 核心实体与用途总表              每张表一句话
+## 2. 核心概念                        心智模型：数据对象与表、状态分层、流转驱动
+## 3. 实体关系                        关系图 + 关联键 + 含义
+## 4. 表字段详解                      每张表一节（持久化数据结构）
+## 5. 核心工作流                      工作流 = 表操作序列 + 完整示例
+## 6. 设计洞察                        作者在想什么
 ```
 
-**Heading translation for Chinese reports** (when the user requests Chinese):
+**英文报告标题翻译**（当用户请求英文时）：
 
-| English | 中文 |
+| 中文 | English |
 |---|---|
-| 1. Core Entities & Purposes | 1. 核心实体与用途总表 |
-| 2. Entity Relationships | 2. 实体关系 |
-| 3. Core Design Ideas | 3. 核心设计思想 |
-| 4. Core Entities in Detail | 4. 核心实体详解 |
-| 5. Core Workflows | 5. 核心工作流 |
-| 6. State Machine Summary | 6. 状态机汇总 |
+| 1. 核心实体与用途总表 | 1. Core Entities & Purposes |
+| 2. 核心概念 | 2. Core Concepts |
+| 3. 实体关系 | 3. Entity Relationships |
+| 4. 表字段详解 | 4. Tables in Detail |
+| 5. 核心工作流 | 5. Core Workflows |
+| 6. 设计洞察 | 6. Design Insights |
 
-**Whole-repo mode**: repeat §4 and §5 once per deep-dived domain (each under a domain index in §1); non-deep-dived domains get one-liners in §1.
+**全仓库模式**：每个深潜领域重复 §4 和 §5（各自挂在 §1 的领域索引下）；未深潜的领域在 §1 中一句话带过。
 
-## Section-by-section guidance
+## 逐节指引
 
-### 1. Core Entities & Purposes
+### 1. 核心实体与用途总表
 
-Table of all entities in scope: `Entity | Purpose`, one plain-language line each (from entity inventory). Example:
+范围内所有实体的表格：`表 | 用途`，每行一句通俗语言（来自实体清单）。这是读者的第一张地图，按阅读顺序排列：主实体在前，明细、桥表、映射表在后。示例：
 
-| Entity | Purpose |
+| 表 | 用途 |
 |---|---|
-| expense_claim + expense_claim_detail | Expense claim header / line items |
-| employee_advance | Employee loan/advance, incl. sanctioned amount |
-| expense_claim_advance | Expense-to-advance offsetting (writing off loans against claims) |
+| expense_claim + expense_claim_detail | 报销单主表 / 明细行 |
+| employee_advance | 员工借款/预支，含核定金额 |
+| expense_claim_advance | 报销与借款的冲销（用报销抵减借款），桥表 |
 
-Optionally add a "design takeaways" quote-box, 1-3 lines, when it genuinely helps the reader (e.g. "借鉴方向: 报销字段建模、借款→冲销生命周期、费用类型体系"). Never author-facing advice ("worth copying") — the report explains the system, it doesn't coach the author. **Consistency rule** (if the quote-box is present): every claim in it must hold against the detail sections — if one entity is an exception (e.g. one of four gates is a real approval flow while the others are submit-time checks), state the exception; no overgeneralization.
+可选：当确实有助于读者时，加一个 1-3 行的"设计要点"引用框（例如 "借鉴方向: 报销字段建模、借款→冲销生命周期、费用类型体系"）。绝不写面向作者的建议（"worth copying"）；报告解释系统，不指导作者。**一致性规则**（若存在引用框）：框内每个论断必须与详情章节一致；若某个实体是例外（例如四个关卡中有一个是真实审批流，其余是提交时校验），要说明例外；不泛化。
 
-### 2. Entity Relationships
+### 2. 核心概念（心智模型）
 
-Real relationship semantics, grouped by type — not a code/trigger map:
+一段到几段短文，回答冷读者最先产生的机制问题。**先回答这三个问题，答不上来说明研究没做完**（下面用"数据对象"泛指领域里的核心业务对象：单据、订单、账本条目、配置项等）：
 
-1. **Structure (composition)** — parent-child links with cardinality and what the child represents (e.g. Budget 1:N Budget Distribution: each row is one time-slice, rows sum to the yearly total, child dies with parent).
-2. **References** — every reference link annotated with what it means (e.g. Budget.account → Account: which expense category this budget constrains; a budget on a tree-group expands to all descendants = shared quota). A bare `A.b → C` mapping with no meaning annotation is not done. Include dynamically injected references.
-3. **Matching relationships (read-only)** — the links that matter at validation/report time: which entities are compared on what key, all read-only (e.g. GL Entry matched to Budget on the (dimension, account) key = "already spent"; prefix-sum of distribution rows = "how much should be spent by now").
+1. **数据对象与表怎么对应**：一个业务对象 = 一张物理表、一份数据 = 一行？有没有键值表（如单例设置）、子表挂主表、无物理表（纯代码/视图）这类例外？加字段 = 加列，还是另有迁移机制？
+2. **状态由谁管**：有没有预置的生命周期状态（草稿/已提交/已取消这类三态），含义固定、不可配置？有没有可配置的状态机或工作流（比如审批流）？业务自己的状态字段在哪一层？
+3. **状态怎么流转**：状态迁移由什么驱动（人工动作、定时任务、外部事件、代码直接改）？流转规则存在哪里（配置表 vs 写死在代码里）？
 
-Keep trigger points and query flows OUT of this section — they belong to §5 workflows. Then 1-3 plain paragraphs on what the relationships imply (e.g. "budget and consumption have no balance table — spending is never written back to the budget").
+每个问题一两句 + 一个例子，不展开细节（细节在 §4/§5）。机制简单就写短（两三句），机制复杂这节就是全篇最重要的地图。常见写法：分层列表，每层一两句。典型例子（Frappe 这类单据系统）："一个单据类型 = 一张表，保存模板即建表；docstatus（草稿/已提交/已取消）是预置三态不可配置，workflow_state 是可配置的工作流字段，两者靠状态实例绑定的 doc_status 联动；业务字段自己维护业务状态"。
 
-### 3. Core Design Ideas (the "what were they thinking" section)
+### 3. 实体关系
 
-2-5 short paragraphs capturing the system's core ideas. Derive from what is surprising, repeated, or carefully designed. If the code contradicts a naive expectation, that contrast is usually the insight.
+按类型分组的真实关系语义，不是代码/触发器映射。**每个引用都要标注关联键与含义**：
 
-Good examples (from the Frappe expense report):
-- "An expense claim is essentially a business document plus an accounting voucher; submitting the claim is the posting act itself" (voucher layer vs ledger layer: every document eventually writes into the one general-ledger table).
-- "The advance request has no exchange-rate field. The rate exists only on the payment entry: the rate becomes a fact at the moment of payment" (information flow: advance request → payment entry (rate born here) → claim offset rows → submit writes back).
-- "Accounts are not hand-entered; the system derives them from a (expense type, company) mapping table, to prevent misclassified postings".
+1. **结构（组合）**：父子链接，含基数与子表代表什么（例如 Budget 1:N Budget Distribution，按 parent_id 关联：每行是一个时间段切片，各行之和等于年度总额，子随父亡）。
+2. **引用**：每个引用链接标注关联键 + 含义（例如 Budget.account → Account，按 account_id 关联：该预算约束哪个费用科目；挂在树形分组上的预算展开到所有后代 = 共享额度）。裸写 `A.b → C` 而不标注含义不算完成。包含动态注入的引用。
+3. **匹配关系（只读）**：校验/报表时起作用的链接：哪些实体按什么键比较，全部只读（例如 GL Entry 按 (维度, 科目) 键与 Budget 匹配 = "已花费"；分布行的前缀和 = "此刻应花费多少"）。
+4. **桥表**：N:M 中间表单独说明：它记录什么、谁写它、读它的典型场景（例如 借款 N:M 报销，经核销记录桥接，一次冲销一行，借款可分多次冲销）。
 
-If you can't find deep insights, state the design's basic structure plainly — do not inflate.
+关系图用 ASCII 图，关键处加注释。然后写 1-3 段平实文字说明这些关系意味着什么（例如 "预算与消费之间没有余额表，消费从不写回预算"；"借款单的已核销金额是核销记录的累加，不是手填的余额"）。
 
-If the domain has a clear conceptual layering, show it as a small diagram — it is often the single most clarifying picture (e.g. voucher layer vs one general-ledger table: "报销单 / 付款单 / JE 全部写进唯一一张 GL Entry 表"; or an event ledger that is the source of truth for write-backs). Each insight paragraph must carry ≥2 code-grounded evidence points.
+### 4. 表字段详解（持久化数据结构）
 
-### 4. Core Entities in Detail (persistent data structures)
+每张核心表（脊柱路径上的表；外围表在 §1 一句话带过）一个小节。**读者到这里应该已经能从字段表反推出系统怎么工作。**
 
-One subsection per core entity (spine-path entities only; peripheral entities get one-liners in section 1). Each subsection:
+- **领域概念总结**：放在各表小节之前，用一句平实的话说清**本领域**的数据模型（例如 "Budget = 公司 × 成本对象 × 科目 × 时间窗口 → 一个总额；Budget Distribution = 该总额的时间切片，各切片之和等于总额"）。§2 讲通用机制，这里讲本领域的具体模型。读者先建立心智模型，再看细节。如果这一句很难写，说明报告还没准备好。
+- 每张表小节以一句平实的话开头：它是什么、代表什么、**为什么存在**（解决什么问题）。必须让从未见过该领域的读者看懂；如果日常类比有帮助就用（例如 "年度薪资预算是 12 个月份切片，你按月管理，而不是按年初至今"）。如果"为什么存在"需要超过一句，就展开写；这是报告最见功力之处。
+- **字段表**：`字段 | 含义`，字段多时按逻辑分组（基础 / 审批 / 币种 / 金额 / 支付 / 归属 / 汇率 / 其他...）。每个字段都有通俗含义。标注只读/系统写回字段（只读、系统写回）。公式写进含义里（例如 `grand_total = 核定总额 + 税 − 借款冲销`）。引用字段标注关联键。
+- **子表**在父表下说明（例如 报销单的三个子表：费用/税/借款，各有自己的字段表）。
+- **谁写它**：说明哪些字段人工填写、哪些系统写回（例如 "只有申请字段是人工填的；付款后所有金额都是系统写回"）。
+- **Schema 路径引用**：每个表小节末尾：`Schema: frappe__hrms/hrms/hr/doctype/expense_claim/expense_claim.json`。
 
-- **Domain model in one line** at the top of the section, before the per-entity subsections: the whole thing in one plain sentence, e.g. "Budget = company × cost object × account × time window → one total; Budget Distribution = time slices of that total, summing to it". Reader gets the mental model first, detail after. If this one-liner is hard to write, the report isn't ready yet.
-- **One sentence**: what it is, what it represents, and **why it exists** (what problem it solves). Must be understandable to a reader who has never seen this domain — if an everyday analogy helps, use it (e.g. "an annual salary budget is 12 monthly slices — you manage month by month, not by year-to-date"). If "why it exists" needs more than one sentence, expand it — this is where the report earns its keep.
-- **Field table**: `Field | Meaning`, grouped by logic when many fields (basics / approval / currency / amounts / payment / attribution / FX / other...). Every field has a plain-language meaning. Mark read-only/system-written fields (read-only, system write-back). Include formulas in the meaning (e.g. `grand_total = sanctioned total + tax − advance offset`).
-- **Child tables** documented under their parent (e.g. the Expense Claim's three child tables: expenses/taxes/advances, each with its own field table).
-- **Who writes it**: note which fields humans fill vs which the system writes back (e.g. "only the request fields are human-filled; after payment all amounts are system write-backs").
-- **Schema path citation** at the end of each entity section: `Schema: frappe__hrms/hrms/hr/doctype/expense_claim/expense_claim.json`.
+框架样板列解释过一次后不再重复（例如 Frappe 的 `parent/parenttype/parentfield/idx`，一句话带过，之后不再出现）。废弃/死亡实体（只有迁移引用，无活跃路径）绝不出现。遗留但活跃的结构只给一段话，且仅当它影响读者必须知道的行为（例如仍在运行的旧校验器）；不给字段表。
 
-Skip framework boilerplate columns once they're explained (e.g. Frappe's `parent/parenttype/parentfield/idx` — mention in one sentence, then never repeat). Deprecated/dead entities (migration-only references) never appear anywhere in the report. Legacy-but-live structures get one short paragraph only if they affect behavior the reader must know (e.g. an old validator that still runs); no field tables for them.
+### 5. 核心工作流（工作流 = 表操作序列 + 完整示例）
 
-### 5. Core Workflows (workflows + data flow + worked example)
+脊柱工作流，逐步走查。**叙述框架：建模清楚后，代码就是读表、关联、计算、更新表。** 报告要把这个链路讲明白，让读者看完能直接照着写代码。
 
-The spine workflow, as a step-by-step walkthrough with:
-
-- **One-line closed-loop summary at the top** — the reader gets the whole flow before the detail (e.g. "标准的「申请 → 审批(可砍价) → 核销借款 → 支付 → 入账」闭环").
-- Each step described in **business terms**: what happens, when, why, in what order, what it reads/writes — no function names in the narrative. Trigger points are stated in plain language (e.g. "the check runs when a purchase request is submitted, when a submitted PO's lines change, and as a backstop when GL entries are posted — all read-only, never writing the budget").
-- **Evidence appendix (optional)**: only when the user asks for auditability — at the end of the workflow section, one compact table mapping each trigger point to its function(s) (file + name), labeled "验证依据 / evidence — 不必读". Default: omit; verification happens during research, not in the report. Function names stay out of the narrative — except when the name itself is the fact (e.g. "the legacy validator runs unconditionally" — keep the fact, name optional).
-- **State machines**: submit states, approval states, derived states with their derivation rules. A compact diagram works:
+- **流程总览**：读者在细节之前先看到整个流程（例如 "标准的「申请 → 审批(可砍价) → 核销借款 → 支付 → 入账」闭环"）。
+- 每一步写两件事：
+  1. **业务解释**：发生了什么、何时、为什么、什么顺序，用业务语言，不出现函数名。
+  2. **表操作**：读哪张表、按什么键关联、算什么、写回哪个表的哪些字段（例如 提交报销：读明细行求和 → 写回报销单总额 → 状态 草稿→已提交；核销：对借款类明细行，写核销记录 → 写回借款单.已核销金额 += 行金额）。
+- 触发点用平实语言说明（例如 "该检查在采购申请提交时、已提交 PO 的行变更时、以及 GL 入账兜底时运行，全部只读，从不写预算"）。
+- **证据附录（可选）**：仅当用户要求可审计性时。放在工作流章节末尾，一张紧凑表格，把每个触发点映射到其函数（文件 + 名称），标注"验证依据 / evidence（不必读）"。默认省略；验证发生在研究阶段，不在报告里。函数名不进入叙述，除非名称本身就是事实（例如 "旧校验器无条件运行"；保留事实，名称可选）。
+- **状态机**：提交状态、审批状态、派生状态及其推导规则。紧凑图即可：
   ```
   docstatus:  Draft(0) --submit--> Submitted(1) --cancel--> Cancelled(2)
   approval_status:  Draft --> Approved / Rejected
-  status (read-only derived):  Submitted+Approved+fully paid --> Paid ...
+  status (只读派生):  Submitted+Approved+fully paid --> Paid ...
   ```
-- **Key formulas** with exact computations and the computing function.
-- **One-line intuition after hard rules**: after each key formula or subtle rule, add a plain-language 直观理解 line (e.g. "you either hold the qualification of the highest hit threshold, or any higher-threshold rule's qualification — higher-threshold rules apply to you too, so senior approvers can submit any amount"). If the rule needs the intuition to be understood, the intuition is not optional.
-- **Data flow**: which entity writes back to which (e.g. submitting a claim writes GL entries, updates the advance's claimed_amount, records offsets in the advance-payment ledger; cashier payment sets is_paid → status Paid).
-- **Worked example (mandatory)**: one realistic scenario with concrete numbers through every step. Structure:
+  多个状态机且未在本节覆盖时，在本节末尾加"状态机汇总"小节。
+- **关键公式**：精确计算及计算函数。
+- **直观理解**：每个关键公式或微妙规则后，加一句通俗的说明（例如 "你要么持有最高命中阈值规则的资格，要么持有任何更高阈值规则的资格；更高阈值规则对你也适用，所以高级审批人可以提交任意金额"）。如果规则需要这句理解才能被看懂，它就不是可选项。
+- **数据流**：哪个实体写回哪个（例如 提交报销单写入 GL 分录、更新借款的 claimed_amount、在借款付款账本中记录冲销；出纳付款设置 is_paid → 状态 Paid）。
+- **完整示例（强制）**：一个真实场景，带具体数字走完全流程。结构：
 
   ```
-  Employee A, Singapore company, claims travel expenses:
-    Line items: flight 1000 SGD (claimed), hotel 500 SGD (claimed)
-    Approver sanctions: flight 1000, hotel 400 (cut 100) → total_claimed=1500, sanctioned=1400
-    Tax row GST 9% → tax=126, grand_total = 1400+126−800 (offset) = 726
-    Submit → GL: debit travel account 1526 / credit advance 800 / credit payable 726 ...
-    Cashier pays 726 → is_paid → status Paid
+  员工 A，新加坡公司，报销差旅费：
+    明细：机票 1000 SGD（申请）、酒店 500 SGD（申请）
+    审批人核定：机票 1000、酒店 400（砍 100）→ total_claimed=1500, sanctioned=1400
+    税行 GST 9% → tax=126, grand_total = 1400+126−800（冲销）= 726
+    提交 → GL：借 差旅科目 1526 / 贷 借款 800 / 贷 应付 726 ...
+    出纳支付 726 → is_paid → 状态 Paid
   ```
 
-  Cover the normal path **plus one interesting branch** (cut-down approval / multi-currency / partial offset / cancellation). If the domain has journal entries, show them (debit/credit per line). Verify all arithmetic with a script. Presentation: the header states at most "数字已用脚本验证 / numbers script-verified" — no script paths, no run commands, no work/ references in the report; formulas appear as plain math (120,000 ÷ 12 = 10,000), not code syntax (flt(...)).
+  覆盖正常路径**加一个有趣的分支**（砍价审批 / 多币种 / 部分冲销 / 取消）。如果领域有会计分录，展示它们（每行借/贷）。所有算术用脚本验证。呈现方式：标题最多写"数字已用脚本验证 / numbers script-verified"。报告中不出现脚本路径、运行命令、work/ 引用；公式写成普通数学（120,000 ÷ 12 = 10,000），不是代码语法（flt(...)）。
 
-### 6. State Machine Summary
+### 6. 设计洞察（"作者在想什么"一节）
 
-Only if several state machines exist and weren't fully covered in §5. Otherwise skip.
+2-5 段短文，捕捉系统的核心思想。放在最后：读者先拿到地图和动作，再听你为什么这么设计。从令人意外、反复出现或精心设计之处提炼。如果代码与直觉预期相悖，这个反差通常就是洞察。
 
-## Style rules
+好例子：
+- "报销单本质上是一张业务单据加一张会计凭证；提交报销单这个动作本身就是入账"（凭证层 vs 账本层：每张单据最终都写进唯一一张总账表）。
+- "借款申请没有汇率字段。汇率只存在于付款单上：汇率在付款那一刻才成为事实"（信息流：借款申请 → 付款单（汇率在此诞生）→ 报销冲销行 → 提交时写回）。
+- "科目不是手填的；系统从 (费用类型, 公司) 映射表推导，防止科目记错"。
+- "余额不存储，永远计算。借款单的已核销金额是核销记录的累加，系统里不存在'剩余未核销'字段"。这类"余额 = 累加"的洞察最容易解释表为什么长这样。
 
-- **Plain language, concrete rules.** Short sentences, one idea per sentence. Everyday words over fancy ones whenever they mean the same thing. A sentence that needs a dictionary is a rewrite.
-- **Explain every domain term once, at first use, in the simplest way** (e.g. "核销 = 用报销冲抵借款", "offsetting = writing off an advance against a claim"). After that, reuse the term — no re-explaining, no quoting it.
-- **Code identifiers in the reading path get glossed or removed.** If a field name / API term must appear (e.g. `base_grand_total`, `Dynamic Link`, `per_billed`), give its plain meaning inline at first use; if it adds nothing, drop it. Unglossed identifiers in the narrative are not done — identifiers are welcome only in the evidence appendix. Same for implementation mechanics: function internals, SQL constructs (subqueries/exists), iteration and dimension handling, file-scoped detail — narrate the business behavior or move it to an evidence appendix, when one exists. A sentence that reads like a code walkthrough is a rewrite.
-- **No buzzwords or filler.** Banned in reports: leverage, robust, seamless, streamline, empower, comprehensive, cutting-edge, granular, "it is important to note", "in order to", 赋能, 抓手, 闭环 (unless it is the actual domain term), 打通, 体系化. If a word adds nothing, cut it.
-- **The worked example is the explanation.** When a concept is hard to describe in words, show it in the example instead of adding more adjectives.
-- **Tables** for fields, **ASCII diagrams** for relationships, **code blocks** for formulas/state machines/workflow steps.
-- Every entity section cites its schema file path; every workflow step was verified against a real function during research.
-- Worked example numbers must be internally consistent (script-checked).
-- No marketing/AI-flavored prose. Straight-forward terms.
-- **Humanize prose (mandatory):** after drafting, run the humanizer skill on prose paragraphs only (never tables/code/numbers) — works for both Chinese and English reports. Then review each of its changes: keep edits that cut fluff, revert any that weaken technical precision or change a domain term's meaning.
-- Deviations from this template must be stated explicitly at the top of the report.
+找不到深刻洞察时，就平实地陈述设计的基本结构，不要拔高。
 
-## Mini examples
+如果领域有清晰的概念分层，用小图展示，它往往是最能说明问题的一张图（例如 凭证层 vs 唯一一张总账表："报销单 / 付款单 / JE 全部写进唯一一张 GL Entry 表"；或事件账本是写回的唯一事实来源）。每个洞察段落必须携带 ≥2 个基于代码的证据点。
 
-### A. Field table (style reference)
+## 风格规则
 
-| Field | Meaning |
+- **通俗语言，具体规则。** 短句，一句一个想法。能用日常词就不用花哨词。需要查字典才能读懂的句子，重写。
+- **每个领域术语首次出现时解释一次，用最简单的方式**（例如 "核销 = 用报销冲抵借款"、"offsetting = writing off an advance against a claim"）。之后复用该术语，不再解释、不再加引号。
+- **阅读路径中的代码标识符要解释或删除。** 如果字段名/API 术语必须出现（例如 `base_grand_total`、`Dynamic Link`、`per_billed`），首次出现时给出通俗含义；如果无助于理解就删掉。叙述中不允许出现未解释的标识符；标识符只欢迎出现在证据附录中。实现机制同理：函数内部实现、SQL 结构（子查询/exists）、迭代与维度处理、文件级细节。叙述业务行为，或移入证据附录（如果存在）。读起来像代码走读的句子，重写。
+- **无废话、无套话。** 报告中禁用：leverage, robust, seamless, streamline, empower, comprehensive, cutting-edge, granular, "it is important to note", "in order to", 赋能, 抓手, 闭环（除非它真是领域术语）, 打通, 体系化。一个词如果没增加信息，删掉。
+- **完整示例就是解释。** 当概念难以用文字描述时，在示例中展示，而不是堆形容词。
+- **字段用表格，关系用 ASCII 图，公式/状态机/工作流步骤用代码块。**
+- 每个实体章节引用其 schema 文件路径；每个工作流步骤在研究阶段对照真实函数验证过。
+- 完整示例的数字必须内部一致（脚本校验过）。
+- 无营销腔、无 AI 腔。直白的词。
+- **人味化散文（强制）：** 草稿完成后，加载 humanizer 技能，仅对散文段落运行（绝不处理表格/代码/数字），使用 embedded 模式。中英文报告都适用。逐条审查其改动：保留删废话的改动，回退任何削弱技术精度或改变领域术语含义的改动。啰嗦可以接受；目标是自然语言中把想法讲清楚，不是压缩。不要让 humanizer 的 "compress the dull parts" 把技术解释压缩到失去清晰度。
+- **中文 AI 腔（中文报告）：** humanizer 技能针对的是英文 AI 腔（em dash、-ing 结尾、"Additionally"）。中文有自己的：首先/其次/最后 连用、值得注意的是、综上所述、不难看出、总而言之、助力/赋能/抓手/闭环/打通/体系化/进一步/更好地/有效/高效/全面/深入/显著/充分/积极/大力/持续/不断/着力/切实、排比句（三个平行分句）、总结式开头（"本文介绍了..."）、三段式结构。用同样的方式清除：删掉废话，保留想法。
+- **不用破折号（——）或连接号（–）。** 破折号是最可靠的 AI 痕迹。用句号、逗号、冒号或括号替代。适用于报告正文；技能自身的指引也遵守同一规则。
+- 偏离本模板必须在报告顶部明确说明。
+
+## 小示例
+
+### A. 字段表（风格参考）
+
+| 字段 | 含义 |
 |---|---|
-| expense_type | Expense type, required, points to Expense Claim Type |
-| amount / sanctioned_amount | Claimed amount / sanctioned amount. Sanctioned defaults to claimed; approver may lower it (the "cut") |
-| base_amount / base_sanctioned_amount | Base-currency copies (multi-currency: every amount field has a base_* counterpart) |
-| default_account | Account. Derived by the system from the (type, company) mapping, not hand-entered, to prevent misclassified postings |
+| expense_type | 费用类型，必填，指向 Expense Claim Type |
+| amount / sanctioned_amount | 申请金额 / 核定金额。核定默认等于申请；审批人可调低（"砍价"） |
+| base_amount / base_sanctioned_amount | 本位币副本（多币种：每个金额字段都有 base_* 对应） |
+| default_account | 科目。系统从 (类型, 公司) 映射推导，不手填，防止科目记错 |
 
-### B. Annotated relationship diagram (style reference)
+### B. 带注释的关系图（风格参考）
 
 ```
 Expense Claim Type ----┐
@@ -156,8 +165,26 @@ Expense Claim (claim doc)              Employee Advance (loan doc)
   └- is_paid --> Payment Entry (claim payment)
 ```
 
-### C. Design insight (style reference)
+### C. 表操作步骤（风格参考）
 
-> An expense claim is essentially a business document plus an accounting voucher; submitting the claim is the posting act itself.
+> 提交报销：读明细行求和 → 写回报销单总额 → 状态 草稿→已提交
+> 审批：逐行读明细，改核定金额 → 重算总额 → 状态 已提交→已审批
+> 核销：对借款类明细行，写核销记录 → 写回借款单.已核销金额 += 行金额
 
-> The advance request has no exchange-rate field. The rate exists only on the payment entry: the rate becomes a fact at the moment of payment.
+### D. 设计洞察（风格参考）
+
+> 报销单本质上是一张业务单据加一张会计凭证；提交报销单这个动作本身就是入账。
+
+> 借款申请没有汇率字段。汇率只存在于付款单上：汇率在付款那一刻才成为事实。
+
+> 余额不存储，永远计算。借款单的已核销金额是核销记录的累加，系统里不存在"剩余未核销"字段。
+
+### E. 人味化散文（风格参考）
+
+人味化前（AI 腔）：
+> 报销单作为报销生态系统的核心枢纽，无缝编排从提交、审批到支付的完整生命周期，同时确保对借款和税费的全面追踪。
+
+人味化后（人写的）：
+> 报销单就是一份报销请求。它带着明细行、税行，以及它冲销的借款。提交它就会生成会计分录；支付它就把单子关掉。
+
+人味化后更短，因为原文全是废话。如果想法需要更多字，就保留；检验标准是读者一遍能跟上想法，而不是文字短。

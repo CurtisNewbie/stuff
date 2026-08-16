@@ -1,104 +1,109 @@
 ---
 name: repo-design-report
-description: Produce a design research report of a source code repository (whole repo or a domain subset). The report shows (1) the core entities and their relationships — what they are, what they represent, and the design intent behind them, giving a sense of what the software's authors were thinking; (2) the persistent data structures — tables, fields, and what each field means; (3) the core workflows — how data flows as a workflow progresses, with concrete worked examples, detailed enough that a developer could reimplement the design from the report. Use when the user asks to "analyze this repo's design", "write a source code research report", "research/analyze the design of this project's source code", "how is X designed in this codebase", "understand the design of this system before rebuilding it", or when a developer needs to learn a codebase's design to rebuild, extend, or evaluate it.
+description: 对源代码仓库（整个仓库或某个领域子集）做设计研究并产出可读的设计研究报告。报告包含 (1) 核心实体及其关系：它们是什么、代表什么、背后的设计意图，让读者感受到作者的设计思路；(2) 持久化数据结构：表、字段及每个字段的含义；(3) 核心工作流：数据如何随流程流转，附具体数字的完整示例，详细到开发者可以仅凭报告重新实现该设计。当用户要求 "analyze this repo's design"、"write a source code research report"、"research/analyze the design of this project's source code"、"how is X designed in this codebase"、"understand the design of this system before rebuilding it"，或开发者需要学习某个代码库的设计以便重建、扩展或评估时使用。
 ---
 
 # repo-design-report
 
-Guide the agent to analyze a source code repo (whole or part) and write a readable design research report. Quality bar: a domain deep-dive report on Frappe/HRMS/ERPNext expense reimbursement — entity map with one-line purposes, ASCII entity-relationship diagram, per-table field breakdowns with plain-language meanings, state machines, a worked numeric workflow example with journal entries, and design insights. If the user provides their own reference report, match or beat that one instead.
+引导 agent 分析源代码仓库（整体或部分）并撰写可读的设计研究报告。质量标准：实体总表（每行一句话用途）、ASCII 实体关系图、逐表字段拆解（含通俗含义）、状态机、带会计分录的完整数字示例、设计洞察。若用户提供了自己的参考报告，则以匹配或超越该报告为准。叙述风格固定为数据模型优先（表驱动）：先表总览，再核心概念（心智模型：数据对象与表、状态分层、流转驱动），再关系（关联键 + 含义），再逐表字段，再工作流（= 表操作序列：读表、关联、计算、写回），设计洞察收尾。完整样张见 `references/sample-report.md`。
 
-## Principles (non-negotiable)
+## 原则（不可妥协）
 
-- **Plain language, reader first.** Straight-forward terms; if a concept is hard, give a concrete example. Understanding is the goal, not exhaustive coverage. Do not overcomplicate.
-- **No unexplained acronyms.** Every acronym is expanded at first use as "full name (acronym)" — e.g. 物料申请（MR, Material Request）、采购订单（PO, Purchase Order）— before any bare use. Domain jargon the code uses (MR, PO, GL) is the worst offender; never assume the reader knows it. After expansion, reusing the acronym is fine.
-- **Cold-reader principle.** The target reader is a developer who has never touched this codebase and may not know the domain — the report must be self-contained and understandable in one cold pass. Test every section against: "can someone who cannot open the code follow this?" If a term, identifier, or mechanic needs code knowledge to follow, gloss it, explain it, or cut it. The ultimate test: a cold reader could reimplement the design from the report alone.
-- **No fabrication.** Every entity, field, and workflow claim must be verified against the code. Anything not confirmed from source is marked `⚠️ UNVERIFIED` — never invented.
-- **Logic-first narrative; citations are evidence, not content.** Workflow steps are described as design logic — what happens, when, why, in what order, in business terms. Function names are how you verified the logic during research, not what the reader needs: verification is a research-process gate, not report content. Produce an evidence appendix (trigger point → function mapping, labeled "验证依据 / evidence — 不必读") only when the user explicitly asks for auditability; otherwise omit it. Per entity: cite the schema definition file path. No line numbers (they rot). The reading path is not a code walkthrough: no function internals, SQL constructs (subqueries, exists), iteration/dimension mechanics, or file-scoped implementation detail in prose — say what happens and why in business terms; a sentence that needs code knowledge to parse goes to the appendix or gets rewritten.
-- **Language.** Match the language of the user's request (Chinese request → Chinese report, English request → English report). The skill instructions themselves are always English; only the produced report follows the request language.
+- **通俗语言，读者优先。** 用直白的词；概念难懂就给具体例子。目标是理解，不是穷尽覆盖。不要过度复杂化。
+- **不出现未解释的缩写。** 每个缩写首次出现时展开为"全称（缩写）"，例如 物料申请（MR, Material Request）、采购订单（PO, Purchase Order），之后才能单独使用。代码里的领域黑话（MR、PO、GL）是最严重的违规项；永远不要假设读者知道。展开一次后，后续可复用缩写。
+- **冷读者原则。** 目标读者是从未接触过该代码库的开发者，可能也不懂该领域；报告必须自包含，冷读者一遍读懂。用这个标准检验每一节："一个打不开代码的人能跟上吗？"如果某个术语、标识符或机制需要代码知识才能理解，就解释它、淡化它或删掉它。终极检验：冷读者仅凭报告就能重新实现该设计。
+- **不编造。** 每个实体、字段、工作流论断都必须对照代码验证。凡未经源码确认的内容，标注 `⚠️ UNVERIFIED`，绝不虚构。
+- **逻辑优先的叙述；引用是证据，不是内容。** 工作流步骤用设计逻辑描述：发生了什么、何时、为什么、什么顺序，用业务语言。函数名是你研究时验证逻辑的手段，不是读者需要的内容：验证是研究过程的关卡，不是报告内容。仅当用户明确要求可审计性时，才产出证据附录（触发点 → 函数映射，标注"验证依据 / evidence（不必读）"）；否则省略。每个实体引用其 schema 定义文件路径。不写行号（会腐烂）。阅读路径不是代码走读：正文不出现函数内部实现、SQL 结构（子查询、exists）、迭代/维度机制、文件级实现细节；用业务语言说发生了什么、为什么；需要代码知识才能读懂的句子，要么改写，要么放进附录。
+- **语言。** 报告语言跟随用户请求语言（中文请求 → 中文报告，英文请求 → 英文报告）。技能指令本身为中文；只有产出的报告跟随请求语言。
 
-## Inputs
+## 输入
 
-- **Repo path** — local directory, or a clone URL (clone to a temp dir first).
-- **Optional: domain/focus hint** — e.g. "expense reimbursement", "billing", "auth", "the payment flow".
-- **Optional: output dir** — default: `<repo>-design-report/` next to the repo (ask only if ambiguous).
-- **Optional: reference report** — path or URL to a sample design report the output should match or beat in quality (e.g. the user's own research report on a similar system). It sets a quality bar, not an outline contract — see §6 for what the diff rule covers. If none is given, the quality bar described in the Overview applies.
+- **仓库路径**：本地目录，或 clone URL（先 clone 到临时目录）。
+- **可选：领域/关注点提示**：例如 "费用报销"、"计费"、"认证"、"支付流程"。
+- **可选：输出目录**：默认是仓库旁的 `<repo>-design-report/`（仅在歧义时询问）。
+- **可选：参考报告**：示例设计报告的路径或 URL，输出应匹配或超越其质量（例如用户对类似系统的研究报告）。它设定质量标杆，不是大纲契约，见 §6 的 diff 规则。若未提供，以文件开头描述的质量标准为准。
 
-## Modes
+## 模式
 
-- **Domain deep-dive (default)** — analyze one domain to full depth, like the Frappe expense-claim reference report.
-- **Whole-repo survey** — map all major domains first, then deep-dive one domain and summarize the rest, or deep-dive several (ask the user which). Multi-domain assembly: each deep-dived domain gets its own detail + workflow sections under a domain index in §1; non-deep-dived domains get one-liners in §1.
+- **领域深潜（默认）**：将一个领域分析到完整深度。
+- **全仓库概览**：先映射所有主要领域，然后深潜一个领域并概述其余，或深潜多个（询问用户选哪个）。多领域组装：每个深潜领域在 §1 的领域索引下有自己的详情 + 工作流章节；未深潜的领域在 §1 中一句话带过。
 
-If the user's intent is not obvious, ask which mode.
+若用户意图不明显，询问用哪种模式。
 
-## Workflow
+## 工作流
 
-### 1. Scope
+### 1. 范围
 
-1. Determine mode (ask if unclear; whole-repo is only worth it for small/medium repos).
-2. **Domain mode, no focus given:** discover candidate domains from code entry points (routes/controllers/service modules/README/module dirs — see analysis-playbook.md §3), present a shortlist with a recommendation, and ask the user to pick (or approve the recommendation). Do not start a deep-dive before the domain is chosen.
-3. **Whole-repo mode:** same discovery, show the domain map, ask which domains to deep-dive.
+1. 确定模式（不清楚就问；全仓库模式只对中小仓库值得）。
+2. **领域模式，未给关注点：** 从代码入口点发现候选领域（路由/控制器/服务模块/README/模块目录，见 analysis-playbook.md §2），给出候选清单和推荐，请用户选择（或批准推荐）。领域选定前不要开始深潜。
+3. **全仓库模式：** 同样做发现，展示领域地图，询问深潜哪些领域。
 
-### 2. Setup
+### 2. 准备
 
-Create the output dir `<out>/` for the final report. Optional `<out>/work/` for draft artifacts — use it only when a long session risks context loss or the user asks for intermediate records; do not persist drafts for their own sake.
+创建输出目录 `<out>/` 存放最终报告。可选 `<out>/work/` 存放草稿产物；仅当长会话有上下文丢失风险或用户要求中间记录时使用；不要为了保留而保留草稿。
 
-### 3. Discovery (optional drafts → `work/`)
+### 3. 发现（可选草稿 → `work/`）
 
-1. **Framework orientation** — tech stack, and where schema definitions live (analysis-playbook.md §1).
-2. **Domain map** — candidate domains with entry points (optionally save to work/domain-map.md).
-3. **Entity inventory** — every entity/table in scope, one-line purpose each (optionally save to work/entities.md). This becomes the purpose overview table in the report.
-4. **Spine workflow** — the domain's main business flow traced end-to-end (e.g. expense: request → approval (approver may cut amounts) → advance offset → payment → posting). Entities the spine touches = core entities. Everything else is peripheral.
+1. **框架定位**：技术栈，以及 schema 定义在哪里。
+2. **领域地图**：候选领域及入口点（可选保存到 work/domain-map.md）。
+3. **实体清单**：范围内每个实体/表，一句话用途（可选保存到 work/entities.md）。这成为报告中的用途总表。
+4. **脊柱工作流**：领域的主业务流端到端追踪（例如 报销：申请 → 审批（审批人可砍价）→ 借款冲销 → 支付 → 入账）。脊柱触及的实体 = 核心实体。其余都是外围。
 
-### 4. Deep-dive per core entity
+### 4. 每个核心实体深潜
 
-1. Pull the **full schema definition from source** (never from usage alone).
-2. Extract fields + meanings: name, type, required/read-only, what it means, **who writes it** (human / system write-back), formula if any.
-3. Note relationships: reference fields, parent-child subtables, mapping tables.
-4. Note **design intent**: why this entity exists, what it represents, what it implies about the system's design (e.g. "the advance request has no exchange-rate field — the rate exists only on the payment entry, because the rate becomes a fact at the moment of payment").
-5. Optionally save as a field-table draft (work/entity-<name>.md) when persistence helps.
+1. 从源码拉取**完整 schema 定义**（绝不只从使用处推断）。
+2. 提取字段 + 含义：名称、类型、必填/只读、含义、**谁写它**（人工 / 系统写回）、公式（如有）。
+3. 记录关系：引用字段、父子子表、映射表。
+4. 记录**设计意图**：这个实体为什么存在、代表什么、对系统设计意味着什么（例如 "借款申请没有汇率字段，汇率只存在于付款单上，因为汇率在付款那一刻才成为事实"）。
+5. 可选：当持久化有帮助时，保存为字段表草稿（work/entity-<name>.md）。
 
-Peripheral entities: one-line purpose only — no field tables (core-path rule). Deprecated/dead entities (only migration/back-compat references, no live path): omit entirely — never mention them anywhere (only exception: one sentence of old-vs-new contrast in a design insight that explains the current structure's shape). Legacy-but-live code paths: one paragraph max, only when they change what the reader would reimplement (see analysis-playbook.md §2).
+外围实体：只给一句话用途，不给字段表（核心路径规则）。废弃/死亡实体（只有迁移/向后兼容引用，无活跃路径）：完全省略，任何地方都不提（唯一例外：在设计洞察中用一句新旧对比解释当前结构的形状）。遗留但活跃的代码路径：最多一段，仅当它改变读者需要重新实现的内容时（见 analysis-playbook.md §1）。
 
-### 5. Workflow tracing
+### 5. 工作流追踪
 
-For the spine workflow, trace step by step: trigger → function(s) → validations → data writes (which table, which fields) → state transitions → side effects (optionally save to work/workflow-<domain>.md). Extract:
+对脊柱工作流逐步追踪：触发 → 函数 → 校验 → 数据写入（哪个表、哪些字段）→ 状态转换 → 副作用（可选保存到 work/workflow-<domain>.md）。每步同时提取**表操作**：读哪张表、按什么键关联、算什么、写回哪个表的哪些字段。提取：
 
-- **State machines** — submit states, approval states, derived display states, with transition rules (e.g. `docstatus: Draft(0) → Submitted(1) → Cancelled(2)`).
-- **Formulas** — exact computations from code (totals, tax, exchange gain/loss), with the function that computes them.
-- **Write-back flows** — which entity writes which fields on other entities when (e.g. expense claim submit → employee_advance.claimed_amount += allocated).
-- **Worked example (mandatory)** — a realistic scenario run through the whole workflow with concrete numbers at every step: inputs → computed values → resulting row writes → journal entries if the domain is accounting. Verify the arithmetic with a script (e.g. python) — never hand-calculate. Presentation: the header says at most "数字已用脚本验证" — never cite the script's path or run command, never reference work/ files; formulas in the example are plain math (120,000 ÷ 12 = 10,000), not code syntax (flt(...)).
+- **状态机**：提交状态、审批状态、派生显示状态，含转换规则（例如 `docstatus: Draft(0) → Submitted(1) → Cancelled(2)`）。
+- **公式**：来自代码的精确计算（合计、税、汇兑损益），含计算函数。
+- **写回流**：哪个实体在何时写其他实体的哪些字段（例如 报销单提交 → employee_advance.claimed_amount += allocated）。
+- **完整示例（强制）**：一个真实场景走完全流程，每步带具体数字：输入 → 计算值 → 结果行写入 → 会计分录（若领域涉及会计）。用脚本（如 python）验证算术，绝不手算。呈现方式：标题最多写"数字已用脚本验证"；绝不引用脚本路径或运行命令，绝不引用 work/ 文件；示例中的公式是普通数学（120,000 ÷ 12 = 10,000），不是代码语法（flt(...)）。
 
-### 6. Assemble the final report
+### 6. 组装最终报告
 
-Follow `references/report-template.md` (canonical skeleton). Deviate from the template only with explicit justification. The three mandatory sections from the principles are: entities + relationships + design intent, persistent data structures, and core workflows with examples.
+遵循 `references/report-template.md`（标准骨架）。偏离模板必须有明确理由。组装前先读 `references/sample-report.md` 的完整样张，风格与质量标准以此为准。原则中三个必选章节：实体 + 关系 + 设计意图、持久化数据结构、带示例的核心工作流。
 
-If a reference report was provided (user-supplied or the built-in example): before assembling, diff the planned outline against the reference section-by-section — **canonical sections only**: anything the reference covers *within the template's §1-§6 sections* that the report doesn't must either be covered or explicitly justified as dropped. Reference content outside the canonical skeleton (e.g. intro/scope, patterns/next-steps appendices) is not binding — extra sections in the reference do not create obligations, never copy them just for format consistency. The reference sets a quality bar, not an outline contract.
+若提供了参考报告（用户提供或内置示例）：组装前，逐节对比计划大纲与参考报告，**仅限标准骨架章节**：参考报告在模板 §1-§6 范围内覆盖而本报告未覆盖的内容，必须覆盖或明确说明为何放弃。标准骨架之外的参考内容（如引言/范围、模式/下一步附录）不构成义务；参考报告中的额外章节不要为了格式一致而照抄。参考报告设定质量标杆，不是大纲契约。
 
-No author-facing meta advice in domain sections: 借鉴方向 / "patterns worth copying" / lessons-for-the-author boxes are dropped entirely — the report explains the system, it doesn't coach the author.
+领域章节中不出现面向作者的元建议：借鉴方向 / "patterns worth copying" / 给作者的教训框一律删除；报告解释系统，不指导作者。
 
-### 7. Verify (gate — do not output before passing)
+**人味化（强制，验证前）：** 草稿组装完成后，加载 humanizer 技能，仅对散文段落运行（绝不处理表格、代码块或数字），使用 embedded 模式。逐条审查其改动：保留删废话的改动，回退任何削弱技术精度或改变领域术语含义的改动。啰嗦可以接受；目标是自然语言中把想法讲清楚，不是压缩。中文报告还要清除 report-template.md 风格规则一节列出的中文 AI 腔。如果草稿读起来仍像聊天机器人写的，说明这一步没做。
 
-- Every field in the report exists in the cited schema file (re-read and spot-check).
-- Every workflow step was verified against a real function during research (spot-check existence in source).
-- Formulas re-derived from code, arithmetic script-checked.
-- Unverified items carry `⚠️ UNVERIFIED`.
-- The worked example is present, and its arithmetic was verified by running a script (python or equivalent) — no script run, no example, not done.
-- Every entity in scope has either a field table or an explicit peripheral one-liner — no orphans.
-- Mandatory sections (entity map, entity relationships, entity detail, workflows, state machines) all present — no silent deviations.
-- Every design-insight paragraph cites its supporting evidence (≥2 code-grounded points).
-- Prose is plain language: short sentences, no buzzwords or filler, every domain term explained once at first use; every acronym expanded as "full name (acronym)" at first use — no bare acronym in the reading path before its expansion.
-- Humanizer pass done: all prose paragraphs (never tables/code/numbers) were processed with the humanizer skill, and each of its changes was reviewed — fluff cuts kept, any change that weakens technical precision or alters a domain term's meaning reverted.
-- Every summary/quote-box claim is consistent with the detail sections — exceptions stated, no overgeneralization.
-- No code walkthrough in the reading path: unglossed identifiers, function names with file references, SQL constructs, and iteration/mechanics detail appear only in the evidence appendix — prose that needs code knowledge to parse is a rewrite.
-- Cold-reader pass done: the final draft was read top-to-bottom as a reader who cannot open the code; anything requiring code knowledge to follow was glossed, explained, or removed.
+### 7. 验证（关卡，未通过不得输出）
 
-### 8. Output
+- 报告中的每个字段都存在于所引用的 schema 文件中（重读并抽查）。
+- 每个工作流步骤在研究阶段对照真实函数验证过（在源码中抽查存在性）。
+- 每个工作流步骤可压缩为 读/关联/计算/写回 的表操作序列。
+- 公式从代码重新推导，算术经脚本校验。
+- 未验证项带 `⚠️ UNVERIFIED`。
+- 完整示例存在，且其算术经运行脚本（python 或等价物）验证；没跑脚本就没有示例，不算完成。
+- 范围内的每个实体要么有字段表，要么有明确的外围一句话；无孤儿。
+- 必选内容（实体总表、核心概念、实体关系、表字段详解、工作流含状态机）全部存在；无静默偏离。
+- 核心概念节回答了三个问题：核心数据对象与表的映射（有没有键值/子表/无表例外）、状态由谁管（预置 vs 可配置 vs 业务字段）、状态怎么流转（驱动方 + 规则存放处；有流程引擎/工作流则字段 + 配置表 + 驱动方都说清）。
+- 每个设计洞察段落引用其支持证据（≥2 个基于代码的点）。
+- 正文是通俗语言：短句、无套话废话、每个领域术语首次出现时解释一次；每个缩写首次出现时展开为"全称（缩写）"；阅读路径中不得出现未展开的裸缩写。
+- 按 §6 完成人味化：确实加载并运行了 humanizer 技能，仅处理散文段落（绝不处理表格/代码/数字）；逐条审查改动，保留删废话，回退削弱精度或改变领域术语含义的改动。抽查：把最终报告大声读一遍；任何一句像聊天机器人写的，都要重写。
+- 每个摘要/引用框论断与详情章节一致；例外已说明，无过度泛化。
+- 阅读路径无代码走读：未解释的标识符、带文件引用的函数名、SQL 结构、迭代/机制细节只出现在证据附录；需要代码知识才能读懂的正文是重写。
+- 冷读者检查完成：以打不开代码的读者身份从头到尾读最终稿；任何需要代码知识才能理解的内容都已解释、淡化或删除。
 
-- Final report: `<out>/<domain>-design-report.md` (or `<repo>-design-report.md` for whole-repo). The final report is the single consolidated, self-contained deliverable.
-- If created, drafts stay in `<out>/work/` — work products, not deliverables; don't polish them.
-- Publish to Feishu only if the user explicitly asks (e.g. via lark-cli).
+### 8. 输出
 
-## References
+- 最终报告：`<out>/<domain>-design-report.md`（全仓库模式为 `<repo>-design-report.md`）。最终报告是唯一整合、自包含的交付物。
+- 若创建了草稿，保留在 `<out>/work/`，是工作产物，不是交付物，不要润色。
+- 仅当用户明确要求时（例如通过 lark-cli）才发布到飞书。
 
-- `references/report-template.md` — canonical report skeleton, section guidance, and style rules with mini examples. **Read before assembling the final report.**
-- `references/analysis-playbook.md` — framework-agnostic discovery: finding schema definitions, entities, entry points, and tracing workflows; worked-example construction; anti-patterns. **Read during discovery and deep-dive.**
+## 参考
+
+- `references/report-template.md`：标准报告骨架（数据模型优先结构）、章节指引、带小示例的风格规则。**组装最终报告前必读。**
+- `references/sample-report.md`：数据模型优先风格的完整报告样张（借款+报销微型领域，5 张表）。**组装前阅读，作为风格与质量标准的具象参照。**
+- `references/analysis-playbook.md`：与框架无关的发现方法：找 schema 定义、实体、入口点、追踪工作流；完整示例构建；反模式。**发现与深潜阶段阅读。**

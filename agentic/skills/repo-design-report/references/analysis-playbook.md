@@ -1,88 +1,70 @@
-# Analysis Playbook — repo-design-report
+# 分析手册：repo-design-report
 
-Framework-agnostic heuristics for digging through an unfamiliar codebase: finding schema definitions, mapping domains, tracing workflows, and building verified worked examples. Read this during discovery and deep-dive; do not attempt to enumerate every file — target the spine.
+与框架无关的探索启发式方法：在陌生代码库中找 schema 定义、映射领域、追踪工作流、构建已验证的完整示例。发现与深潜阶段阅读。不要试图穷举每个文件，瞄准脊柱。
 
-## Table of Contents
+## 目录
 
-1. [Framework orientation: where schemas live](#1-framework-orientation-where-schemas-live)
-2. [Entity discovery](#2-entity-discovery)
-3. [Entry points and domain map](#3-entry-points-and-domain-map)
-4. [Spine workflow identification](#4-spine-workflow-identification)
-5. [Tracing techniques](#5-tracing-techniques)
-6. [Worked example construction](#6-worked-example-construction)
-7. [Anti-patterns](#7-anti-patterns)
+1. [实体发现](#1-实体发现)
+2. [入口点与领域地图](#2-入口点与领域地图)
+3. [脊柱工作流识别](#3-脊柱工作流识别)
+4. [追踪技巧](#4-追踪技巧)
+5. [完整示例构建](#5-完整示例构建)
+6. [反模式](#6-反模式)
 
-## 1. Framework orientation: where schemas live
+## 1. 实体发现
 
-First 15 minutes of any repo: identify the stack and where table definitions live. Schema sources are the **authoritative** place for fields — always prefer them over usage sites.
+- 找到 schema 来源，枚举实体。schema 来源是字段的**权威**位置；始终优先于使用处。
+- 按名称盘点：按领域前缀分组（例如 `expense_claim`、`expense_claim_type`、`expense_claim_advance`、`employee_advance` 明显是一族）。
+- 每个实体一句话用途：从 (a) schema 文件自带的 description 字段（若有）、(b) 文件名、(c) 快速扫一眼关键字段、(d) 在工作流中的使用推导。此阶段不要完整读每个实体。
+- **盘点时标记废弃/死亡结构。** 名称有暗示（`legacy_`、`deprecated`、旧版本前缀），迁移/升级补丁可确认。通过 grep 谁引用了该实体或代码路径来验证：
+  - 只有迁移补丁 / 升级脚本 / 向后兼容垫片引用它，没有活跃运行时路径 → **死亡**。报告中**完全**省略：用途表无行、字段表无行、覆盖边界不提及。唯一例外：当它解释*当前*结构为何如此时，在设计洞察里写一句新旧对比；绝不描述旧结构本身。
+  - 仍在活跃运行时路径上（无条件执行的旧控制器、实际运行的向后兼容分支、双控制器过渡）→ **遗留但活跃**，不是废弃。仅当它改变读者需要重新实现的内容时保留（例如双重校验副作用）；最多一段，不给字段表。
+- **框架注入的系统列记一次**（例如 Frappe 的 `parent/parenttype/parentfield/idx`；Rails 时间戳），之后字段表中忽略。
+- **注意动态字段**（例如 ERPNext Accounting Dimension 运行时注入字段）。记录机制，不枚举注入的字段。
 
-| Stack | Where table/schema definitions live |
-|---|---|
-| Django | `*/models.py`, migrations `*/migrations/*.py` |
-| Rails | `db/schema.rb`, `db/migrate/*.rb` |
-| Java Spring | `@Entity` classes, `resources/db/migration/*` (Flyway/Liquibase) |
-| Go | `*_model.go` / GORM structs with `gorm:"column:..."` tags, migration files |
-| TypeScript | `prisma/schema.prisma`, TypeORM `@Entity()` decorators, Drizzle schema files |
-| Python (SQLAlchemy) | `models/*.py`, `__tablename__` |
-| Frappe (Python) | `*/doctype/<name>/<name>.json` (fields), `<name>.py` (business logic) |
-| Unknown | grep for `CREATE TABLE`, `@Entity`, `__tablename__`, `schema.rb`, `migrations/` dirs |
+## 2. 入口点与领域地图
 
-Detection shortcuts: read README + `package.json`/`pyproject.toml`/`go.mod`/`pom.xml`, then confirm with one grep for table-definition patterns.
+- 入口点：Web 路由/控制器、API 端点、CLI 命令、定时任务、消息消费者、README 功能列表、`docs/`。
+- 按路径前缀 / 模块 / 命名把入口点分组为候选领域（例如 `/api/expense/*`、`payroll/`、`hr/`）。
+- 领域地图 = 候选领域列表，含入口点和大致规模（文件数）。这是领域模式下展示给用户的候选清单。
+- 不确定"最核心领域"时的推荐启发：被最多其他领域引用的领域（跟随引用字段），或生命周期最丰富的那个。
 
-## 2. Entity discovery
+## 3. 脊柱工作流识别
 
-- Find the schema source (per framework table above) and enumerate entities.
-- Name-based inventory: group files by domain prefix (e.g. `expense_claim`, `expense_claim_type`, `expense_claim_advance`, `employee_advance` are clearly one family).
-- One-line purpose per entity: derive from (a) the schema file's own description field if present, (b) the file name, (c) one glance at its key fields, (d) its usage in the workflow. Do not read every entity fully at this stage.
-- **Flag deprecated/dead structures during inventory.** Names hint at it (`legacy_`, `deprecated`, old-version prefixes), migration/upgrade patches confirm it. Verify by grepping who references the entity or code path:
-  - Only migration patches / upgrade scripts / back-compat shims reference it, no live runtime path → **dead**. Omit from the report **entirely**: no purpose-table row, no field-table row, no coverage-boundary mention. Only exception: one sentence of old-vs-new contrast inside a design insight when it explains why the *current* structure is shaped this way — never a description of the old structure itself.
-  - Still on a live runtime path (old controller executed unconditionally, back-compat branch that actually runs, dual-controller transitions) → **legacy but live**, not deprecated. Keep it only when it changes what the reader would reimplement (e.g. the double-validation side effect); one paragraph max, no field tables.
-- Note **framework-injected system columns** once (e.g. Frappe's `parent/parenttype/parentfield/idx`; Rails timestamps) and then ignore them in field tables.
-- Note **dynamic fields** (e.g. ERPNext Accounting Dimension injects fields at runtime). Document the mechanism, don't enumerate the injected fields.
+对选定领域，找到其主文档/实体的生命周期：
 
-## 3. Entry points and domain map
+1. 找到主实体的状态/状态字段（例如 `docstatus`、`status`、`approval_status`）。grep 它的赋值处。
+2. 跟随每个状态转换到其处理器（submit/approve/pay/cancel 函数）。
+3. 追踪每个处理器写什么：校验、字段更新、子表变更、其他实体（写回）、副作用记录。
+4. 脊柱 = 端到端生命周期链（例如 报销：Draft → 提交 → 审批 → 借款冲销 → 支付 → 入账）。触及的实体 = 核心集合。
 
-- Entry points: web routes/controllers, API endpoints, CLI commands, scheduled jobs, message consumers, README feature lists, `docs/`.
-- Group entry points into candidate domains by path prefix / module / naming (e.g. `/api/expense/*`, `payroll/`, `hr/`).
-- The domain map = list of candidate domains with their entry points and rough size (file counts). This is the shortlist shown to the user in domain mode.
-- Recommendation heuristic for "most central domain" when unsure: the domain whose entities are referenced by the most other domains (follow reference fields), or the one with the richest lifecycle.
+## 4. 追踪技巧
 
-## 4. Spine workflow identification
+- **谁写一个字段**：跨代码库 grep 字段名；区分人工输入（schema `read_only: false`、表单脚本、UI 的 `set_value`）与系统写回（校验/提交钩子中计算、账本汇总）。
+- **公式**：对聚合字段（`total_*`、`grand_total`、`tax_amount`...），找到计算函数（通常叫 `set_*_amounts`、`calculate_*`），从代码复制精确公式，再用平实语言表达。
+- **状态机**：grep 状态字段的可能值及每个值的赋值处；寻找推导函数（把 `docstatus` + 支付历史组合起来的 `get_status()` 是派生状态，按派生状态描述）。
+- **函数是面包屑，不是内容。** 用函数名追踪和验证逻辑，但报告用业务语言叙述设计逻辑。研究时收集触发点 → 函数映射以验证论断；叙述中不出现函数名。证据附录仅当用户要求可审计性时出现。机制同理：SQL 结构、迭代结构、维度处理、函数内部实现。用它们追踪，用业务语言叙述，细节只在生成附录时放入附录。
+- **写回流**：当实体 A 的提交处理器更新实体 B 时，就是写回（例如 报销单提交 → `employee_advance.claimed_amount += allocated`）。这些是报告的数据流事实，明确收集。
+- **账本/咨询表**：有些表是事件账本，不是会计（例如 借款付款账本记录 Submit/Adjustment 事件，是所有写回金额的来源）。识别哪些表是其他表的只读事实来源。
+- **测试是地面真相**：仓库的测试编码了预期行为（金额、状态转换、错误用例）。读领域的测试文件确认；它们比追踪 UI 更快更可靠。
+- **不要过度验证**：公式/流程一旦从代码 + 测试确认，就继续。只有真正无法验证的项才标 `⚠️ UNVERIFIED`。
 
-For the chosen domain, find its main document/entity's lifecycle:
+## 5. 完整示例构建
 
-1. Find the status/state field(s) on the main entity (e.g. `docstatus`, `status`, `approval_status`). Grep its assignments.
-2. Follow each state transition to its handler (submit/approve/pay/cancel functions).
-3. Trace what each handler writes: validations, field updates, subtable changes, other entities (write-backs), side-effect records.
-4. The spine = the end-to-end lifecycle chain (e.g. expense: Draft → submit → approval → advance offset → payment → posting). Entities touched = core set.
+目的：让读者精确看到系统在真实案例上的行为，从而能重新实现设计。
 
-## 5. Tracing techniques
+1. 选一个覆盖正常路径**加一个有趣分支**的场景（砍价审批、多币种、部分分配、取消）。
+2. 沿脊柱工作流逐步走查场景。每一步：输入 → 计算值 → 行写入（哪个表/字段）→ 状态变化。
+3. 如果领域涉及复式记账（会计），展示会计分录：每行的借/贷科目与金额，以及不变量检查（借方合计 = 贷方合计）。
+4. **每个数字用脚本验证**（python 一行即可）。绝不手算；算术错误会毁掉报告的可信度。
+5. 示例保持一分钟内读完；细节放表格/代码块，不放散文。
 
-- **Who writes a field**: grep the field name across the codebase; separate human input (schema `read_only: false`, form scripts, `set_value` from UI) from system write-back (computed in validation/submit hooks, ledger summaries).
-- **Formulas**: for aggregate fields (`total_*`, `grand_total`, `tax_amount`...), find the compute function (often named `set_*_amounts`, `calculate_*`) and copy the exact formula from code, then express it in plain terms.
-- **State machines**: grep for the status field's possible values and where each is assigned; look for derivation functions (a `get_status()` that combines `docstatus` + payment history is a derived state — describe it as such).
-- **Functions are breadcrumbs, not content.** Use function names to trace and verify logic, but the report narrates design logic in business terms. Collect the trigger-point → function mapping during research to verify claims; keep names out of the narrative. An evidence appendix appears only when the user asks for auditability. Same for mechanics: SQL constructs, iteration structure, dimension handling, function internals — trace with them, narrate in business terms, park the detail in the appendix only if one is being produced.
-- **Write-back flows**: when entity A's submit handler updates entity B, that's a write-back (e.g. expense claim submit → `employee_advance.claimed_amount += allocated`). These are the report's data-flow facts — collect them explicitly.
-- **Ledger/advisory tables**: some tables are event ledgers, not accounting (e.g. the advance-payment ledger records Submit/Adjustment events and is the source for all write-back amounts). Identify which tables are read-only sources of truth for others.
-- **Tests as ground truth**: the repo's tests encode expected behavior (amounts, state transitions, error cases). Read the domain's test files for confirmation — they are faster and more reliable than tracing UI.
-- **Don't over-verify**: once a formula/flow is confirmed from code + tests, move on. Only genuinely unverifiable items get `⚠️ UNVERIFIED`.
+## 6. 反模式
 
-## 6. Worked example construction
-
-Purpose: show the reader exactly how the system behaves on a realistic case, so they could reimplement the design.
-
-1. Pick a scenario covering the normal path **plus one interesting branch** (a cut-down approval, multi-currency, partial allocation, cancellation).
-2. Walk the scenario step-by-step through the spine workflow. At each step: inputs → computed values → row writes (which table/fields) → state change.
-3. If the domain involves double-entry (accounting), show the journal entries: debit/credit lines with accounts and amounts, and the invariant check (sum of debits = sum of credits).
-4. **Verify every number with a script** (python one-liner is fine). Never hand-calculate — arithmetic errors destroy report credibility.
-5. Keep the example short enough to read in one minute; put detail in tables/code blocks, not prose.
-
-## 7. Anti-patterns
-
-- **Don't trust comments/README over code.** Docs lie; the schema and handlers don't.
-- **Don't infer a field's meaning from one usage.** Check the schema definition + at least two usages.
-- **Don't document framework machinery as domain design.** System columns and framework plumbing get one sentence each, then disappear.
-- **Don't enumerate.** If there are 30 similar entities, document the pattern once and list the rest in a table row.
-- **Don't read linearly.** Grep, jump, follow references. Reading files in order wastes context on noise.
-- **Don't dump identifiers.** The report is design, not a code map. Function names stay out of the narrative (an evidence appendix exists only when the user asks for it); the narrative stays logic-first.
-- **Don't guess at design intent.** Insights must be grounded in what the code does; a claim like "X is essentially Y" needs at least two pieces of supporting evidence.
+- **不要相信注释/README 胜过代码。** 文档会撒谎；schema 和处理器不会。
+- **不要从一次使用推断字段含义。** 检查 schema 定义 + 至少两处使用。
+- **不要把框架机制当领域设计记录。** 系统列和框架管道各一句话，然后消失。
+- **不要穷举。** 如果有 30 个相似实体，把模式记录一次，其余列在表格行里。
+- **不要线性阅读。** Grep、跳跃、跟随引用。按顺序读文件是在用上下文换噪音。
+- **不要倾倒标识符。** 报告是设计，不是代码地图。函数名不进入叙述（证据附录仅当用户要求时存在）；叙述保持逻辑优先。
+- **不要猜测设计意图。** 洞察必须基于代码实际行为；"X 本质上是 Y" 这类论断需要至少两个支持证据。
