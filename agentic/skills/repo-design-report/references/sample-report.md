@@ -94,23 +94,23 @@ Schema: sample/advance_settlement.json（样张为合成领域，仅演示引用
 
 ## 5. 核心工作流
 
-流程总览：借款 → 报销 → 审批（可砍价）→ 核销 → 付款。
+流程总览：先借款，再报销，然后审批（审批人可以砍价），核销借款，最后付款。
 
 1. **借款**
    业务：员工申请借款，公司放款。
-   表操作：写 advance（金额、状态）→ 状态 草稿→已借款。
+   表操作：写 advance 的金额和状态，状态从草稿改为已借款。
 2. **报销**
    业务：员工贴票填明细，每行是"哪类费用、申请多少"，可勾选"用借款付"。
-   表操作：写 expense_claim + expense_item 行 → 读明细行求和 → 写回 claim.total_amount。
+   表操作：写 expense_claim 和 expense_item 行，读明细行求和，把总额写回 claim.total_amount。
 3. **审批（可砍价）**
    业务：审批人逐行看明细，可把核定金额改小，总额跟着变。
-   表操作：逐行读 expense_item → 写 item.sanctioned_amount → 重算写回 claim.total_amount → 状态 已提交→已审批；驳回则回草稿。
+   表操作：逐行读 expense_item，写核定金额，重算总额写回 claim.total_amount，状态从已提交改为已审批；驳回则回到草稿。
 4. **核销**
    业务：付款前，把勾了"用借款付"的明细行冲销对应借款。
-   表操作：对每行借款类明细，写 advance_settlement（advance_id, claim_id, 金额=核定金额）→ 写回 advance.claimed_amount += 行金额。
+   表操作：对每行借款类明细，写一条 advance_settlement 记录（记下借款、报销单和核定金额），再把 advance.claimed_amount 加上行金额。
 5. **付款**
    业务：公司支付应付金额（总额 − 已核销）。
-   表操作：读 claim.total_amount、核销记录求和 → 写 claim.status = 已付款。
+   表操作：读 claim.total_amount，把核销记录求和，把 claim.status 改为已付款。
 
 状态机：
 
@@ -134,9 +134,9 @@ advance.status:        草稿 --放款--> 已借款 --(claimed_amount = amount)-
 
 ```
 明细：机票 1000（申请）、酒店 500（申请），机票勾选"用借款付"
-审批：机票 1000、酒店 400（砍 100）→ total_amount = 1000 + 400 = 1400
-核销：机票行冲销借款 → 核销记录写一行 800 → advance.claimed_amount = 800，剩余 0
-应付 = 1400 − 800 = 600 → 付款 600 → 报销单状态 = 已付款
+审批：机票 1000、酒店 400（砍 100），total_amount = 1000 + 400 = 1400
+核销：机票行冲销借款，核销记录写一行 800，advance.claimed_amount = 800，剩余 0
+应付 = 1400 − 800 = 600，付款 600，报销单状态改为已付款
 ```
 
 （本领域不涉及会计；若涉及，此处给出借/贷分录，并检查借方合计 = 贷方合计）
