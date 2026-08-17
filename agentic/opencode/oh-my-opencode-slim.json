@@ -1,42 +1,54 @@
 {
+  "$schema": "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json",
   "preset": "openai",
   "presets": {
     "openai": {
       "orchestrator": {
-        "model": "opencode-go/deepseek-v4-pro",
-        "skills": ["*"],
-        "mcps": ["context7", "grep_app"]
-        "variant": "high"
+        "model": "opencode-go/deepseek-v4-flash",
+        "variant": "max",
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*",
+          "!context7",
+          "!websearch"
+        ]
       },
       "oracle": {
-        "model": "opencode-go/glm-5.1",
-        "skills": ["simplify"],
+        "model": "opencode-go/deepseek-v4-flash",
+        "variant": "max",
+        "skills": [
+          "simplify"
+        ],
         "mcps": []
       },
       "librarian": {
         "model": "opencode-go/minimax-m2.7",
+        "variant": "max",
         "skills": [],
-        "mcps": ["context7", "grep_app"]
+        "mcps": [
+          "context7",
+          "grep_app"
+        ]
       },
       "explorer": {
         "model": "opencode-go/minimax-m2.7",
+        "variant": "max",
         "skills": [],
         "mcps": []
       },
       "designer": {
-        "model": "opencode-go/kimi-k2.5",
-        "variant": "medium",
-        "skills": ["agent-browser"],
+        "model": "opencode-go/minimax-m2.7",
+        "variant": "max",
+        "skills": [
+          "agent-browser"
+        ],
         "mcps": []
       },
       "fixer": {
         "model": "opencode-go/deepseek-v4-flash",
-        "variant": "high",
-        "skills": [],
-        "mcps": []
-      },
-      "council": {
-        "model": "opencode-go/kimi-k2.5",
+        "variant": "max",
         "skills": [],
         "mcps": []
       }
