@@ -1,6 +1,6 @@
 # 借款与报销 设计研究报告（样张）
 
-> 本文件是数据模型优先风格的完整样张，领域是合成的（员工借款 + 报销，5 张表），只演示风格与质量标准。真实报告中的 schema 路径、证据点等要素以实际项目为准。
+> 本文件是数据模型优先风格的完整样张，领域是合成的（员工借款 + 报销，5 张表），只演示风格与质量标准。真实报告中的证据点等要素以实际项目为准。
 
 ## 1. 核心实体与用途总表
 
@@ -90,8 +90,6 @@ employee ──< advance ──┐
 | claim_id | 来自哪张报销单（关联 expense_claim） |
 | amount | 本次冲销金额，系统写回 = 对应明细行的核定金额 |
 
-Schema: sample/advance_settlement.json（样张为合成领域，仅演示引用格式）
-
 ## 5. 核心工作流
 
 流程总览：先借款，再报销，然后审批（审批人可以砍价），核销借款，最后付款。
@@ -130,13 +128,37 @@ advance.status:        草稿 --放款--> 已借款 --(claimed_amount = amount)-
 
 **完整示例（数字已用脚本验证）**
 
-员工 A 借了 800 元，出差回来报销：
+员工 A 借了 800 元，出差回来报销。流程是：先借款，再报销，然后审批（审批人可以砍价），核销借款，最后付款。
 
+**第 1 步：保存报销单**
+
+```sql
+INSERT INTO expense_claim (id, employee_id, status) VALUES ('CLM-001', 'EMP-A', '草稿');
+INSERT INTO expense_item (claim_id, expense_type, amount, pay_from_advance) VALUES
+  ('CLM-001', '机票', 1000, 1),
+  ('CLM-001', '酒店', 500, 0);
 ```
-明细：机票 1000（申请）、酒店 500（申请），机票勾选"用借款付"
-审批：机票 1000、酒店 400（砍 100），total_amount = 1000 + 400 = 1400
-核销：机票行冲销借款，核销记录写一行 800，advance.claimed_amount = 800，剩余 0
-应付 = 1400 − 800 = 600，付款 600，报销单状态改为已付款
+
+**第 2 步：审批（砍价）**
+
+```sql
+UPDATE expense_item SET sanctioned_amount = 400 WHERE claim_id = 'CLM-001' AND expense_type = '酒店';
+UPDATE expense_claim SET total_amount = 1400, status = '已审批' WHERE id = 'CLM-001';
 ```
+
+**第 3 步：核销**
+
+```sql
+INSERT INTO advance_settlement (advance_id, claim_id, amount) VALUES ('ADV-001', 'CLM-001', 800);
+UPDATE advance SET claimed_amount = 800 WHERE id = 'ADV-001';
+```
+
+**第 4 步：付款**
+
+```sql
+UPDATE expense_claim SET status = '已付款' WHERE id = 'CLM-001';
+```
+
+应付 = 1400 − 800 = 600，付款 600。借款剩余 = 800 − 800 = 0，自动结清。
 
 （本领域不涉及会计；若涉及，此处给出借/贷分录，并检查借方合计 = 贷方合计）
