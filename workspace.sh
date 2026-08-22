@@ -72,6 +72,16 @@ if ismac; then
     done
 fi
 
+# shorten pwd in prompt when it's too long, cut at directory boundaries
+function __short_pwd() {
+    local p="${PWD/#$HOME/~}"
+    if [ ${#p} -gt 40 ]; then
+        printf '%s' "$p" | awk -F/ 'NF > 5 { print $1"/"$2"/"$3 "/.../" $(NF-1)"/"$NF; next } { print }'
+    else
+        echo "$p"
+    fi
+}
+
 gitps1=0
 if [ -f "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh" ]; then
     source "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh"
@@ -84,7 +94,7 @@ if [ $gitps1 -ne 1 ] && [ -d "/usr/local/etc/bash_completion.d" ]; then
 fi
 
 if [ $gitps1 -eq 1 ]; then
-    PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \w\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
+    PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \$(__short_pwd)\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
 fi
 
 if ismac; then
