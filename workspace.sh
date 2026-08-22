@@ -75,8 +75,13 @@ fi
 # shorten pwd in prompt when it's too long, cut at directory boundaries
 function __short_pwd() {
     local p="${PWD/#$HOME/~}"
-    if [ ${#p} -gt 40 ]; then
-        printf '%s' "$p" | awk -F/ 'NF > 5 { print $1"/"$2"/"$3 "/.../" $(NF-1)"/"$NF; next } { print }'
+    local branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    local total=${#p}
+    if [ -n "$branch" ]; then
+        total=$((total + ${#branch} + 3)) # +3 for " ()"
+    fi
+    if [ $total -gt 40 ]; then
+        printf '%s' "$p" | awk -F/ 'NF > 5 { print $1"/"$2"/"$3 "/.../" $(NF-1)"/"$NF; next } NF > 3 { print $1"/"$2 "/.../" $NF; next } { print }'
     else
         echo "$p"
     fi
