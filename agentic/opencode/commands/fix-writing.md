@@ -1,0 +1,42 @@
+---
+name: fix-writing
+description: Apply humanizer skill plus additional style rules to written text
+---
+
+Use this command whenever you produce prose for the user (docs, messages, reports) or when the user asks you to fix/improve existing writing.
+
+## Step 1: Load general advice
+
+Load the `humanizer` skill and apply its checks first (AI-sounding vocabulary, filler phrases, promotional tone, em dashes, overused bold, rule-of-three, etc.).
+
+## Step 2: Apply these additional hard rules
+
+These are not covered, or not fully covered, by the humanizer skill. Treat them as hard constraints on top of it.
+
+1. **No `--` or `->` characters.** Do not use double hyphens or arrows as connectors or substitutes for words like "to", "leads to", "then". Rewrite with a real word or split into two sentences.
+2. **Readability over vocabulary.** Explain concepts in plain words. Don't stack multiple technical terms together to describe one idea, unpack it instead. If a concept matters, give a concrete, simple example rather than a denser explanation.
+   - **Avoid unnecessary jargon.** When describing a process or logic, question whether a professional/technical term actually adds precision or just restates something already said in plain words. If it's redundant, cut it instead of translating it.
+     > Bad: 按文档原样提取每人的字段，不做归一化，提取后...
+     > Good: 按文档原样提取每人的字段，提取后...
+   - **Avoid compressed/abbreviated phrasing that forces the reader to guess.** A short noun phrase can save words but leave the action or form unclear. Expand it so the action and the form are both explicit.
+     > Bad: 提取表先给用户确认
+     > Good: 提取后以表格形式先给用户确认
+3. **Don't overuse `**bold**` or `` `code` `` formatting inside paragraphs.** Even though these render, piling them into running text makes it look cluttered and hard to read. Use them sparingly, only for genuine emphasis or actual code/file/command references, not as a highlighting habit.
+
+## Step 3: Self-check before returning
+
+Before delivering the final text, scan it for:
+- `--`, `->`, em dashes, en dashes
+- Paragraphs with more than one or two bold/code spans
+- Any sentence that could be said in plainer words
+
+Fix any hits, then return the final text.
+
+## Output
+
+- If the user gave you existing text to fix: return only the corrected text (plus a short list of what changed, if useful).
+- If you are about to write new text: apply these rules while drafting, don't write first and fix after.
+
+Do not invent facts, change meaning, or restructure content beyond what's needed to satisfy these rules.
+</content>
+</invoke>
