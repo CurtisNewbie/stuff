@@ -9,6 +9,8 @@ Use this command whenever you produce prose for the user (docs, messages, report
 
 Load the `humanizer` skill and apply its checks first (AI-sounding vocabulary, filler phrases, promotional tone, em dashes, overused bold, rule-of-three, etc.).
 
+Humanizer's signposting/filler list is English-focused (e.g. "let's dive in"). For Chinese text, also catch the equivalent openers: 核心来说、简单来说、说白了、一句话说 / 一句话总结 / 一句话带过 等. These add no information, drop them and start with the actual content.
+
 ## Step 2: Apply these additional hard rules
 
 These are not covered, or not fully covered, by the humanizer skill. Treat them as hard constraints on top of it.
