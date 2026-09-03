@@ -1595,6 +1595,23 @@ function fmt() {
     done
 }
 
+# requires: IntelliJ IDEA CE/Ultimate installed; style scheme at ~/exec/intellij-default-style.xml
+# (empty <code_scheme> = pure IntelliJ default Java style, headless via `idea format`)
+function javafmt() {
+    idea_bin="/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea"
+    style=~/exec/intellij-default-style.xml
+    if [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
+        "$idea_bin" format -s "$style" -m "*.java" -r . 2>/dev/null
+        echo "Formatted $(pwd) (java)"
+    fi
+    for d in $(ls);
+    do
+        if [ -f "$d/pom.xml" ] || [ -f "$d/build.gradle" ]; then
+            "$idea_bin" format -s "$style" -m "*.java" -r "$d" 2>/dev/null && echo "Formatted $d (java)"
+        fi
+    done
+}
+
 function build() {
     go build -o /dev/null ./...
 }
