@@ -1594,6 +1594,7 @@ function fmt() {
         fi
     done
 }
+export -f fmt
 
 # requires: IntelliJ IDEA CE/Ultimate installed; style scheme at ~/exec/intellij-default-style.xml
 # (empty <code_scheme> = pure IntelliJ default Java style, headless via `idea format`)
