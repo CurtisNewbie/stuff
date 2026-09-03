@@ -1611,6 +1611,7 @@ function javafmt() {
         fi
     done
 }
+export -f javafmt
 
 function build() {
     go build -o /dev/null ./...
