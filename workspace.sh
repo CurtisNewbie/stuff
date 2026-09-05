@@ -2370,13 +2370,13 @@ function occ() {
 }
 
 function ocweb() {
-    port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode web --hostname 0.0.0.0
-}
+    if [ -z "$OPENCODE_SERVER_PASSWORD" ]; then
+      echo "OPENCODE_SERVER_PASSWORD is required"
+      exit 0
+    fi
 
-function occweb() {
     port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode web --continue --hostname 0.0.0.0
+    OPENCODE_PORT="$port" opencode web --mdns
 }
 
 function oc() {
