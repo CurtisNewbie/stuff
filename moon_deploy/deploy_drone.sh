@@ -9,7 +9,6 @@ remote_script_path="~/services/${service}"
 os="linux"
 arch="amd64"
 build="${service}_build"
-pyscript="pyscript"
 dockerfile="./Dockerfile"
 # ---------
 
@@ -29,11 +28,6 @@ dockerfile="./Dockerfile"
     fi
 
     rsync -av -e ssh "./$build" "${remote}:${remote_build_path}"
-    if [ ! $? -eq 0 ]; then
-        exit -1
-    fi
-
-    rsync -av -e ssh "./$pyscript" "${remote}:${remote_script_path}"
     if [ ! $? -eq 0 ]; then
         exit -1
     fi
