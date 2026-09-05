@@ -2369,6 +2369,16 @@ function occ() {
     OPENCODE_PORT="$port" opencode --continue --port $port
 }
 
+function ocweb() {
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode web --hostname 0.0.0.0
+}
+
+function occweb() {
+    port="$(_oc_free_port)"
+    OPENCODE_PORT="$port" opencode web --continue --hostname 0.0.0.0
+}
+
 function oc() {
     port="$(_oc_free_port)"
     OPENCODE_PORT="$port" opencode --port $port
