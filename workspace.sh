@@ -184,10 +184,8 @@ alias gf="while ! git fetch; do sleep 0.3; done;"
 alias gp="git pull"
 # alias gm="git merge"
 alias gl="git log"
-alias gds="git diff -p --staged --stat -- . ':!*_test.go'"
-alias gd="git diff -p -- . ':!*_test.go'"
-alias gda="git diff -p --stat"
-alias gdsa="git diff -p --staged --stat"
+alias gd="git diff --diff-algorithm=histogram -p --stat"
+alias gds="git diff --diff-algorithm=histogram -p --staged --stat"
 # alias gbranch="git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:80)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias gshow="git show -p --stat"
 alias gpush="while ! git push; do sleep 0.3; done"
@@ -1594,6 +1592,25 @@ function fmt() {
         fi
     done
 }
+export -f fmt
+
+# requires: IntelliJ IDEA CE/Ultimate installed; style scheme at ~/exec/intellij-default-style.xml
+# (empty <code_scheme> = pure IntelliJ default Java style, headless via `idea format`)
+function javafmt() {
+    idea_bin="/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea"
+    style=~/exec/intellij-default-style.xml
+    if [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
+        "$idea_bin" format -s "$style" -m "*.java" -r . 2>/dev/null
+        echo "Formatted $(pwd) (java)"
+    fi
+    for d in $(ls);
+    do
+        if [ -f "$d/pom.xml" ] || [ -f "$d/build.gradle" ]; then
+            "$idea_bin" format -s "$style" -m "*.java" -r "$d" 2>/dev/null && echo "Formatted $d (java)"
+        fi
+    done
+}
+export -f javafmt
 
 function build() {
     go build -o /dev/null ./...
