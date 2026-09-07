@@ -8,7 +8,7 @@ This document records the setup and usage knowledge for the opencode configurati
 - Supports synchronization to the global opencode environment (~/.opencode/ and ~/.config/opencode/)
 
 **Main Components**:
-- AGENTS.md - agent configuration and user requirements
+- AGENTS.md - agent configuration and user requirements (use AGENTS_curr.md)
 - commands/ - custom command definitions
 - skills/ - custom agent skills
 - opencode.jsonc - opencode core configuration
@@ -125,58 +125,6 @@ npx skills add agent-browser -g -y
 
 ---
 
-## PDF 处理 (pdf)
-
-提供 PDF 文件的全套处理能力：提取文字/表格、创建新 PDF、合并/拆分文档、填写表单。
-
-### 依赖安装
-
-```bash
-# Python 库
-pip install pypdf pdfplumber reportlab
-
-# 命令行工具（macOS）
-brew install poppler qpdf
-
-# OCR 支持（可选）
-pip install pytesseract pdf2image
-```
-
-### 触发场景
-
-- 提取 PDF 文字或表格内容
-- 合并、拆分、旋转 PDF
-- 创建新 PDF 文档
-- 填写 PDF 表单
-
----
-
-## Word 文档处理 (docx)
-
-创建、编辑、分析 .docx 文件，支持追踪修改（Redlining）、批注、格式保留和文字提取。
-
-### 依赖安装
-
-```bash
-# 文字提取
-brew install pandoc
-
-# 创建新文档
-npm install -g docx
-
-# PDF 转换和图片预览
-brew install libreoffice poppler
-```
-
-### 触发场景
-
-- 从 Markdown 创建 Word 文档
-- 编辑现有文档（含追踪修改）
-- 提取文档内容
-- 法律/合同文档审阅（Redlining 工作流）
-
----
-
 ## 去 AI 味写作 (humanizer)
 
 识别并消除文本中的 AI 写作特征，使内容更自然、更像人类写作。基于 Wikipedia「AI 写作特征」指南。
@@ -229,32 +177,6 @@ python ~/.agents/skills/skill-creator/scripts/init_skill.py <skill-name> --path 
 # 打包发布
 python ~/.agents/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder>
 ```
-
----
-
-## 发现更多 Skills (find-skills)
-
-搜索和安装来自开放 agent skills 生态的 skill 包。
-
-**无需安装**，直接触发 skill 即可使用。
-
-### 触发场景
-
-- 询问「有没有能做 X 的 skill？」
-- 寻找特定领域的工具或工作流
-- 扩展 agent 能力
-
-### 手动搜索
-
-```bash
-# 搜索 skill
-npx skills find <关键词>
-
-# 安装 skill（全局）
-npx skills add <owner/repo@skill> -g -y
-```
-
-**浏览所有 skills**：https://skills.sh/
 
 ---
 
