@@ -549,7 +549,7 @@ function worktreeadd() {
         return 1
     fi
 
-    git worktree add -b "$name" "../$name" "$base"
+    git worktree add -b "$name" "../$name" "$base" && cd "../$name"
 }
 
 function worktreerm() {
