@@ -537,6 +537,30 @@ function gswb() {
     fi
 }
 
+function worktreeadd() {
+    if [ -z "$1" ]; then
+        echored "please enter worktree name"
+        return 1;
+    fi
+
+    name="$1"
+    base=$(curr_branch)
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    git worktree add -b "$name" "../$name" "$base"
+}
+
+function worktreerm() {
+    if [ -z "$1" ]; then
+        echored "please enter worktree name"
+        return 1;
+    fi
+
+    git worktree remove "../$1"
+}
+
 function installall(){
     find . -maxdepth 2 -type d | while read dir; do
     if [ -f "$dir/pom.xml" ]; then
