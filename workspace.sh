@@ -1409,7 +1409,7 @@ function peek_journal() {
 
 function settermproxy() {
     port="7890"
-    ismac && port="1087"
+    ismac && port="7897"
 
     # for shadowsocks
     export HTTP_PROXY="http://127.0.0.1:$port"
