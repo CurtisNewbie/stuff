@@ -8,6 +8,7 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
+OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
