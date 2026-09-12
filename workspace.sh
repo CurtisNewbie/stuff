@@ -209,6 +209,7 @@ alias leetcode="cp $STUFF/leetcode/Solution.java . && code Solution.java"
 alias diff="diff -bur"
 alias misocli="misoconfig && misoapi -run"
 alias snowflake="python3.11 $STUFF/snowflake.py"
+alias diff="diff --color=always"
 
 if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
     alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
