@@ -3,7 +3,9 @@
 - Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to.
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
+- Always write 飞书/Lark Documents with Chinese unless I ask you to use another language specifically.
 - When impl features (writing code), ask if user wants to use TDD skill.
+- Use fix-writing & humanizer skill when writing 飞书/Lark Documents.
 - Prefer creating new subagents to reviving existing subagents.
 
 # Behavioral Guidelines
