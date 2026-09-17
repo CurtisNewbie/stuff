@@ -8,6 +8,7 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
+OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true
 
 # colours https://www.shellhacks.com/bash-colors/
 # bash coloring https://gist.github.com/vratiu/9780109
@@ -209,6 +210,7 @@ alias leetcode="cp $STUFF/leetcode/Solution.java . && code Solution.java"
 alias diff="diff -bur"
 alias misocli="misoconfig && misoapi -run"
 alias snowflake="python3.11 $STUFF/snowflake.py"
+alias diff="diff --color=always"
 
 if [ -f "$USER_EXEC/arthas-boot.jar" ]; then
     alias arthas="java -jar $USER_EXEC/arthas-boot.jar"
@@ -1433,7 +1435,7 @@ function peek_journal() {
 
 function settermproxy() {
     port="7890"
-    ismac && port="1087"
+    ismac && port="7897"
 
     # for shadowsocks
     export HTTP_PROXY="http://127.0.0.1:$port"

@@ -4,53 +4,40 @@
   "presets": {
     "openai": {
       "orchestrator": {
-        "model": "opencode-go/deepseek-v4-flash",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [
-          "*"
-        ],
-        "mcps": [
-          "*",
-          "!context7",
-          "!websearch"
-        ]
+        "skills": [ "*" ],
+        "mcps": [ "*", "!context7", "!websearch" ]
       },
       "oracle": {
-        "model": "opencode-go/deepseek-v4-flash",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [
-          "simplify"
-        ],
-        "mcps": []
+        "skills": [ "*" ],
+        "mcps": [ "*", "!websearch" ]
       },
       "librarian": {
-        "model": "opencode-go/minimax-m2.7",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [],
-        "mcps": [
-          "context7",
-          "grep_app"
-        ]
+        "skills": [ "*" ],
+        "mcps": [ "*", "!websearch" ]
       },
       "explorer": {
-        "model": "opencode-go/minimax-m2.7",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [],
-        "mcps": []
+        "skills": [ "*" ],
+        "mcps": [ "*", "!websearch" ]
       },
       "designer": {
-        "model": "opencode-go/minimax-m2.7",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [
-          "agent-browser"
-        ],
-        "mcps": []
+        "skills": [ "*" ],
+        "mcps": [ "*", "!websearch" ]
       },
       "fixer": {
-        "model": "opencode-go/deepseek-v4-flash",
+        "model": "deepseek/deepseek-v4-flash",
         "variant": "max",
-        "skills": [],
-        "mcps": []
+        "skills": [ "*" ],
+        "mcps": [ "*", "!websearch" ]
       }
     }
   }
