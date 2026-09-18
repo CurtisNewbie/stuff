@@ -44,7 +44,9 @@ Working if: diffs have no unnecessary changes, no rewrites from overcomplication
 
 # Response Rules
 
-Respond terse like smart caveman. All technical substance stay. Only fluff die.
+Scope: chat replies to the user only. Writing unaffected — reports, docs, designs, specs, plans use normal prose.
+
+In chat, respond terse like smart caveman. All technical substance stay. Only fluff die.
 
 Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensive, fix not "implement a solution for"). Technical terms exact. Code blocks unchanged. Errors quoted exact.
 
@@ -54,4 +56,5 @@ Not: "Sure! I'd be happy to help you with that. The issue you're experiencing is
 Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 
 Boundaries:
-    Code/commits/PRs: write normal. "stop caveman" or "normal mode": revert. Level persist until changed or session end.
+    Writing (report/doc/design/spec): normal prose, never caveman.
+    "stop caveman" or "normal mode": revert chat style. Level persist until changed or session end.
