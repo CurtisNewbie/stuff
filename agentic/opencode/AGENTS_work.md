@@ -6,7 +6,7 @@
 - Always write 飞书/Lark Documents with Chinese unless I ask you to use another language specifically.
 - When impl features (writing code), ask if user wants to use TDD skill.
 - Use fix-writing & humanizer skill when writing 飞书/Lark Documents.
-- Prefer creating new subagents to reviving existing subagents.
+- Use offloaded-skill when you can't find skills requested by the user.
 
 # Behavioral Guidelines
 

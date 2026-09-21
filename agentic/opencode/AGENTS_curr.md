@@ -4,7 +4,7 @@
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 - When impl features (writing code), ask if user wants to use TDD skill.
-- Prefer creating new subagents to reviving existing subagents.
+- Use offloaded-skill when you can't find skills requested by the user.
 
 # Behavioral Guidelines
 
