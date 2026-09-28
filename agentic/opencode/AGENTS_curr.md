@@ -3,7 +3,6 @@
 - Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to.
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
-- When impl features (writing code), ask if user wants to use TDD skill.
 - Use offloaded-skill when you can't find skills requested by the user.
 
 # Behavioral Guidelines
@@ -52,4 +51,12 @@ Not: "Sure! I'd be happy to help you with that. The issue you're experiencing is
 Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 
 Boundaries:
-    Code/commits/PRs: write normal. "stop caveman" or "normal mode": revert. Level persist until changed or session end.
+    Writing (report/doc/design/spec): normal prose, never caveman.
+    "stop caveman" or "normal mode": revert chat style. Level persist until changed or session end.
+
+# Planning
+
+When planning (explicitly):
+
+- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+- At the end of each plan, give me a list of unresolved questions to answer, if any.
