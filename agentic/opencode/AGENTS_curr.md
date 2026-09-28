@@ -4,6 +4,7 @@
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 - Use offloaded-skill when you can't find skills requested by the user.
+- When reporting information to me, be extremely concise and sacrifice grammer for the sake of concision.
 
 # Behavioral Guidelines
 

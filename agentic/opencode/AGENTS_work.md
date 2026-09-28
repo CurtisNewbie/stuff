@@ -3,8 +3,9 @@
 - Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to.
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
-- Use human-writing skill when writing reports, 飞书/Lark documents. Always write 飞书/Lark Documents in Chinese unless I ask you to use another language specifically.
 - Use offloaded-skill when you can't find skills requested by the user.
+- When reporting information to me, be extremely concise and sacrifice grammer for the sake of concision.
+- Use human-writing skill when writing reports or 飞书/Lark documents. Always write 飞书/Lark Documents in Chinese unless I ask you to use another language specifically.
 
 # Behavioral Guidelines
 
