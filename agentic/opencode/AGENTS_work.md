@@ -6,6 +6,7 @@
 - Use offloaded-skill when you can't find skills requested by the user.
 - When reporting information to me, be extremely concise and sacrifice grammer for the sake of concision.
 - Use human-writing skill when writing reports or 飞书/Lark documents. Always write 飞书/Lark Documents in Chinese unless I ask you to use another language specifically.
+- Never modify any code programmatically, including via heredocs, python scripts, sed, perl, etc. This is not allowed even if the user asks. Absolutely and strictly forbidden.
 
 # Behavioral Guidelines
 
