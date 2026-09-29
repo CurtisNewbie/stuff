@@ -1,94 +1,58 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "lsp": {
-    "jdtls": {
-      "disabled": true
-    }
-  },
-  "provider": {
-    "bailian-coding-plan": {
-      "npm": "@ai-sdk/anthropic",
-      "name": "Model Studio Coding Plan",
-      "options": {
-        "baseURL": "https://coding.dashscope.aliyuncs.com/apps/anthropic/v1",
-        "apiKey": "YOUR_API_KEY",
+  "providers": {
+    "openai": {
+      "package": "@opencode/ai/providers/openai-compatible",
+      "name": "openai",
+      "settings": {
+        "baseURL": "{env:OC_API_HOST}",
+        "apiKey": "{env:OC_API_KEY}"
       },
       "models": {
-        "qwen3.5-plus": {
-          "name": "Qwen3.5 Plus",
+        "deepseek-v4.1-flash": {
+          "name": "deepseek-v4.1-flash",
+          "attachment": true,
+          "tool_call": true,
+          "temperature": true,
+          "limit": {
+            "context": 1000000,
+            "output": 64000
+          },
           "modalities": {
             "input": [
               "text",
               "image"
-            ],
-            "output": [
-              "text"
-            ],
+            ]
+          }
+        },
+        "deepseek-v4-pro": {
+          "name": "deepseek-v4-pro",
+          "attachment": true,
+          "tool_call": true,
+          "temperature": true,
+          "limit": {
+            "context": 1000000,
+            "output": 64000
           },
-          "options": {
-            "thinking": {
-              "type": "enabled",
-              "budgetTokens": 1024,
-            },
-          },
-        },
-        "qwen3-max-2026-01-23": {
-          "name": "Qwen3 Max 2026-01-23",
-        },
-        "qwen3-coder-next": {
-          "name": "Qwen3 Coder Next",
-        },
-        "qwen3-coder-plus": {
-          "name": "Qwen3 Coder Plus",
-        },
-        "MiniMax-M2.5": {
-          "name": "MiniMax M2.5",
-          "options": {
-            "thinking": {
-              "type": "enabled",
-              "budgetTokens": 1024,
-            },
-          },
-        },
-        "glm-5": {
-          "name": "GLM-5",
-          "options": {
-            "thinking": {
-              "type": "enabled",
-              "budgetTokens": 1024,
-            },
-          },
-        },
-        "glm-4.7": {
-          "name": "GLM-4.7",
-          "options": {
-            "thinking": {
-              "type": "enabled",
-              "budgetTokens": 1024,
-            },
-          },
-        },
-        "kimi-k2.5": {
-          "name": "Kimi K2.5",
           "modalities": {
             "input": [
-              "text",
-              "image"
-            ],
-            "output": [
               "text"
-            ],
-          },
-          "options": {
-            "thinking": {
-              "type": "enabled",
-              "budgetTokens": 1024,
-            },
-          },
-        },
-      },
+            ]
+          }
+        }
+      }
     },
+    "anthropic": {
+      "npm": "aisdk:@ai-sdk/anthropic",
+      "name": "anthropic",
+      "settings": {
+        "baseURL": "{env:OC_API_HOST}",
+        "apiKey": "{env:OC_API_KEY}"
+      },
+      "models": {}
+    }
   },
+  "plugin": [],
   "permission": {
     "read": {
       "*": "allow",
@@ -98,37 +62,14 @@
       "*secrets/*": "deny",
       "*credential*": "deny",
       "*.pem": "deny",
-      "*.key": "deny",
+      "*.key": "deny"
     },
     "external_directory": {
       "~/.opencode/opencode.json": "deny",
       "~/.opencode/opencode.jsonc": "deny",
       "~/.claude/settings.json": "deny",
-      "*": "allow",
-    },
+      "*": "allow"
+    }
   },
-  "plugin": [
-    // "@tarquinen/opencode-dcp@latest",
-    // "superpowers@git+https://github.com/obra/superpowers.git"
-  ],
-  "agent": {
-    // opencode default plan and build mode agents
-    "plan": {
-      "model": "anthropic/claude-opus-4-6",
-    },
-    "build": {
-      "model": "anthropic/claude-sonnet-4-6",
-    },
-  },
-  "autoupdate": false,
-  "mcp": {
-    "WebSearch": {
-      "type": "remote",
-      "url": "https://dashscope.aliyuncs.com/api/v1/mcps/WebSearch/mcp",
-      "enabled": false,
-      "headers": {
-        "Authorization": "Bearer ",
-      },
-    },
-  },
+  "autoupdate": false
 }
