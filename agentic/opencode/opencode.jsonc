@@ -60,13 +60,11 @@
     { "action": "read", "resource": "*secrets/*", "effect": "deny" },
     { "action": "read", "resource": "*credential*", "effect": "deny" },
     { "action": "read", "resource": "*.pem", "effect": "deny" },
-    { "action": "read", "resource": "*.key", "effect": "deny" }
+    { "action": "read", "resource": "*.key", "effect": "deny" },
+    { "action": "external_directory", "resource": "~/.opencode/opencode.json", "effect": "deny" },
+    { "action": "external_directory", "resource": "~/.opencode/opencode.jsonc", "effect": "deny" },
+    { "action": "external_directory", "resource": "~/.claude/settings.json", "effect": "deny" },
+    { "action": "external_directory", "resource": "*", "effect": "allow" }
   ],
-  "external_directory": {
-    "~/.opencode/opencode.json": "deny",
-    "~/.opencode/opencode.jsonc": "deny",
-    "~/.claude/settings.json": "deny",
-    "*": "allow"
-  },
   "update": "disable"
 }
