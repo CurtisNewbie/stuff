@@ -2391,8 +2391,7 @@ function _oc_free_port() {
 }
 
 function occ() {
-    port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode --continue --port $port
+    opencode --continue
 }
 
 function ocweb() {
@@ -2401,13 +2400,11 @@ function ocweb() {
       exit 0
     fi
 
-    port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode web --mdns
+    opencode web --mdns
 }
 
 function oc() {
-    port="$(_oc_free_port)"
-    OPENCODE_PORT="$port" opencode --port $port
+    opencode
 }
 
 function stayawake() {
