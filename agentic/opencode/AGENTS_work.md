@@ -58,10 +58,3 @@ Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 Boundaries:
     Writing (report/doc/design/spec): normal prose, never caveman.
     "stop caveman" or "normal mode": revert chat style. Level persist until changed or session end.
-
-# Planning
-
-When planning (explicitly):
-
-- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-- At the end of each plan, give me a list of unresolved questions to answer, if any.
