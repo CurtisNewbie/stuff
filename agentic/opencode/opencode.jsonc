@@ -43,8 +43,7 @@
       }
     },
     "anthropic": {
-      "npm": "aisdk:@ai-sdk/anthropic",
-      "name": "anthropic",
+      "package": "aisdk:@ai-sdk/anthropic",
       "settings": {
         "baseURL": "{env:OC_API_HOST}",
         "apiKey": "{env:OC_API_KEY}"
@@ -52,24 +51,22 @@
       "models": {}
     }
   },
-  "plugin": [],
-  "permission": {
-    "read": {
-      "*": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
-      "*.env.example": "allow",
-      "*secrets/*": "deny",
-      "*credential*": "deny",
-      "*.pem": "deny",
-      "*.key": "deny"
-    },
-    "external_directory": {
-      "~/.opencode/opencode.json": "deny",
-      "~/.opencode/opencode.jsonc": "deny",
-      "~/.claude/settings.json": "deny",
-      "*": "allow"
-    }
+  "plugins": [],
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "deny" },
+    { "action": "read", "resource": "*.env.*", "effect": "deny" },
+    { "action": "read", "resource": "*.env.example", "effect": "allow" },
+    { "action": "read", "resource": "*secrets/*", "effect": "deny" },
+    { "action": "read", "resource": "*credential*", "effect": "deny" },
+    { "action": "read", "resource": "*.pem", "effect": "deny" },
+    { "action": "read", "resource": "*.key", "effect": "deny" }
+  ],
+  "external_directory": {
+    "~/.opencode/opencode.json": "deny",
+    "~/.opencode/opencode.jsonc": "deny",
+    "~/.claude/settings.json": "deny",
+    "*": "allow"
   },
-  "autoupdate": false
+  "update": "disable"
 }
