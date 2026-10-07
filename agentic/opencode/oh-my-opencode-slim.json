@@ -4,43 +4,43 @@
   "presets": {
     "openai": {
       "orchestrator": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": ["*", "!context7", "!websearch"]
       },
       "oracle": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": []
       },
       "librarian": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": [],
         "mcps": ["*", "!websearch"]
       },
       "explorer": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "explore": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "designer": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "fixer": {
-        "model": "openai/deepseek-v4.1-flash",
+        "model": "deepseek/deepseek-flash",
         "variant": "high",
         "skills": ["*"],
         "mcps": []
