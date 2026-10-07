@@ -5,7 +5,7 @@
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 - Use offloaded-skill when you can't find skills requested by the user.
 - When reporting information to me, be extremely concise and sacrifice grammer for the sake of concision.
-- Never modify any code programmatically, including via heredocs, python scripts, sed, perl, etc. This is not allowed even if the user asks. Absolutely and strictly forbidden.
+- Never modify any code (excl docs) programmatically, including via heredocs, python scripts, sed, perl, etc. This is not allowed even if the user asks. Absolutely and strictly forbidden.
 
 # Behavioral Guidelines
 
