@@ -170,7 +170,7 @@ for env in $expected_env; do
   fi
 done
 
-export SYNC_REPOS="stuff,event-pump,miso,pocket,tamper_script,moon-monorepo,private-skills"
+export SYNC_REPOS="stuff,event-pump,miso,pocket,tamper_script,moon-monorepo,private-skills,ocbar"
 
 # ---------------------------------------------------------------
 
