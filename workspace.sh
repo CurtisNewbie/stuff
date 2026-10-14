@@ -1278,30 +1278,86 @@ function grepcode() {
 
     # --ignore "*.sql" \
 
-  ag -i -r "$1" . \
+  rg -i "$1" . \
     -C 1 \
-    --ignore-dir "target" \
-    --ignore-dir ".git" \
-    --ignore-dir ".vscode" \
-    --ignore-dir "node_modules" \
-    --ignore-dir "dist" \
-    --ignore-dir "logs" \
-    --ignore-dir "log" \
-    --ignore-dir ".idea" \
-    --ignore "*.dmg" \
-    --ignore "*.jar" \
-    --ignore "*.zip" \
-    --ignore "*.gzip" \
-    --ignore "*.tar" \
-    --ignore "*.mp4" \
-    --ignore "*.mov" \
-    --ignore "*.jpg" \
-    --ignore "*.jpeg" \
-    --ignore "*.png" \
-    --ignore "*.excalidraw" \
-    --ignore "go.sum" \
-    --ignore "*.svg" \
-    --ignore "*.md"
+    --glob '!target/**' \
+    --glob '!.git/**' \
+    --glob '!.vscode/**' \
+    --glob '!node_modules/**' \
+    --glob '!dist/**' \
+    --glob '!logs/**' \
+    --glob '!log/**' \
+    --glob '!.idea/**' \
+    --glob '!*.dmg' \
+    --glob '!*.jar' \
+    --glob '!*.zip' \
+    --glob '!*.gzip' \
+    --glob '!*.tar' \
+    --glob '!*.mp4' \
+    --glob '!*.mov' \
+    --glob '!*.jpg' \
+    --glob '!*.jpeg' \
+    --glob '!*.png' \
+    --glob '!*.excalidraw' \
+    --glob '!go.sum' \
+    --glob '!*.svg' \
+    --glob '!*.gif' \
+    --glob '!*.webp' \
+    --glob '!*.ico' \
+    --glob '!*.pdf' \
+    --glob '!*.mp3' \
+    --glob '!*.wav' \
+    --glob '!*.mkv' \
+    --glob '!*.avi' \
+    --glob '!*.webm' \
+    --glob '!*.woff' \
+    --glob '!*.woff2' \
+    --glob '!*.ttf' \
+    --glob '!*.eot' \
+    --glob '!*.class' \
+    --glob '!*.war' \
+    --glob '!*.ear' \
+    --glob '!*.exe' \
+    --glob '!*.dll' \
+    --glob '!*.so' \
+    --glob '!*.dylib' \
+    --glob '!*.o' \
+    --glob '!*.a' \
+    --glob '!*.bin' \
+    --glob '!*.wasm' \
+    --glob '!*.pyc' \
+    --glob '!*.pyo' \
+    --glob '!*.7z' \
+    --glob '!*.rar' \
+    --glob '!*.tgz' \
+    --glob '!package-lock.json' \
+    --glob '!yarn.lock' \
+    --glob '!pnpm-lock.yaml' \
+    --glob '!Cargo.lock' \
+    --glob '!poetry.lock' \
+    --glob '!uv.lock' \
+    --glob '!composer.lock' \
+    --glob '!Gemfile.lock' \
+    --glob '!*.lock' \
+    --glob '!build/**' \
+    --glob '!out/**' \
+    --glob '!coverage/**' \
+    --glob '!__pycache__/**' \
+    --glob '!venv/**' \
+    --glob '!.venv/**' \
+    --glob '!vendor/**' \
+    --glob '!.gradle/**' \
+    --glob '!.mvn/**' \
+    --glob '!.terraform/**' \
+    --glob '!tmp/**' \
+    --glob '!.next/**' \
+    --glob '!.nuxt/**' \
+    --glob '!.cache/**' \
+    --glob '!*.orig' \
+    --glob '!*.rej' \
+    --glob '!*.bak' \
+    --glob '!*.swp' \
+    --glob '!*.tmp'
     # -l
 }
 
