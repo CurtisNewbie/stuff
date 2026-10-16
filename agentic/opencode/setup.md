@@ -187,10 +187,27 @@ python ~/.agents/skills/skill-creator/scripts/package_skill.py <path/to/skill-fo
 ### 安装步骤
 
 ```bash
+# 安装 skill（从自然语言生成 .excalidraw 文件）
 npx skills add https://github.com/github/awesome-copilot --skill excalidraw-diagram-generator -g -y
+
+# 安装官方 Excalidraw CLI（可选，管理 Excalidraw+ 工作区、渲染 PNG）
+npm install -g @excalidraw/cli
 ```
 
-**无需额外依赖**，直接触发 skill 即可使用。
+**skill 无需额外依赖**，直接触发即可使用。
+
+### 官方 Excalidraw CLI
+
+终端管理 Excalidraw+ 工作区，并把 `.excalidraw` 文件渲染为 PNG。本地渲染无需账号，工作区命令需 Excalidraw+ API key。默认输出 JSON，适配 `jq`、shell 脚本与 AI agent。需 Node.js 22+。
+
+```bash
+excalidraw login                              # 保存 API key（工作区命令需要）
+excalidraw whoami                             # 查看当前工作区
+excalidraw render drawing.excalidraw --out drawing.png   # 本地文件渲染 PNG
+excalidraw scenes render <sceneId> --out scene.png       # 渲染工作区场景
+```
+
+**官方仓库**：https://github.com/excalidraw/cli
 
 ### 支持的图表类型
 
