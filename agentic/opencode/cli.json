@@ -22,5 +22,11 @@
   },
   "scroll": {
     "acceleration": true
+  },
+  "keybinds": {
+    "app.exit": [
+      "ctrl+d",
+      "<leader>q"
+    ]
   }
 }
