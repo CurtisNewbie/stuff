@@ -2140,10 +2140,11 @@ function oct() {
     TIMESTAMP=$(date +%y%m%d-%H%M%S)
     RANDOM_SUFFIX=$(head -c 5 /dev/urandom | base32 | tr -d '=' | tr '[:upper:]' '[:lower:]')
     FOLDER_NAME="${TIMESTAMP}-${RANDOM_SUFFIX}"
+    SESSION_ID="ses_$(head -c 16 /dev/urandom | base32 | tr -d '=' | tr '[:upper:]' '[:lower:]')"
 
     mkdir -p "$HOME/ocsession/${FOLDER_NAME}"
     cd "$HOME/ocsession/${FOLDER_NAME}" || return 1
-    opencode
+    opencode --session "$SESSION_ID"
 }
 
 function load_corplink() {
@@ -2447,7 +2448,13 @@ function _oc_free_port() {
 }
 
 function occ() {
-    opencode --continue
+    local id
+    id="$(opencode session list --format json -n 1 2>/dev/null | grep -m1 -o '"id": *"[^"]*"' | cut -d'"' -f4)"
+    if [ -n "$id" ]; then
+        opencode --session "$id"
+    else
+        opencode --continue
+    fi
 }
 
 function ocweb() {
@@ -2460,7 +2467,8 @@ function ocweb() {
 }
 
 function oc() {
-    opencode
+    local sid="ses_$(head -c 16 /dev/urandom | base32 | tr -d '=' | tr '[:upper:]' '[:lower:]')"
+    opencode --session "$sid" "$@"
 }
 
 function stayawake() {
