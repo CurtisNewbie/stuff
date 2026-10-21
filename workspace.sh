@@ -2457,6 +2457,43 @@ function occ() {
     fi
 }
 
+# ocsession <sessionId>  -> open the given session (reuse an id from a previous pick)
+# ocsession              -> list recent sessions and pick one
+function ocsession() {
+    local id="$1"
+    if [ -z "$id" ]; then
+        local lines
+        lines="$(opencode session list -n 20 2>/dev/null)"
+        if [ -z "$lines" ]; then
+            opencode --continue
+            return
+        fi
+
+        local -a ids
+        local i=1
+        while IFS=$'\t' read -r sid title ts; do
+            [ -z "$sid" ] && continue
+            ids+=("$sid")
+            printf '%s%2d)%s %s%-22s%s  %s%-45.45s%s  %s%s%s\n' \
+                "$yellow" "$i" "$colourreset" \
+                "$blue" "$ts" "$colourreset" \
+                "$cyan" "$title" "$colourreset" \
+                "$purple" "$sid" "$colourreset"
+            i=$((i + 1))
+        done <<< "$lines"
+
+        read -p "Pick session [1-${#ids[@]}]: " n
+        if ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -lt 1 ] || [ "$n" -gt "${#ids[@]}" ]; then
+            echored "invalid choice"
+            return 1
+        fi
+        id="${ids[$((n - 1))]}"
+    fi
+
+    echocyan ">>> session: $id"
+    opencode --session "$id"
+}
+
 function ocweb() {
     if [ -z "$OPENCODE_SERVER_PASSWORD" ]; then
       echo "OPENCODE_SERVER_PASSWORD is required"
