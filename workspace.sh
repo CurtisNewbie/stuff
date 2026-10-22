@@ -88,6 +88,28 @@ function __short_pwd() {
     fi
 }
 
+# shorten user@host in prompt; local host is abbreviated to its segment initials, remote (SSH) kept full
+function __short_user_host() {
+    if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+        echo "$USER@$(hostname -s)"
+        return
+    fi
+    local host_short
+    host_short=$(hostname -s | awk -F- '{
+        for (i = 1; i <= NF; i++) {
+            seg = $i
+            out = substr(seg, 1, 1)
+            for (j = 2; j <= length(seg); j++) {
+                ch = substr(seg, j, 1)
+                prev = substr(seg, j - 1, 1)
+                if (ch ~ /[A-Z]/ && prev ~ /[a-z]/) out = out ch
+            }
+            printf "%s", out
+        }
+    }' | tr '[:upper:]' '[:lower:]')
+    echo "$USER@$host_short"
+}
+
 gitps1=0
 if [ -f "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh" ]; then
     source "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh"
@@ -100,7 +122,7 @@ if [ $gitps1 -ne 1 ] && [ -d "/usr/local/etc/bash_completion.d" ]; then
 fi
 
 if [ $gitps1 -eq 1 ]; then
-    PS1="\[\e[1;34m\]\u@\h\[\e[0m\] \$(__short_pwd)\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
+    PS1="\[\e[1;34m\]\$(__short_user_host)\[\e[0m\] \$(__short_pwd)\[\e[1;31m\]\$(__git_ps1)\[\e[0m\]\$ "
 fi
 
 if ismac; then
