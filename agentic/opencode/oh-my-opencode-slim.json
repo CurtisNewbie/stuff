@@ -5,43 +5,43 @@
     "openai": {
       "orchestrator": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": ["*", "!context7", "!websearch"]
       },
       "oracle": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": []
       },
       "librarian": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": [],
         "mcps": ["*", "!websearch"]
       },
       "explorer": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "explore": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "designer": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": ["*", "!websearch"]
       },
       "fixer": {
         "model": "deepseek/deepseek-flash",
-        "variant": "high",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": []
       }
