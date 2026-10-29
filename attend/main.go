@@ -38,7 +38,22 @@ var (
 	DirFlag    = flags.String("dir", "", "input file dir", false)
 	AfterFlag  = flags.String("after", "", "after date", false)
 	LinesFlag  = flags.StrSlice("lines", "extra lines", false)
+	MonthsFlag = flags.Int("months", 0, "show records of the last N months, e.g., -3 / -6", false)
 )
+
+// rewriteMonthShorthand rewrites '-3' / '-6' to '-months=3' / '-months=6'
+// so that the standard flag package doesn't reject them as unknown flags.
+func rewriteMonthShorthand(args []string) []string {
+	out := make([]string, 0, len(args))
+	for _, a := range args {
+		if len(a) > 1 && a[0] == '-' && strings.Trim(a[1:], "0123456789") == "" {
+			out = append(out, "-months="+a[1:])
+			continue
+		}
+		out = append(out, a)
+	}
+	return out
+}
 
 type CachedTimeRange struct {
 	Start string
@@ -51,6 +66,7 @@ var (
 )
 
 func main() {
+	os.Args = append([]string{os.Args[0]}, rewriteMonthShorthand(os.Args[1:])...)
 	flags.Parse()
 
 	if *DirFlag == "" {
@@ -91,6 +107,11 @@ func main() {
 	ocrFutures := util.NewAwaitFutures[string](pool)
 
 	var aft time.Time = util.Now().StartOfMonth().Unwrap()
+
+	// -3 / -6 ... : include records from the start of the month N-1 months ago
+	if *MonthsFlag > 1 {
+		aft = aft.AddDate(0, -(*MonthsFlag - 1), 0)
+	}
 
 	if *AfterFlag != "" {
 		v, err := ParseTime(*AfterFlag)
