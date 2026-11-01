@@ -5,39 +5,75 @@
     "openai": {
       "orchestrator": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
-        "mcps": ["*", "!context7", "!websearch"]
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*",
+          "!context7"
+        ]
       },
       "oracle": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
+        "skills": [
+          "*"
+        ],
         "mcps": []
       },
       "librarian": {
         "model": "deepseek/deepseek-flash",
         "skills": [],
-        "mcps": ["*", "!websearch"]
+        "mcps": [
+          "*"
+        ]
       },
       "explorer": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
-        "mcps": ["*", "!websearch"]
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*"
+        ]
       },
       "explore": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
-        "mcps": ["*", "!websearch"]
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*"
+        ]
       },
       "designer": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
-        "mcps": ["*", "!websearch"]
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*"
+        ]
       },
       "fixer": {
         "model": "deepseek/deepseek-flash",
-        "skills": ["*"],
+        "skills": [
+          "*"
+        ],
         "mcps": []
       }
     }
-  }
+  },
+  "disabled_skills": [
+    "ai-estimates",
+    "codemap",
+    "deanchor",
+    "deepwork",
+    "reflect",
+    "step-back",
+    "verification-planning",
+    "worktrees"
+  ],
+  "disabled_mcps": [
+    "context7"
+  ]
 }
