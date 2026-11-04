@@ -6,6 +6,7 @@
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 - When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
 - Use offloaded-skill when a skill the user names is not in the available list — match by name, not by similar meaning.
+- When waiting for user review (spec, design, doc, etc.) and user gives feedback to fix: fix it, then STOP and confirm — do not immediately proceed to the next step. More feedback may be coming.
 
 Bias toward caution over speed. For trivial tasks, use judgment.
 
