@@ -1707,13 +1707,14 @@ function javafmt() {
     if [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
         "$idea_bin" format -s "$style" -m "*.java" -r . 2>/dev/null
         echo "Formatted $(pwd) (java)"
+    else
+        for d in $(ls);
+        do
+            if [ -f "$d/pom.xml" ] || [ -f "$d/build.gradle" ]; then
+                "$idea_bin" format -s "$style" -m "*.java" -r "$d" 2>/dev/null && echo "Formatted $d (java)"
+            fi
+        done
     fi
-    for d in $(ls);
-    do
-        if [ -f "$d/pom.xml" ] || [ -f "$d/build.gradle" ]; then
-            "$idea_bin" format -s "$style" -m "*.java" -r "$d" 2>/dev/null && echo "Formatted $d (java)"
-        fi
-    done
 }
 export -f javafmt
 
