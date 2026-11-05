@@ -16,7 +16,7 @@
     "thinking": "hide",
     "markdown": "rendered",
     "grouping": "auto",
-    "verbosity": "low"
+    "verbosity": "medium"
   },
   "animations": true,
   "tabs": {
