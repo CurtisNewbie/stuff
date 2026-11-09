@@ -2290,12 +2290,29 @@ function link_title() {
 }
 
 function deploy() {
-    app="$1"
-    if [ -z "$app" ]; then
+    if [ $# -eq 0 ]; then
         echo "Which app"
         return 0
     fi
-    $STUFF/moon_deploy/deploy_$app.sh
+
+    # accepts: deploy vfm mini-fstore moon
+    # or:      deploy vfm, mini-fstore, moon
+    apps=()
+    for arg in "$@"; do
+        IFS=',' read -ra parts <<< "$arg"
+        for p in "${parts[@]}"; do
+            p="${p// /}"
+            [ -n "$p" ] && apps+=("$p")
+        done
+    done
+
+    for app in "${apps[@]}"; do
+        echo "Deploying $app ..."
+        $STUFF/moon_deploy/deploy_$app.sh || {
+            echored "deploy $app failed"
+            return 1
+        }
+    done
 }
 
 function activate() {
