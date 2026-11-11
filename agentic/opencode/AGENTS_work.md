@@ -2,6 +2,7 @@
 
 - Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to.
 - State explicitly the skills you loaded, e.g., "Loaded dev-flow, ptp-flow skills".
+- For coding tasks, attempt to make changes fully verifiable.
 - Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
 - When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
