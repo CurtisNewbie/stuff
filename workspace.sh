@@ -210,6 +210,8 @@ alias gl="git log"
 alias gd="git diff --diff-algorithm=histogram -p --stat"
 alias gds="git diff --diff-algorithm=histogram -p --staged --stat"
 alias gdsc="git diff --diff-algorithm=histogram -p --staged --stat -- . ':(exclude).scratch/'"
+# git diff without tests
+alias gdwt="git diff --diff-algorithm=histogram -p --stat -- . ':(exclude,glob)**/test/**' ':(exclude,glob)**/tests/**' ':(exclude,glob)**/__tests__/**' ':(exclude,glob)**/*_test.go' ':(exclude,glob)**/*.test.*' ':(exclude,glob)**/*.spec.*' ':(exclude,glob)**/*Test.java' ':(exclude,glob)**/*Tests.java' ':(exclude,glob)**/*Test.kt'"
 # alias gbranch="git for-each-ref --count=10 --sort=-committerdate refs/heads/ --format='%(HEAD) %(align:80)%(color:yellow)%(refname:short)%(color:reset)%(end) - %(align:60)%(contents:subject)%(end) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias gshow="git show -p --stat -m"
 alias gpush="while ! git push; do sleep 0.3; done"
