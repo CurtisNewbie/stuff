@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Builds the linux binary, copies it to the server, installs the systemd unit
-# the first time, and restarts the service. No Dockerfile, no container rebuild.
+# Builds the linux binary and copies it to the server. No Dockerfile, no
+# container rebuild, no systemd calls: the unit is expected to exist and the
+# restart is left to the operator.
 #
-# First run: creates ~/services/homeproxy/, installs conf.yml from conf-prod.yml
-# (only when the server has none), writes /etc/systemd/system/homeproxy.service
-# and enables it. Later runs: replaces the binary and restarts the unit. A unit
-# or conf.yml that already exists on the server is never overwritten.
+# conf.yml is seeded from conf-prod.yml only when the server has none, so an
+# edited copy on the server is never overwritten.
 
 # --------- remote
 remote="alphaboi@curtisnewbie.com"
@@ -26,8 +25,6 @@ build="${service}_build"
         exit -1
     fi
     remote_path="${remote_home}/services/${service}/"
-    remote_user="${remote%@*}"
-    unit_path="/etc/systemd/system/${service}.service"
 
     cd "$GIT_PATH/homeproxy"
     if [ ! $? -eq 0 ]; then
@@ -57,43 +54,7 @@ build="${service}_build"
         echo "--- Edit ${remote_path}conf.yml on the server (credentials, trusted-clients, pac.*)"
     fi
 
-    # systemd unit: install once, leave an existing one alone
-    if ! ssh "$remote" "test -f ${unit_path}"; then
-        echo "--- Installing ${unit_path}"
-        ssh "$remote" "sudo tee ${unit_path} >/dev/null" <<EOF
-[Unit]
-Description=${service} forward HTTP proxy
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-User=${remote_user}
-WorkingDirectory=${remote_path}
-ExecStart=${remote_path}${build} configFile=${remote_path}conf.yml
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-EOF
-        if [ ! $? -eq 0 ]; then
-            echo "cannot write ${unit_path}"
-            exit -1
-        fi
-        ssh "$remote" "sudo systemctl daemon-reload && sudo systemctl enable ${service}"
-        if [ ! $? -eq 0 ]; then
-            exit -1
-        fi
-    fi
-
-    ssh "$remote" "sudo systemctl restart ${service}"
-    if [ ! $? -eq 0 ]; then
-        echo "restart failed: sudo systemctl status ${service}"
-        exit -1
-    fi
-
-    ssh "$remote" "sudo systemctl --no-pager --lines=5 status ${service}"
+    echo "--- Binary deployed to ${remote}:${remote_path}${build}"
 
     # cleanup
     if [ -f "$build" ]; then
