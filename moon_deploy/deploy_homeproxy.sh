@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Builds the linux binary and deploys it as a container, like the other services:
-# the binary and its Dockerfile go to ~/services/homeproxy/build/, conf.yml to
-# ~/services/homeproxy/config/, then the compose project in ~/services rebuilds
-# and restarts the service.
+# the binary and its Dockerfile go to ~/services/homeproxy/build/, then the
+# compose project in ~/services rebuilds and restarts the service.
 #
-# conf.yml is seeded from conf-prod.yml only when the server has none, so an
-# edited copy on the server is never overwritten.
+# The config is NOT copied or created here. It belongs on the server at the path
+# below and is mounted into the container read-only; this script only reminds you
+# where that is.
 
 # --------- remote
 remote="alphaboi@curtisnewbie.com"
 service="homeproxy"
 remote_build_path="~/services/${service}/build/"
-remote_config_path="~/services/${service}/config/"
+remote_config_path="~/services/${service}/config/conf.yml"
 os="linux"
 arch="amd64"
 build="${service}_build"
@@ -35,19 +35,9 @@ dockerfile="./Dockerfile"
         exit -1
     fi
 
-    ssh "$remote" "mkdir -p ${remote_build_path} ${remote_config_path} && rm -rf ${remote_build_path}*"
+    ssh "$remote" "mkdir -p ${remote_build_path} && rm -rf ${remote_build_path}*"
     if [ ! $? -eq 0 ]; then
         exit -1
-    fi
-
-    # conf.yml: seed it once, never overwrite an edited copy
-    if ! ssh "$remote" "test -f ${remote_config_path}conf.yml"; then
-        echo "--- Seeding ${remote_config_path}conf.yml from conf-prod.yml"
-        rsync -av -e ssh ./conf-prod.yml "${remote}:${remote_config_path}conf.yml"
-        if [ ! $? -eq 0 ]; then
-            exit -1
-        fi
-        echo "--- Edit ${remote_config_path}conf.yml on the server (trusted-clients, users, pac.*)"
     fi
 
     rsync -av -e ssh "./$build" "${remote}:${remote_build_path}"
@@ -60,11 +50,19 @@ dockerfile="./Dockerfile"
         exit -1
     fi
 
+    # Read-only check, no write: it only tells you whether the mount point exists.
+    if ! ssh "$remote" "test -f ${remote_config_path}"; then
+        echo "--- WARNING: ${remote_config_path} does not exist"
+        echo "--- Put your conf.yml there; it is mounted at /usr/src/config/conf.yml"
+    fi
+
     ssh "$remote" "cd services; docker-compose up -d --build ${service}"
     if [ ! $? -eq 0 ]; then
         echo "compose rebuild failed: cd ~/services && docker-compose up -d --build ${service}"
         exit -1
     fi
+
+    echo "--- Config in use: ${remote_config_path}"
 
     # cleanup
     if [ -f "$build" ]; then
