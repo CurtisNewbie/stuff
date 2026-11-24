@@ -11,4 +11,4 @@
 - Use human-writing skill when writing reports or 飞书/Lark documents. Always write 飞书/Lark Documents in Chinese unless I ask you to use another language specifically
 - When waiting for user review (spec, design, doc, etc.) and user gives feedback to fix: fix it, then STOP and confirm — do not immediately proceed to the next step. More feedback may be coming
 - Compaction should record list of skills important to the session, agent should reload skills after the compaction
-- Always pass `background: true` to the db-access tool
+- Always pass `background: true` to the db-access shell script

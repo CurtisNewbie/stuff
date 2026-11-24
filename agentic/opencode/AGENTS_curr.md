@@ -9,4 +9,4 @@
 - Use offloaded-skill when a skill the user names is not in the available list — match by name, not by similar meaning.
 - When waiting for user review (spec, design, doc, etc.) and user gives feedback to fix: fix it, then STOP and confirm — do not immediately proceed to the next step. More feedback may be coming
 - Compaction should record list of skills important to the session, agent should reload skills after the compaction
-- Always pass `background: true` to the db-access tool
+- Always pass `background: true` to the db-access shell script
