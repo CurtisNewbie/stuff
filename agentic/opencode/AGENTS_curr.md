@@ -1,11 +1,11 @@
 # Standing Rules
 
-- Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to.
-- State explicitly the skills you loaded, e.g., "Loaded xxx, yyy skills".
-- For coding tasks, attempt to make changes fully verifiable.
-- Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it.
+- Focus primarily on orchestration! For implementation and exploration, always delegate to specialist agents instead unless you have a good reason not to
+- State explicitly the skills you loaded, e.g., "Loaded xxx, yyy skills"
+- For coding tasks, attempt to make changes fully verifiable
+- Once you have shown your plan, do not change to alternative solution unless I agree. If the solution doesn't work, just say it
 - When calculating numbers, ALWAYS use python scripts to compute the results, NEVER CALCULATE YOURSELF!
-- When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
+- When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision
 - Use offloaded-skill when a skill the user names is not in the available list — match by name, not by similar meaning.
-- When waiting for user review (spec, design, doc, etc.) and user gives feedback to fix: fix it, then STOP and confirm — do not immediately proceed to the next step. More feedback may be coming.
-- Compaction should record list of skills important to the session, agent should reload skills after the compaction.
+- When waiting for user review (spec, design, doc, etc.) and user gives feedback to fix: fix it, then STOP and confirm — do not immediately proceed to the next step. More feedback may be coming
+- Compaction should record list of skills important to the session, agent should reload skills after the compaction
